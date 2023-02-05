@@ -1,0 +1,19 @@
+.hovered-toolwind-element {
+  outline: 2px solid blueviolet;
+  cursor: default !important;
+}
+
+.toolwind-popup-element {
+  max-width: 256px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: #aaa 1px solid;
+  color: #333 !important;
+  background-color: #fff;
+  font-size: 14px;
+  z-index: 10000;
+}
+
+.bg-green {
+  background-color: green !important;
+}
