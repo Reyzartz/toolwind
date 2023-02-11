@@ -13,6 +13,7 @@
       ],
       "js": [
         "/libs/popper-min.js",
+        "/utils.js",
         "content_script.js"
       ]
     }
