@@ -1,8 +1,17 @@
-let hoveredElement,
-  hoverPopupElement,
-  selectedElement,
-  selectedPopupElement,
-  popper
+import { createPopper, Instance as PopperInstance } from '@popperjs/core'
+import {
+  appendClassNames,
+  appendElementToBody,
+  removeCustomClassNames,
+  getClassNames
+} from './utils'
+import './style.css'
+
+let hoveredElement: HTMLElement | null,
+  hoverPopupElement: HTMLElement,
+  selectedElement: HTMLElement | null,
+  selectedPopupElement: HTMLTextAreaElement,
+  popper: PopperInstance | null
 
 function init () {
   hoveredElement = null
@@ -13,15 +22,6 @@ function init () {
   hoverPopupElement = document.createElement('div')
 }
 
-function injectCSSStyles () {
-  let cssLink = document.createElement('link')
-  cssLink.href = chrome.runtime.getURL('/styles/index.css')
-  cssLink.type = 'text/css'
-  cssLink.rel = 'stylesheet'
-
-  appendElementToHead(cssLink)
-}
-
 function addPopupTool () {
   appendClassNames(hoverPopupElement, ['toolwind-hovered-popup-element'])
   appendClassNames(selectedPopupElement, ['toolwind-selected-popup-element'])
@@ -29,7 +29,10 @@ function addPopupTool () {
   selectedPopupElement.rows = 5
 
   selectedPopupElement.addEventListener('keyup', e => {
-    selectedElement.className = e.target.value + ' selected-toolwind-element'
+    if (selectedElement === null) return
+    selectedElement.className =
+      (e.target as typeof selectedPopupElement).value +
+      ' selected-toolwind-element'
   })
 
   appendElementToBody(selectedPopupElement)
@@ -37,24 +40,28 @@ function addPopupTool () {
 }
 
 function addEventListenerToAllElements () {
-  const allElements = document.querySelector('body').querySelectorAll('*')
+  const allElements = (
+    document.querySelector('body') as HTMLBodyElement
+  ).querySelectorAll('*')
 
   allElements.forEach(ele => {
     ele.addEventListener('click', e => {
       e.stopPropagation()
 
-      console.log('se')
-
-      removeCustomClassNames(selectedElement)
+      if (selectedElement !== null) {
+        removeCustomClassNames(selectedElement)
+      }
 
       if (selectedElement !== null) {
         selectedElement = null
 
         return
       } else {
-        selectedElement = e.target
+        selectedElement = e.target as HTMLElement
 
-        selectedPopupElement.value = getClassNames(e.target).join(' ')
+        selectedPopupElement.value = getClassNames(
+          e.target as HTMLElement
+        ).join(' ')
 
         appendClassNames(selectedElement, ['selected-toolwind-element'])
       }
@@ -67,18 +74,22 @@ function addEventListenerToAllElements () {
     ele.addEventListener('mouseover', e => {
       e.stopPropagation()
 
-      console.log('ho')
+      if (hoveredElement !== null) {
+        removeCustomClassNames(hoveredElement)
+      }
 
       if (selectedElement !== null) {
         hoveredElement = null
 
         return
       } else {
-        removeCustomClassNames(hoveredElement)
+        hoveredElement = e.target as HTMLElement
 
-        hoveredElement = e.target
+        hoverPopupElement.innerText = getClassNames(
+          e.target as HTMLElement
+        ).join(' ')
 
-        hoverPopupElement.innerText = getClassNames(e.target).join(' ')
+        console.log('e', hoverPopupElement.innerText)
 
         appendClassNames(hoveredElement, ['hovered-toolwind-element'])
       }
@@ -88,19 +99,20 @@ function addEventListenerToAllElements () {
   })
 }
 
-function setPopperElement (reference, popup) {
+function setPopperElement (reference: HTMLElement, popup: HTMLElement) {
   if (popper !== null) {
     popper.destroy()
   }
 
-  popper = Popper.createPopper(reference, popup, {
+  popper = createPopper(reference, popup, {
     placement: 'bottom-end'
   })
 }
 
 ;(() => {
+  console.log(document)
+
   init()
-  injectCSSStyles()
   addEventListenerToAllElements()
   addPopupTool()
 
