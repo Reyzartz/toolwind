@@ -25,7 +25,7 @@ export function appendClassNames (el: HTMLElement, newClassNames: string[]) {
 }
 
 export function removeCustomClassNames (el: HTMLElement) {
-  if (el === null || typeof el.className !== 'string') return
+  if (typeof el.className !== 'string') return
 
   const classNames = getClassNames(el)
 

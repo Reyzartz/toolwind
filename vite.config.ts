@@ -1,3 +1,4 @@
+import react from '@vitejs/plugin-react-swc'
 import { crx } from '@crxjs/vite-plugin'
 import { resolve, parse } from 'path'
 import { defineConfig } from 'vite'
@@ -12,7 +13,7 @@ const publicDir = resolve(__dirname, 'public')
 const isDev = process.env.__DEV__ === 'true'
 
 export default defineConfig({
-  plugins: [crx({ manifest })],
+  plugins: [react(), crx({ manifest })],
   resolve: {
     alias: {
       '@src': root,
@@ -27,7 +28,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         panel: resolve(pagesDir, 'panel', 'index.html'),
-        content: resolve(pagesDir, 'content', 'index.ts'),
+        content: resolve(pagesDir, 'content', 'main.tsx'),
         background: resolve(pagesDir, 'background', 'index.ts'),
         devtools: resolve(pagesDir, 'devtools', 'index.html'),
         options: resolve(pagesDir, 'options', 'index.html'),
