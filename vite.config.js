@@ -13,7 +13,15 @@ const publicDir = resolve(__dirname, 'public')
 const isDev = process.env.__DEV__ === 'true'
 
 export default defineConfig({
-  plugins: [react(), crx({ manifest })],
+  plugins: [
+    react(),
+    crx({
+      manifest,
+      contentScripts: {
+        injectCss: true
+      }
+    })
+  ],
   resolve: {
     alias: {
       '@src': root,
@@ -24,6 +32,7 @@ export default defineConfig({
   publicDir,
   build: {
     outDir,
+    emptyOutDir: true,
     sourcemap: isDev,
     rollupOptions: {
       input: {
@@ -32,7 +41,7 @@ export default defineConfig({
         background: resolve(pagesDir, 'background', 'index.ts'),
         devtools: resolve(pagesDir, 'devtools', 'index.html'),
         options: resolve(pagesDir, 'options', 'index.html'),
-        contentStyle: resolve(pagesDir, 'content', 'style.css'),
+        contentStyle: resolve(pagesDir, 'contentStyle', 'contentStyle.css'),
         popup: resolve(pagesDir, 'popup', 'index.html')
       },
       output: {

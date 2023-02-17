@@ -11,7 +11,12 @@ export function appendElementToBody (el: HTMLElement) {
 }
 
 export function getClassNames (el: HTMLElement) {
-  if (el === null || typeof el.className !== 'string') return []
+  if (
+    el === null ||
+    typeof el.className !== 'string' ||
+    el.className.trim().length === 0
+  )
+    return []
 
   const classNames = el.className.split(' ')
 

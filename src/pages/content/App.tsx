@@ -63,7 +63,7 @@ const App = () => {
       <InspectedElementHighlighter element={inspectedElement} />
 
       {isElementSelected && (
-        <InspectedElementHighlighter element={selectedElement} selected />
+        <InspectedElementHighlighter element={selectedElement} />
       )}
     </>
   )
