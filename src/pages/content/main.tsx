@@ -10,7 +10,7 @@ import contentCss from '../contentStyle/contentStyle.css'
   styles.innerHTML = contentCss
 
   const root = document.createElement('div')
-  root.id = 'root'
+  root.id = 'toolwind-root'
   document.body.append(root)
   document.body.append(styles)
 

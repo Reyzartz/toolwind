@@ -29,10 +29,17 @@ export function appendClassNames (el: HTMLElement, newClassNames: string[]) {
   el.className = classNames.concat(newClassNames).join(' ')
 }
 
-export function removeCustomClassNames (el: HTMLElement) {
-  if (typeof el.className !== 'string') return
+export function removeClassNames (
+  el: HTMLElement,
+  classNames: string | string[]
+): string[] {
+  if (typeof el.className !== 'string') return []
 
-  const classNames = getClassNames(el)
+  const elementClassNames = getClassNames(el).filter(
+    name => !classNames.includes(name)
+  )
 
-  el.className = classNames.join(' ')
+  el.className = elementClassNames.join(' ')
+
+  return elementClassNames
 }

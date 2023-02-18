@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { InspectedElementHighlighter } from './components/inspectedElementHighlighter'
+import { InspectedElementHighlighter } from './components'
 
 const App = () => {
   const [inspectedElement, setInspectedElement] = useState<HTMLElement | null>(
@@ -25,11 +25,9 @@ const App = () => {
   // this function doesn't get the updated state values since it's inside a event listener
   const onSelectElementHandler = useCallback(
     (ele: HTMLElement) => {
-      let isPreviouslySelectedElement = false
-
       setSelectedElement(ele)
 
-      setIsElementSelected(!isPreviouslySelectedElement)
+      setIsElementSelected(true)
     },
     [isElementSelected, selectedElement]
   )
@@ -48,7 +46,10 @@ const App = () => {
 
       element.addEventListener('click', e => {
         e.stopPropagation()
-        onSelectElementHandler(element as HTMLElement)
+
+        if (!element.id.includes('toolwind')) {
+          onSelectElementHandler(element as HTMLElement)
+        }
       })
     })
   }, [])
@@ -63,7 +64,7 @@ const App = () => {
       <InspectedElementHighlighter element={inspectedElement} />
 
       {isElementSelected && (
-        <InspectedElementHighlighter element={selectedElement} />
+        <InspectedElementHighlighter element={selectedElement} selected />
       )}
     </>
   )
