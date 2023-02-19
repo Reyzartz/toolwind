@@ -35,11 +35,34 @@ export function removeClassNames (
 ): string[] {
   if (typeof el.className !== 'string') return []
 
-  const elementClassNames = getClassNames(el).filter(
-    name => !classNames.includes(name)
-  )
+  const elementClassNames = Array.isArray(classNames)
+    ? getClassNames(el).filter(name => !classNames.includes(name))
+    : getClassNames(el).filter(name => classNames !== name)
 
   el.className = elementClassNames.join(' ')
 
   return elementClassNames
+}
+
+export function updateClassName (
+  el: HTMLElement,
+  index: number,
+  updatedClassName: string
+): string[] {
+  if (typeof el.className !== 'string') return []
+
+  const updatedClassNames = getClassNames(el)
+
+  updatedClassNames[index] = updatedClassName
+
+  el.className = updatedClassNames.join(' ')
+
+  return updatedClassNames
+}
+
+// this is later going to be change to accept only tailwind classes from the sites spreadsheets
+export const isClassNameValid = (name: string) => {
+  const regex = /^[\w-]+(:[\w-]+)?(-[\w-]+)?$/i
+
+  return regex.test(name)
 }

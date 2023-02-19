@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { getClassNames, removeClassNames } from '../utils'
+import { getClassNames, removeClassNames, updateClassName } from '../utils'
 import { ClassNameTag } from '.'
 
 interface SelectedElementPopupProps {
@@ -37,10 +37,15 @@ export const SelectedElementPopup = ({
   const rect = useMemo(() => element.getClientRects()[0], [element])
 
   const deleteClassNameHandler = useCallback(
-    (e: Event, name: string) => {
-      e.stopPropagation()
-
+    (name: string) => {
       setClassNames(removeClassNames(element, name) as string[])
+    },
+    [element]
+  )
+
+  const updateClassNameHandler = useCallback(
+    (ind: number, updatedClassName: string) => {
+      setClassNames(updateClassName(element, ind, updatedClassName))
     },
     [element]
   )
@@ -65,13 +70,14 @@ export const SelectedElementPopup = ({
         style={{ ...styles.popper, zIndex: 10000 }}
         {...attributes.popper}
       >
-        <div className='bg-indigo-900 w-64  shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase '>
-          <div className='p-3 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
+        <div className='bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'>
+          <div className='p-3 w-64 max-h-64 overflow-scroll bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
             {classNames.map((name, ind) => (
               <ClassNameTag
-                key={`${name + ind}`}
+                key={ind}
                 name={name}
-                onDelete={(e: any) => deleteClassNameHandler(e, name)}
+                onDelete={() => deleteClassNameHandler(name)}
+                onChange={name => updateClassNameHandler(ind, name)}
               />
             ))}
           </div>

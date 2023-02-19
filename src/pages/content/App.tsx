@@ -32,10 +32,8 @@ const App = () => {
     [isElementSelected, selectedElement]
   )
 
-  const addEventListenerToAllElements = useCallback(function () {
-    const allElements = (
-      document.querySelector('body') as HTMLBodyElement
-    ).querySelectorAll('*')
+  const addEventListenerToAllElements = useCallback(() => {
+    const allElements = document.body.querySelectorAll('*')
 
     allElements.forEach(element => {
       element.addEventListener('mouseover', e => {
@@ -48,6 +46,7 @@ const App = () => {
         e.stopPropagation()
 
         if (!element.id.includes('toolwind')) {
+          console.log('click')
           onSelectElementHandler(element as HTMLElement)
         }
       })
