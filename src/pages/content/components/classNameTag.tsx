@@ -35,7 +35,7 @@ export const ClassNameTag = ({
 
   return (
     <div
-      className='bg-indigo-900 border border-indigo-600 rounded-[4px] max-w-max flex overflow-hidden cursor-pointer'
+      className=':uno: bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex overflow-hidden cursor-pointer'
       style={{
         color: isValid ? 'white' : 'red'
       }}
@@ -43,7 +43,7 @@ export const ClassNameTag = ({
       {isEditing ? (
         <input
           defaultValue={name}
-          className='px-2 py-1 text-sm text-inherit bg-transparent max-w-max'
+          className=':uno: px-2 py-1 text-sm text-inherit bg-transparent max-w-max'
           onBlur={onBlurHandler}
           onChange={onChangeHandler}
           autoFocus
@@ -51,7 +51,7 @@ export const ClassNameTag = ({
       ) : (
         <div
           onClick={() => setIsEditing(true)}
-          className='px-2 py-1 text-sm text-inherit'
+          className=':uno: px-2 py-1 text-sm text-inherit'
         >
           {name}
         </div>
@@ -59,7 +59,7 @@ export const ClassNameTag = ({
 
       <button
         onClick={onDelete}
-        className=' pr-2 font-4xl z-0 font-bold leading-none h-full transition-all text-slate-400 hover:text-red-500'
+        className=':uno: pr-2 font-4xl z-0 font-bold leading-none h-full transition-all text-slate-400 hover:text-red-500'
       >
         ⤫
       </button>

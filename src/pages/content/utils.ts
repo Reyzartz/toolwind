@@ -66,3 +66,29 @@ export const isClassNameValid = (name: string) => {
 
   return regex.test(name)
 }
+
+var searchForCss = function (className: string) {
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    let styleSheet = document.styleSheets[i] as any
+    try {
+      for (let j = 0; j < styleSheet.cssRules.length; j++) {
+        let rule = styleSheet.cssRules[j] as any
+        // console.log(rule.selectorText)
+        if (rule.selectorText && rule.selectorText.includes(className)) {
+          console.log('found - ', rule.selectorText, ' ', i, '-', j)
+        }
+      }
+      if (styleSheet.imports) {
+        for (let k = 0; k < styleSheet.imports.length; k++) {
+          let imp = styleSheet.imports[k]
+          for (let l = 0; l < imp.cssRules.length; l++) {
+            let rule = imp.cssRules[l]
+            if (rule.selectorText && rule.selectorText.includes(className)) {
+              console.log('found - ', rule.selectorText, ' ', i, '-', k, '-', l)
+            }
+          }
+        }
+      }
+    } catch (err) {}
+  }
+}

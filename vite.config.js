@@ -3,6 +3,7 @@ import { crx } from '@crxjs/vite-plugin'
 import { resolve, parse } from 'path'
 import { defineConfig } from 'vite'
 import manifest from './src/manifest'
+import UnoCSS from 'unocss/vite'
 
 const root = resolve(__dirname, 'src')
 const pagesDir = resolve(root, 'pages')
@@ -10,11 +11,10 @@ const assetsDir = resolve(root, 'assets')
 const outDir = resolve(__dirname, 'dist')
 const publicDir = resolve(__dirname, 'public')
 
-const isDev = process.env.__DEV__ === 'true'
-
 export default defineConfig({
   plugins: [
     react(),
+    UnoCSS({}),
     crx({
       manifest,
       contentScripts: {
@@ -22,6 +22,7 @@ export default defineConfig({
       }
     })
   ],
+
   resolve: {
     alias: {
       '@src': root,
@@ -33,7 +34,6 @@ export default defineConfig({
   build: {
     outDir,
     emptyOutDir: true,
-    sourcemap: isDev,
     rollupOptions: {
       input: {
         panel: resolve(pagesDir, 'panel', 'index.html'),
@@ -46,14 +46,12 @@ export default defineConfig({
       },
       output: {
         entryFileNames: 'src/pages/[name]/index.js',
-        chunkFileNames: isDev
-          ? 'assets/js/[name].js'
-          : 'assets/js/[name].[hash].js',
+        chunkFileNames: 'assets/js/[name].[hash].js',
         assetFileNames: assetInfo => {
           const { dir, name: _name } = parse(assetInfo.name)
           const assetFolder = dir.split('/').at(-1)
           const name = assetFolder + _name
-          return `assets/[ext]/${name}.chunk.[ext]`
+          return `assets/[ext]/${name}.[hash].[ext]`
         }
       }
     }

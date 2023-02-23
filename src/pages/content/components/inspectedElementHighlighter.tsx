@@ -27,20 +27,21 @@ const InspectedElementHighlighter = ({
         />
       )}
 
-      {/* inspected Element Highted border */}
+      {/* inspected Element Highted  */}
       <div
-        id='toolwind-highlight-bar'
-        className='border-t border-purple-600 fixed z-[10000]'
+        id='toolwind-highlight-bar-t'
+        className=':uno: bg-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
           left: rect.x,
-          width: rect.width
+          width: rect.width,
+          height: 10
         }}
       />
 
       <div
-        id='toolwind-highlight-bar'
-        className='border-b border-purple-600 fixed z-[10000]'
+        id='toolwind-highlight-bar-b'
+        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y + rect.height,
           left: rect.x,
@@ -49,8 +50,8 @@ const InspectedElementHighlighter = ({
       />
 
       <div
-        id='toolwind-highlight-bar'
-        className='border-l border-purple-600 fixed z-[10000]'
+        id='toolwind-highlight-bar-l'
+        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
           left: rect.x,
@@ -59,11 +60,11 @@ const InspectedElementHighlighter = ({
       />
 
       <div
-        id='toolwind-highlight-bar'
-        className='border-r border-purple-600 fixed z-[10000]'
+        id='toolwind-highlight-bar-r'
+        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
-          left: rect.x + rect.width,
+          left: rect.x + rect.width - 2,
           height: rect.height
         }}
       />

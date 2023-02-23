@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 #toolwind-arrow,
 #toolwind-arrow::before {
   position: absolute;

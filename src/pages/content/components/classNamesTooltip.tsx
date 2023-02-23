@@ -34,7 +34,7 @@ export const ClassNamesTooltip = ({
     <>
       <div
         ref={setReferenceElement as any}
-        className='fixed z-[-10000]'
+        className=':uno: fixed z-[-10000]'
         style={{
           top: rect.y,
           left: rect.x,
@@ -50,7 +50,7 @@ export const ClassNamesTooltip = ({
         style={{ ...styles.popper, zIndex: 10000 }}
         {...attributes.popper}
       >
-        <div className='bg-purple-600 min-w-[48px] border border-white shadow-md px-3 py-1 rounded-md text-sm text-slate-200 lowercase'>
+        <div className=':uno: bg-purple-600 min-w-[48px] border border-solid border-white shadow-md px-3 py-1 rounded-md text-sm text-slate-200 lowercase'>
           {`${tagName}# ${
             classNames.length === 0 ? '' : classNames.join(', ')
           }`}
@@ -60,7 +60,7 @@ export const ClassNamesTooltip = ({
           id='toolwind-arrow'
           ref={setArrowElement as any}
           style={styles.arrow}
-          className='bg-purple-600 border border-white'
+          className=':uno: bg-purple-600 border border-solid border-white'
         />
       </div>
     </>

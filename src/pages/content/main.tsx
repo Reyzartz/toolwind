@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { App } from './App'
 import contentCss from '../contentStyle/contentStyle.css'
 
+import 'virtual:uno.css'
+
 // Main function for root
 ;(() => {
   // temporary solution for injecting css

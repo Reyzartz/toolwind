@@ -39,7 +39,9 @@ const App = () => {
       element.addEventListener('mouseover', e => {
         e.stopPropagation()
 
-        onHoverElementHandler(element as HTMLElement)
+        if (!element.id.includes('toolwind')) {
+          onHoverElementHandler(element as HTMLElement)
+        }
       })
 
       element.addEventListener('click', e => {

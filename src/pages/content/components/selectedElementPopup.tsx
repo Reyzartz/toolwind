@@ -54,7 +54,7 @@ export const SelectedElementPopup = ({
     <>
       <div
         ref={setReferenceElement as any}
-        className='fixed z-[-10000]'
+        className=':uno: fixed z-[-10000]'
         style={{
           top: rect.y,
           left: rect.x,
@@ -70,8 +70,8 @@ export const SelectedElementPopup = ({
         style={{ ...styles.popper, zIndex: 10000 }}
         {...attributes.popper}
       >
-        <div className='bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'>
-          <div className='p-3 w-64 max-h-64 overflow-scroll bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
+        <div className=':uno: bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'>
+          <div className=':uno: p-3 w-64 max-h-64 overflow-scroll bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
             {classNames.map((name, ind) => (
               <ClassNameTag
                 key={ind}
@@ -87,7 +87,7 @@ export const SelectedElementPopup = ({
           id='toolwind-arrow'
           ref={setArrowElement as any}
           style={styles.arrow}
-          className='bg-indigo-900 border-transparent'
+          className=':uno: bg-indigo-900 border-transparent'
         />
       </div>
     </>
