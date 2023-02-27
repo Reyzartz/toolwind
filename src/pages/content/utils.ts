@@ -60,35 +60,37 @@ export function updateClassName (
   return updatedClassNames
 }
 
+const twRegex =
+  /^\.(-?)([a-z]+:)?([a-z]+)(-(([0-9]*[a-z]+)|([0-9]+((\.|\/)[0-9]+)?)))*$/
+
 // this is later going to be change to accept only tailwind classes from the sites spreadsheets
 export const isClassNameValid = (name: string) => {
-  const regex = /^[\w-]+(:[\w-]+)?(-[\w-]+)?$/i
-
-  return regex.test(name)
+  return twRegex.test('.' + name)
 }
 
-var searchForCss = function (className: string) {
+const classList = (() => {
+  const results: string[] = []
+
   for (let i = 0; i < document.styleSheets.length; i++) {
     let styleSheet = document.styleSheets[i] as any
+
     try {
       for (let j = 0; j < styleSheet.cssRules.length; j++) {
         let rule = styleSheet.cssRules[j] as any
-        // console.log(rule.selectorText)
-        if (rule.selectorText && rule.selectorText.includes(className)) {
-          console.log('found - ', rule.selectorText, ' ', i, '-', j)
-        }
-      }
-      if (styleSheet.imports) {
-        for (let k = 0; k < styleSheet.imports.length; k++) {
-          let imp = styleSheet.imports[k]
-          for (let l = 0; l < imp.cssRules.length; l++) {
-            let rule = imp.cssRules[l]
-            if (rule.selectorText && rule.selectorText.includes(className)) {
-              console.log('found - ', rule.selectorText, ' ', i, '-', k, '-', l)
+        if (rule.selectorText) {
+          rule.selectorText.split(' ').forEach((text: string) => {
+            if (twRegex.test(text)) {
+              results.push(text.replace('.', ''))
             }
-          }
+          })
         }
       }
     } catch (err) {}
   }
+
+  return [...new Set(results)].sort()
+})()
+
+export const searchForCss = (searchTerm: string): string[] => {
+  return classList.filter(className => className.includes(searchTerm))
 }

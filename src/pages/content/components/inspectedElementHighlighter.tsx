@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { getClassNames } from '../utils'
 import { ClassNamesTooltip, SelectedElementPopup } from '.'
 
@@ -30,18 +30,17 @@ const InspectedElementHighlighter = ({
       {/* inspected Element Highted  */}
       <div
         id='toolwind-highlight-bar-t'
-        className=':uno: bg-purple-600 fixed z-[10000]'
+        className=':uno: border-t border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
           left: rect.x,
-          width: rect.width,
-          height: 10
+          width: rect.width
         }}
       />
 
       <div
         id='toolwind-highlight-bar-b'
-        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
+        className=':uno: border-b border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y + rect.height,
           left: rect.x,
@@ -51,7 +50,7 @@ const InspectedElementHighlighter = ({
 
       <div
         id='toolwind-highlight-bar-l'
-        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
+        className=':uno: border-l border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
           left: rect.x,
@@ -61,10 +60,10 @@ const InspectedElementHighlighter = ({
 
       <div
         id='toolwind-highlight-bar-r'
-        className=':uno: border border-solid border-purple-600 fixed z-[10000]'
+        className=':uno: border-r border-solid border-purple-600 fixed z-[10000]'
         style={{
           top: rect.y,
-          left: rect.x + rect.width - 2,
+          left: rect.x + rect.width,
           height: rect.height
         }}
       />

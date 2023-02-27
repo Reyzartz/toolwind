@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
-import { isClassNameValid } from '../utils'
+import { isClassNameValid, searchForCss } from '../utils'
+import { ClassNameInput } from './classNameInput'
 
 interface ClassNameTagProps {
   name: string
@@ -16,13 +17,15 @@ export const ClassNameTag = ({
 
   const [isEditing, setIsEditing] = useState(false)
   const [isValid, setIsValid] = useState(isClassNameValid(name))
+  const [suggestedClasses, setSuggestedClasses] = useState<string[]>([])
 
   const onChangeHandler = useCallback(
-    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+    (value: string) => {
       if (isClassNameValid(value)) {
         onChange(value)
       }
 
+      setSuggestedClasses(searchForCss(value))
       setIsValid(isClassNameValid(value))
     },
     [onChange]
@@ -35,31 +38,30 @@ export const ClassNameTag = ({
 
   return (
     <div
-      className=':uno: bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex overflow-hidden cursor-pointer'
+      className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer'
       style={{
         color: isValid ? 'white' : 'red'
       }}
     >
       {isEditing ? (
-        <input
-          defaultValue={name}
-          className=':uno: px-2 py-1 text-sm text-inherit bg-transparent max-w-max'
-          onBlur={onBlurHandler}
+        <ClassNameInput
+          classNames={suggestedClasses}
           onChange={onChangeHandler}
-          autoFocus
+          defaultValue={name}
+          onBlur={onBlurHandler}
         />
       ) : (
-        <div
+        <button
           onClick={() => setIsEditing(true)}
-          className=':uno: px-2 py-1 text-sm text-inherit'
+          className=':uno: px-2 py-1 text-sm text-inherit border-none bg-transparent'
         >
           {name}
-        </div>
+        </button>
       )}
 
       <button
         onClick={onDelete}
-        className=':uno: pr-2 font-4xl z-0 font-bold leading-none h-full transition-all text-slate-400 hover:text-red-500'
+        className=':uno: pr-2 font-4xl z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
       >
         ⤫
       </button>

@@ -71,7 +71,7 @@ export const SelectedElementPopup = ({
         {...attributes.popper}
       >
         <div className=':uno: bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'>
-          <div className=':uno: p-3 w-64 max-h-64 overflow-scroll bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
+          <div className=':uno: p-3 w-72 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
             {classNames.map((name, ind) => (
               <ClassNameTag
                 key={ind}
