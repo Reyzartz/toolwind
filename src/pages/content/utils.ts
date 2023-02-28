@@ -1,3 +1,5 @@
+import { CSSClassObject } from './types/common'
+
 export function appendElementToHead (el: HTMLElement) {
   const head = document.querySelector('head') as HTMLHeadElement
 
@@ -20,7 +22,9 @@ export function getClassNames (el: HTMLElement) {
 
   const classNames = el.className.split(' ')
 
-  return classNames.filter(name => !name.includes('toolwind'))
+  return classNames.filter(
+    name => !name.includes('toolwind') && name.trim().length > 0
+  )
 }
 
 export function appendClassNames (el: HTMLElement, newClassNames: string[]) {
@@ -68,20 +72,37 @@ export const isClassNameValid = (name: string) => {
   return twRegex.test('.' + name)
 }
 
+export const getCssClassObjectFromCssText = (cssText: string) => {
+  let propertyText = cssText.slice(
+    cssText.indexOf('{') + 1,
+    cssText.indexOf('}')
+  )
+
+  propertyText = propertyText.slice(0, propertyText.lastIndexOf(';'))
+
+  return propertyText.split(';').map(property => {
+    const [key, value] = property.split(':')
+
+    return {
+      key: key.trim(),
+      value: value.trim()
+    }
+  })
+}
+
 const classList = (() => {
-  const results: string[] = []
+  const results: CSSClassObject[] = []
 
   for (let i = 0; i < document.styleSheets.length; i++) {
-    let styleSheet = document.styleSheets[i] as any
+    let styleSheet = document.styleSheets[i]
 
     try {
       for (let j = 0; j < styleSheet.cssRules.length; j++) {
         let rule = styleSheet.cssRules[j] as any
-        if (rule.selectorText) {
-          rule.selectorText.split(' ').forEach((text: string) => {
-            if (twRegex.test(text)) {
-              results.push(text.replace('.', ''))
-            }
+        if (rule.selectorText && twRegex.test(rule.selectorText)) {
+          results.push({
+            name: rule.selectorText.replace('.', ''),
+            cssProperty: getCssClassObjectFromCssText(rule.cssText)
           })
         }
       }
@@ -91,6 +112,6 @@ const classList = (() => {
   return [...new Set(results)].sort()
 })()
 
-export const searchForCss = (searchTerm: string): string[] => {
-  return classList.filter(className => className.includes(searchTerm))
+export const searchForCss = (searchTerm: string): CSSClassObject[] => {
+  return classList.filter(({ name }) => name.includes(searchTerm))
 }

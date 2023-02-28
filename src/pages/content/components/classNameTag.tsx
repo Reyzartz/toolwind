@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import { CSSClassObject } from '../types/common'
 import { isClassNameValid, searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
 
@@ -17,7 +18,7 @@ export const ClassNameTag = ({
 
   const [isEditing, setIsEditing] = useState(false)
   const [isValid, setIsValid] = useState(isClassNameValid(name))
-  const [suggestedClasses, setSuggestedClasses] = useState<string[]>([])
+  const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
 
   const onChangeHandler = useCallback(
     (value: string) => {
@@ -47,7 +48,7 @@ export const ClassNameTag = ({
         <ClassNameInput
           classNames={suggestedClasses}
           onChange={onChangeHandler}
-          defaultValue={name}
+          defaultValue={{ name }}
           onBlur={onBlurHandler}
         />
       ) : (
@@ -61,7 +62,7 @@ export const ClassNameTag = ({
 
       <button
         onClick={onDelete}
-        className=':uno: pr-2 font-4xl z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
+        className=':uno: pr-2 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
       >
         ⤫
       </button>
