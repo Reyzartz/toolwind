@@ -11,10 +11,12 @@ import 'virtual:uno.css'
   const styles = document.createElement('style')
   styles.innerHTML = contentCss
 
-  const root = document.createElement('div')
-  root.id = 'toolwind-root'
-  document.body.append(root)
-  document.body.append(styles)
+  // create a custom html component
+  const root = document.createElement('toolwind-root')
+
+  root.append(styles)
+
+  document.querySelector('html')?.append(root)
 
   ReactDOM.createRoot(root).render(
     <React.StrictMode>

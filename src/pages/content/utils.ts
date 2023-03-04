@@ -1,4 +1,5 @@
-import { CSSClassObject } from './types/common'
+import { runtime } from 'webextension-polyfill'
+import { CSSClassObject, Message } from '../../types/common'
 
 export function appendElementToHead (el: HTMLElement) {
   const head = document.querySelector('head') as HTMLHeadElement
@@ -114,4 +115,15 @@ const classList = (() => {
 
 export const searchForCss = (searchTerm: string): CSSClassObject[] => {
   return classList.filter(({ name }) => name.includes(searchTerm))
+}
+
+export const onMessageListener = (
+  actionType: Message['actionType'],
+  callback: (action: Message['action']) => void
+) => {
+  runtime.onMessage.addListener((request: Message, _sender) => {
+    if (request.actionType === actionType) {
+      callback(request.action)
+    }
+  })
 }

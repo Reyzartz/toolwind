@@ -20,6 +20,7 @@ const manifest = defineManifest(async () => ({
       '32': 'icons/logo-32.png'
     }
   },
+  permissions: ['activeTab', 'tabs', 'storage'],
   icons: {
     '16': 'icons/logo-16.png',
     '32': 'icons/logo-32.png',

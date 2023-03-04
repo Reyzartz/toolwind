@@ -1,6 +1,6 @@
 import { Combobox } from '@headlessui/react'
 import { ChangeEvent, Fragment, useCallback } from 'react'
-import { CSSClassObject } from '../types/common'
+import { CSSClassObject } from '../../../types/common'
 
 const CssPropertiesDisplay = ({ name, cssProperty }: CSSClassObject) => {
   return (

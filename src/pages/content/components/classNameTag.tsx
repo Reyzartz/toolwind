@@ -1,11 +1,11 @@
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
-import { CSSClassObject } from '../types/common'
+import { CSSClassObject } from '../../../types/common'
 import { isClassNameValid, searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
 
 interface ClassNameTagProps {
   name: string
-  onDelete: (e: any) => void
+  onDelete: React.MouseEventHandler<HTMLButtonElement>
   onChange: (name: string) => void
 }
 
@@ -37,6 +37,12 @@ export const ClassNameTag = ({
     setIsEditing(false)
   }, [])
 
+  const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
+    useCallback(e => {
+      e.stopPropagation()
+      setIsEditing(true)
+    }, [])
+
   return (
     <div
       className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer'
@@ -53,7 +59,7 @@ export const ClassNameTag = ({
         />
       ) : (
         <button
-          onClick={() => setIsEditing(true)}
+          onClick={onClickHandler}
           className=':uno: px-2 py-1 text-sm text-inherit border-none bg-transparent'
         >
           {name}

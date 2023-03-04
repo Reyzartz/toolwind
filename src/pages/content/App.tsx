@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
+import { getItemFromStorage } from '../popup/utils'
 import { InspectedElementHighlighter } from './components'
+import { onMessageListener } from './utils'
 
 const App = () => {
   const [inspectedElement, setInspectedElement] = useState<HTMLElement | null>(
@@ -11,6 +13,8 @@ const App = () => {
   )
 
   const [isElementSelected, setIsElementSelected] = useState(false)
+
+  const [extensionEnabled, setExtensionEnabled] = useState(false)
 
   // this function doesn't get the updated state values since it's inside a event listener
   const onHoverElementHandler = useCallback(
@@ -32,35 +36,59 @@ const App = () => {
     [isElementSelected, selectedElement]
   )
 
-  const addEventListenerToAllElements = useCallback(() => {
-    const allElements = document.body.querySelectorAll('*')
+  const init = useCallback(() => {
+    const mouseoverEventHandler = (e: MouseEvent) => {
+      e.stopPropagation()
 
-    allElements.forEach(element => {
-      element.addEventListener('mouseover', e => {
-        e.stopPropagation()
+      if (
+        e.target !== null &&
+        !(e.target as HTMLElement).matches('toolwind-root *')
+      ) {
+        onHoverElementHandler(e.target as HTMLElement)
+      }
+    }
 
-        if (!element.id.includes('toolwind')) {
-          onHoverElementHandler(element as HTMLElement)
-        }
-      })
+    const clickEventListener = (e: MouseEvent) => {
+      e.stopPropagation()
 
-      element.addEventListener('click', e => {
-        e.stopPropagation()
+      if (
+        e.target !== null &&
+        !(e.target as HTMLElement).matches('toolwind-root *')
+      ) {
+        onSelectElementHandler(e.target as HTMLElement)
+      }
+    }
 
-        if (!element.id.includes('toolwind')) {
-          console.log('click')
-          onSelectElementHandler(element as HTMLElement)
-        }
-      })
+    onMessageListener('EXTENSION_STATE', ({ state }) => {
+      switch (state) {
+        case 'enabled':
+          document.addEventListener('mouseover', mouseoverEventHandler)
+          document.addEventListener('click', clickEventListener)
+          setExtensionEnabled(true)
+          break
+        case 'disabled':
+          document.removeEventListener('mouseover', mouseoverEventHandler)
+          document.removeEventListener('click', clickEventListener)
+          setExtensionEnabled(false)
+      }
+    })
+
+    getItemFromStorage('toolwind_extension_state').then(res => {
+      setExtensionEnabled(res === 'enabled')
+
+      if (res === 'enabled') {
+        document.addEventListener('mouseover', mouseoverEventHandler)
+        document.addEventListener('click', clickEventListener)
+      }
     })
   }, [])
 
   useEffect(() => {
     // this function need to run before any of the toolwind components are mounted
-    addEventListenerToAllElements()
+    init()
   }, [])
 
-  return (
+  return extensionEnabled ? (
     <>
       <InspectedElementHighlighter element={inspectedElement} />
 
@@ -68,6 +96,8 @@ const App = () => {
         <InspectedElementHighlighter element={selectedElement} selected />
       )}
     </>
+  ) : (
+    <></>
   )
 }
 
