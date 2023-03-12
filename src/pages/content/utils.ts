@@ -65,6 +65,23 @@ export function updateClassName (
   return updatedClassNames
 }
 
+export function addTemporaryClassName (
+  el: HTMLElement,
+  currentClassNames: string[],
+  index: number,
+  temporaryClassName: string
+): string[] {
+  if (typeof el.className !== 'string') return []
+
+  const updatedClassNames = [...currentClassNames]
+
+  updatedClassNames[index] = temporaryClassName
+
+  el.className = updatedClassNames.join(' ')
+
+  return updatedClassNames
+}
+
 const twRegex =
   /^\.(-?)([a-z]+:)?([a-z]+)(-(([0-9]*[a-z]+)|([0-9]+((\.|\/)[0-9]+)?)))*$/
 
@@ -114,7 +131,7 @@ const classList = (() => {
 })()
 
 export const searchForCss = (searchTerm: string): CSSClassObject[] => {
-  return classList.filter(({ name }) => name.includes(searchTerm))
+  return classList.filter(({ name }) => name.startsWith(searchTerm))
 }
 
 export const onMessageListener = (

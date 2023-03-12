@@ -1,6 +1,11 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { getClassNames, removeClassNames, updateClassName } from '../utils'
+import {
+  addTemporaryClassName,
+  getClassNames,
+  removeClassNames,
+  updateClassName
+} from '../utils'
 import { ClassNameTag } from '.'
 
 interface SelectedElementPopupProps {
@@ -50,6 +55,14 @@ export const SelectedElementPopup = ({
     [element]
   )
 
+  const addActiveOptionClassName = useCallback(
+    (ind: number, newClassNameOption: string) => {
+      // adding an extra className to the end of the existing classnames
+      addTemporaryClassName(element, classNames, ind, newClassNameOption)
+    },
+    [element]
+  )
+
   return (
     <>
       <div
@@ -78,6 +91,9 @@ export const SelectedElementPopup = ({
                 name={name}
                 onDelete={() => deleteClassNameHandler(name)}
                 onChange={name => updateClassNameHandler(ind, name)}
+                onActiveOptionChange={name =>
+                  addActiveOptionClassName(ind, name)
+                }
               />
             ))}
           </div>

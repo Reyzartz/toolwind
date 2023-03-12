@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { CSSClassObject } from '../../../types/common'
 import { isClassNameValid, searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
@@ -7,12 +7,14 @@ interface ClassNameTagProps {
   name: string
   onDelete: React.MouseEventHandler<HTMLButtonElement>
   onChange: (name: string) => void
+  onActiveOptionChange: (newClassNameOption: string) => void
 }
 
 export const ClassNameTag = ({
   name,
   onDelete,
-  onChange
+  onChange,
+  onActiveOptionChange
 }: ClassNameTagProps) => {
   //TODO: use a reducer from and store default values of the class name
 
@@ -22,9 +24,7 @@ export const ClassNameTag = ({
 
   const onChangeHandler = useCallback(
     (value: string) => {
-      if (isClassNameValid(value)) {
-        onChange(value)
-      }
+      onChange(value)
 
       setSuggestedClasses(searchForCss(value))
       setIsValid(isClassNameValid(value))
@@ -33,9 +33,11 @@ export const ClassNameTag = ({
   )
 
   const onBlurHandler = useCallback(() => {
+    // onChange(name)
+
     setIsValid(isClassNameValid(name))
     setIsEditing(false)
-  }, [])
+  }, [name])
 
   const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
     useCallback(e => {
@@ -56,6 +58,7 @@ export const ClassNameTag = ({
           onChange={onChangeHandler}
           defaultValue={{ name }}
           onBlur={onBlurHandler}
+          onActiveOptionChange={onActiveOptionChange}
         />
       ) : (
         <button
