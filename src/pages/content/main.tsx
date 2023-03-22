@@ -1,28 +1,30 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './App'
-import contentCss from '../contentStyle/contentStyle.css'
+import contentCss from '../contentStyle/contentStyle.css?inline'
 
 import 'virtual:uno.css'
 
 // Main function for root
+import { RecoilRoot } from 'recoil'
 ;(() => {
-  // temporary solution for injecting css
-  const styles = document.createElement('style')
-  styles.innerHTML = contentCss
+	const styles = document.createElement('style')
+	styles.innerHTML = contentCss
 
-  // create a custom html component
-  const root = document.createElement('toolwind-root')
+	const root = document.createElement('toolwind-root')
 
-  root.append(styles)
+	root.append(styles)
 
-  document.querySelector('html')?.append(root)
+	document.querySelector('html')?.append(root)
 
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  )
+	// TODO: remove the root when the extension is toggled off
+	ReactDOM.createRoot(root).render(
+		<React.StrictMode>
+			<RecoilRoot>
+				<App />
+			</RecoilRoot>
+		</React.StrictMode>
+	)
 })()
 
 export {}

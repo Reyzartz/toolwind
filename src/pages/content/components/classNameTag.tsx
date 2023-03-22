@@ -1,80 +1,67 @@
 import { useCallback, useState } from 'react'
-import { CSSClassObject } from '../../../types/common'
-import { isClassNameValid, searchForCss } from '../utils'
+import { CSSClass, CSSClassObject } from '../../../types/common'
+import { searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
 
 interface ClassNameTagProps {
-  name: string
-  onDelete: React.MouseEventHandler<HTMLButtonElement>
-  onChange: (name: string) => void
-  onActiveOptionChange: (newClassNameOption: string) => void
+	classObject: CSSClass
+	onDelete: (id: string) => void
+	onUpdate: (id: string, className: string) => void
 }
 
 export const ClassNameTag = ({
-  name,
-  onDelete,
-  onChange,
-  onActiveOptionChange
+	classObject: { id, displayName, className },
+	onDelete,
+	onUpdate
 }: ClassNameTagProps) => {
-  //TODO: use a reducer from and store default values of the class name
+	const [isEditing, setIsEditing] = useState(false)
+	const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [isValid, setIsValid] = useState(isClassNameValid(name))
-  const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
+	const onChangeHandler = useCallback(
+		(value: string) => {
+			onUpdate(id, value)
 
-  const onChangeHandler = useCallback(
-    (value: string) => {
-      onChange(value)
+			setSuggestedClasses(searchForCss(value))
+		},
+		[id, onUpdate]
+	)
 
-      setSuggestedClasses(searchForCss(value))
-      setIsValid(isClassNameValid(value))
-    },
-    [onChange]
-  )
+	const onBlurHandler = useCallback(() => {
+		setIsEditing(false)
+	}, [className])
 
-  const onBlurHandler = useCallback(() => {
-    // onChange(name)
+	const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
+		useCallback((e) => {
+			e.stopPropagation()
+			setIsEditing(true)
+		}, [])
 
-    setIsValid(isClassNameValid(name))
-    setIsEditing(false)
-  }, [name])
+	return (
+		<div className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer text-indigo-200'>
+			{isEditing ? (
+				<ClassNameInput
+					classNames={suggestedClasses}
+					onChange={onChangeHandler}
+					defaultValue={{ name: className }}
+					onBlur={onBlurHandler}
+				/>
+			) : (
+				<button
+					onClick={onClickHandler}
+					className=':uno: px-2 py-1 text-sm text-inherit border-none bg-transparent'
+				>
+					{displayName}
+				</button>
+			)}
 
-  const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
-    useCallback(e => {
-      e.stopPropagation()
-      setIsEditing(true)
-    }, [])
-
-  return (
-    <div
-      className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer'
-      style={{
-        color: isValid ? 'white' : 'red'
-      }}
-    >
-      {isEditing ? (
-        <ClassNameInput
-          classNames={suggestedClasses}
-          onChange={onChangeHandler}
-          defaultValue={{ name }}
-          onBlur={onBlurHandler}
-          onActiveOptionChange={onActiveOptionChange}
-        />
-      ) : (
-        <button
-          onClick={onClickHandler}
-          className=':uno: px-2 py-1 text-sm text-inherit border-none bg-transparent'
-        >
-          {name}
-        </button>
-      )}
-
-      <button
-        onClick={onDelete}
-        className=':uno: pr-2 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
-      >
-        ⤫
-      </button>
-    </div>
-  )
+			{!isEditing && (
+				<button
+					onClick={() => onDelete(id)}
+					className=':uno: pr-2 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
+				>
+					⤫
+				</button>
+			)}
+		</div>
+	)
 }
