@@ -27,6 +27,7 @@ export const ClassNameTag = ({
 	)
 
 	const onBlurHandler = useCallback(() => {
+		setSuggestedClasses([])
 		setIsEditing(false)
 	}, [className])
 

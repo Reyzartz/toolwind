@@ -56,25 +56,30 @@ const ClassNameInput = ({
 		(event: ChangeEvent<HTMLInputElement>) => {
 			onChange(event.target.value)
 		},
-		[]
+		[onChange]
 	)
 
-	const onChangeHandler = useCallback(({ name }: CSSClassObject) => {
-		console.log('click')
+	const onChangeHandler = useCallback(
+		({ name }: CSSClassObject) => {
+			onChange(name)
+		},
+		[onChange]
+	)
 
-		onChange(name)
-	}, [])
+	useEffect(() => {
+		if (classNames.length === 0) {
+			setActiveClassObject(null)
+		}
+	}, [classNames.length])
 
 	const setActiveOptionHandler = useCallback((name: string) => {
 		setActiveClassObject(getClassObjectFromClassName(name))
 	}, [])
 
 	const onBlurHandler = useCallback(() => {
-		console.log('blur')
-
 		setActiveClassObject(null)
 		onBlur()
-	}, [])
+	}, [onBlur])
 
 	return (
 		<Combobox

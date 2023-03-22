@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { ClassNameTag } from '.'
+import { AddClassName, ClassNameTag } from '.'
 import { useRecoilTransaction_UNSTABLE, useRecoilValue } from 'recoil'
 import {
 	activeClassObjectState,
@@ -8,6 +8,7 @@ import {
 	selectedElementAtomState,
 	selectedElementState
 } from '../store'
+import { getClassObjectFromClassName } from '../utils'
 
 export const SelectedElementPopup = () => {
 	const element = useRecoilValue(selectedElementState) as HTMLElement
@@ -95,6 +96,18 @@ export const SelectedElementPopup = () => {
 		[]
 	)
 
+	const addClassNameHandler = useRecoilTransaction_UNSTABLE(
+		({ set, get }) =>
+			(className: string) => {
+				const newClassObject = getClassObjectFromClassName(className)
+
+				console.log(newClassObject)
+
+				set(classObjectsState, [...get(classObjectsState), newClassObject])
+			},
+		[]
+	)
+
 	return (
 		<>
 			<div
@@ -125,6 +138,8 @@ export const SelectedElementPopup = () => {
 								onUpdate={updateClassNameHandler}
 							/>
 						))}
+
+						<AddClassName addClassName={addClassNameHandler} />
 					</div>
 				</div>
 
