@@ -16,7 +16,7 @@ export function getClassNames(el: HTMLElement) {
 	)
 }
 
-export const getClassObjectFromClassName = (className: string): CSSClass => {
+export const getCssClassObjectFromClassName = (className: string): CSSClass => {
 	return {
 		id: crypto.randomUUID(),
 		displayName: className,
@@ -41,7 +41,7 @@ export const getClassObjects = (el: HTMLElement | null): CSSClass[] => {
 
 	return classNames
 		.filter((name) => !name.includes('toolwind') && name.trim().length > 0)
-		.map((className) => getClassObjectFromClassName(className))
+		.map((className) => getCssClassObjectFromClassName(className))
 }
 
 const twRegex =

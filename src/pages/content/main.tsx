@@ -1,19 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './App'
-import contentCss from '../contentStyle/contentStyle.css?inline'
+import { ContentStyles } from './styles'
 
 import 'virtual:uno.css'
 
 // Main function for root
 import { RecoilRoot } from 'recoil'
 ;(() => {
-	const styles = document.createElement('style')
-	styles.innerHTML = contentCss
-
 	const root = document.createElement('toolwind-root')
-
-	root.append(styles)
 
 	document.querySelector('html')?.append(root)
 
@@ -22,6 +17,7 @@ import { RecoilRoot } from 'recoil'
 		<React.StrictMode>
 			<RecoilRoot>
 				<App />
+				<ContentStyles />
 			</RecoilRoot>
 		</React.StrictMode>
 	)

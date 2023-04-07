@@ -4,13 +4,13 @@ import { searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
 
 interface ClassNameTagProps {
-	classObject: CSSClass
+	cssClass: CSSClass
 	onDelete: (id: string) => void
 	onUpdate: (id: string, className: string) => void
 }
 
 export const ClassNameTag = ({
-	classObject: { id, displayName, className },
+	cssClass: { id, displayName, className },
 	onDelete,
 	onUpdate
 }: ClassNameTagProps) => {

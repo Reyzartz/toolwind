@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { RecoilRoot, useRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 import { getItemFromStorage } from '../popup/utils'
 import { InspectedElementHighlighter } from './components'
 import { selectedElementState } from './store'

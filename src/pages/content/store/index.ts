@@ -2,12 +2,12 @@ import { atom, DefaultValue, selector } from 'recoil'
 import { CSSClass } from '../../../types/common'
 import { getClassObjects } from '../utils'
 
-export const classObjectsState = atom<CSSClass[]>({
-	key: 'class-objects',
+export const cssClassesState = atom<CSSClass[]>({
+	key: 'css-classes',
 	default: []
 })
 
-export const activeClassObjectState = atom<CSSClass | null>({
+export const activeCssClassState = atom<CSSClass | null>({
 	key: 'active-class-object',
 	default: null
 })
@@ -25,7 +25,7 @@ export const selectedElementState = selector<HTMLElement | null>({
 		set(selectedElementAtomState, element)
 
 		if (element !== null && !(element instanceof DefaultValue)) {
-			set(classObjectsState, getClassObjects(element))
+			set(cssClassesState, getClassObjects(element))
 		}
 	}
 })

@@ -2,8 +2,8 @@ import { Combobox } from '@headlessui/react'
 import { ChangeEvent, Fragment, useCallback, useEffect } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { CSSClassObject, CSSProperty } from '../../../types/common'
-import { activeClassObjectState } from '../store'
-import { getClassObjectFromClassName } from '../utils'
+import { activeCssClassState } from '../store'
+import { getCssClassObjectFromClassName } from '../utils'
 
 interface CssPropertiesDisplayProps {
 	className: string
@@ -50,7 +50,7 @@ const ClassNameInput = ({
 	defaultValue,
 	onBlur
 }: ClassNameInputProps) => {
-	const setActiveClassObject = useSetRecoilState(activeClassObjectState)
+	const setActiveClassOption = useSetRecoilState(activeCssClassState)
 
 	const onTextInputChangeHandler = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
@@ -68,16 +68,16 @@ const ClassNameInput = ({
 
 	useEffect(() => {
 		if (classNames.length === 0) {
-			setActiveClassObject(null)
+			setActiveClassOption(null)
 		}
 	}, [classNames.length])
 
 	const setActiveOptionHandler = useCallback((name: string) => {
-		setActiveClassObject(getClassObjectFromClassName(name))
+		setActiveClassOption(getCssClassObjectFromClassName(name))
 	}, [])
 
 	const onBlurHandler = useCallback(() => {
-		setActiveClassObject(null)
+		setActiveClassOption(null)
 		onBlur()
 	}, [onBlur])
 

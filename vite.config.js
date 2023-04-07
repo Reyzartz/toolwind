@@ -12,48 +12,47 @@ const outDir = resolve(__dirname, 'dist')
 const publicDir = resolve(__dirname, 'public')
 
 export default defineConfig({
-  plugins: [
-    react(),
-    UnoCSS({}),
-    crx({
-      manifest,
-      contentScripts: {
-        injectCss: true
-      }
-    })
-  ],
+	plugins: [
+		react(),
+		UnoCSS({}),
+		crx({
+			manifest,
+			contentScripts: {
+				injectCss: true
+			}
+		})
+	],
 
-  resolve: {
-    alias: {
-      '@src': root,
-      '@assets': assetsDir,
-      '@pages': pagesDir
-    }
-  },
-  publicDir,
-  build: {
-    outDir,
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        panel: resolve(pagesDir, 'panel', 'index.html'),
-        content: resolve(pagesDir, 'content', 'main.tsx'),
-        background: resolve(pagesDir, 'background', 'index.ts'),
-        devtools: resolve(pagesDir, 'devtools', 'index.html'),
-        options: resolve(pagesDir, 'options', 'index.html'),
-        contentStyle: resolve(pagesDir, 'contentStyle', 'contentStyle.css'),
-        popup: resolve(pagesDir, 'popup', 'index.html')
-      },
-      output: {
-        entryFileNames: 'src/pages/[name]/index.js',
-        chunkFileNames: 'assets/js/[name].[hash].js',
-        assetFileNames: assetInfo => {
-          const { dir, name: _name } = parse(assetInfo.name)
-          const assetFolder = dir.split('/').at(-1)
-          const name = assetFolder + _name
-          return `assets/[ext]/${name}.[hash].[ext]`
-        }
-      }
-    }
-  }
+	resolve: {
+		alias: {
+			'@src': root,
+			'@assets': assetsDir,
+			'@pages': pagesDir
+		}
+	},
+	publicDir,
+	build: {
+		outDir,
+		emptyOutDir: true,
+		rollupOptions: {
+			input: {
+				panel: resolve(pagesDir, 'panel', 'index.html'),
+				content: resolve(pagesDir, 'content', 'main.tsx'),
+				background: resolve(pagesDir, 'background', 'index.ts'),
+				devtools: resolve(pagesDir, 'devtools', 'index.html'),
+				options: resolve(pagesDir, 'options', 'index.html'),
+				popup: resolve(pagesDir, 'popup', 'index.html')
+			},
+			output: {
+				entryFileNames: 'src/pages/[name]/index.js',
+				chunkFileNames: 'assets/js/[name].[hash].js',
+				assetFileNames: (assetInfo) => {
+					const { dir, name: _name } = parse(assetInfo.name)
+					const assetFolder = dir.split('/').at(-1)
+					const name = assetFolder + _name
+					return `assets/[ext]/${name}.[hash].[ext]`
+				}
+			}
+		}
+	}
 })
