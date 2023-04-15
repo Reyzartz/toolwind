@@ -1,5 +1,11 @@
 import { Combobox } from '@headlessui/react'
-import { ChangeEvent, Fragment, useCallback, useEffect } from 'react'
+import {
+	ChangeEvent,
+	Fragment,
+	KeyboardEvent,
+	useCallback,
+	useEffect
+} from 'react'
 import { useSetRecoilState } from 'recoil'
 import { CSSClassObject, CSSProperty } from '../../../types/common'
 import { activeCssClassState } from '../store'
@@ -70,7 +76,7 @@ const ClassNameInput = ({
 		if (classNames.length === 0) {
 			setActiveClassOption(null)
 		}
-	}, [classNames.length])
+	}, [classNames.length, defaultValue])
 
 	const setActiveOptionHandler = useCallback((name: string) => {
 		setActiveClassOption(getCssClassObjectFromClassName(name))
@@ -78,8 +84,20 @@ const ClassNameInput = ({
 
 	const onBlurHandler = useCallback(() => {
 		setActiveClassOption(null)
+
 		onBlur()
 	}, [onBlur])
+
+	const onKeyupHandler = useCallback(
+		(e: KeyboardEvent<HTMLInputElement>) => {
+			if (e.code === 'Enter') {
+				onChange(e.currentTarget.value)
+				setActiveClassOption(null)
+				onBlur()
+			}
+		},
+		[onBlur]
+	)
 
 	return (
 		<Combobox
@@ -94,6 +112,7 @@ const ClassNameInput = ({
 						className=':uno: !mx-2 !my-1 text-inherit !bg-transparent !text-sm focus:!outline-none focus:!border-b border-indigo-600'
 						onChange={onTextInputChangeHandler}
 						displayValue={({ name }: CSSClassObject) => name}
+						onKeyUpCapture={onKeyupHandler}
 						//TODO: Fix this it's getting triggered before onClick and it closing the modal
 						onBlur={onBlurHandler}
 						autoFocus
@@ -103,7 +122,7 @@ const ClassNameInput = ({
 						{activeOption?.name}
 					</span>
 
-					{activeOption !== null && (
+					{classNames.length > 0 && activeOption !== null && (
 						<CssPropertiesDisplay
 							className={activeOption.name}
 							cssProperties={activeOption.cssProperty}

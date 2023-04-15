@@ -8,7 +8,7 @@ export const cssClassesState = atom<CSSClass[]>({
 })
 
 export const activeCssClassState = atom<CSSClass | null>({
-	key: 'active-class-object',
+	key: 'active-css-class',
 	default: null
 })
 

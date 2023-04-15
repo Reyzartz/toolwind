@@ -16,16 +16,17 @@ export function getClassNames(el: HTMLElement) {
 	)
 }
 
+export const isCustomClass = (name: string) => {
+	return name.indexOf('[') < name.indexOf(']') || name.includes(':')
+}
+
 export const getCssClassObjectFromClassName = (className: string): CSSClass => {
 	return {
 		id: crypto.randomUUID(),
-		displayName: className,
-		className: className.includes(':') ? className.split(':')[1] : className,
+		className,
 		defaultClassName: className,
-		pseudoClassName: className.includes(':')
-			? className.split(':')[1]
-			: undefined,
-		isColorProperty: false
+		isColorProperty: false,
+		customClass: isCustomClass(className)
 	}
 }
 

@@ -1,9 +1,8 @@
 export interface CSSClass {
 	id: string
-	displayName: string
 	className: string
+	customClass: boolean
 	defaultClassName: string
-	pseudoClassName?: string
 	cssProperties?: CSSProperty[]
 	isColorProperty: boolean
 }

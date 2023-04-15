@@ -10,7 +10,7 @@ interface ClassNameTagProps {
 }
 
 export const ClassNameTag = ({
-	cssClass: { id, displayName, className },
+	cssClass: { id, className },
 	onDelete,
 	onUpdate
 }: ClassNameTagProps) => {
@@ -51,7 +51,7 @@ export const ClassNameTag = ({
 					onClick={onClickHandler}
 					className=':uno: px-2 py-1 text-sm text-inherit border-none bg-transparent'
 				>
-					{displayName}
+					{className}
 				</button>
 			)}
 

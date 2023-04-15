@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { activeCssClassState, cssClassesState, selectedElementState } from '.'
 import { CSSClass } from '../../../types/common'
-import { getCssClassObjectFromClassName } from '../utils'
+import { getCssClassObjectFromClassName, isCustomClass } from '../utils'
 
 export const useCSSClasses = () => {
 	const [cssClasses, setCssClasses] = useRecoilState(cssClassesState)
@@ -13,20 +13,23 @@ export const useCSSClasses = () => {
 
 	useLayoutEffect(() => {
 		setClassNameToElement()
-	}, [activeCssClass])
+		console.log('useLayoutEffect', activeCssClass?.className)
+	}, [activeCssClass, cssClasses])
 
 	const setCssClassesHandler = useCallback((updatedCssClasses: CSSClass[]) => {
 		setCssClasses(updatedCssClasses)
 	}, [])
 
 	const setClassNameToElement = useCallback(() => {
-		if (activeCssClass !== null) [...cssClasses, activeCssClass]
-
 		if (selectedElement === null) return
 
-		selectedElement.className = cssClasses
-			.map(({ displayName }) => displayName)
-			.join(' ')
+		const classNames = cssClasses.map(({ className }) => className)
+
+		if (activeCssClass !== null) {
+			classNames.push(activeCssClass.className)
+		}
+
+		selectedElement.className = classNames.join(' ')
 	}, [cssClasses, activeCssClass, selectedElement])
 
 	const removeCssClass = useCallback(
@@ -47,11 +50,8 @@ export const useCSSClasses = () => {
 
 				return {
 					...cssClass,
-					displayName:
-						cssClass.pseudoClassName !== undefined
-							? `${cssClass.pseudoClassName}:${className}`
-							: className,
-					className
+					className,
+					customClass: isCustomClass(className)
 				}
 			})
 
@@ -63,6 +63,8 @@ export const useCSSClasses = () => {
 	const addCssClass = useCallback(
 		(className: string) => {
 			const newClassObject = getCssClassObjectFromClassName(className)
+
+			console.log(newClassObject)
 
 			setCssClassesHandler([...cssClasses, newClassObject])
 		},
