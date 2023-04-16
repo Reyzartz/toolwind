@@ -2,39 +2,33 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { getItemFromStorage } from '../popup/utils'
 import { InspectedElementHighlighter } from './components'
-import { selectedElementState } from './store'
+import { inspectedElementState, selectedElementState } from './store'
 import { onMessageListener } from './utils'
 
 const App = () => {
-	const [inspectedElement, setInspectedElement] = useState<HTMLElement | null>(
-		null
+	const [inspectedElement, setInspectedElement] = useRecoilState(
+		inspectedElementState
 	)
 
 	const [selectedElement, setSelectedElement] =
 		useRecoilState<HTMLElement | null>(selectedElementState)
 
-	const [isElementSelected, setIsElementSelected] = useState(false)
-
 	const [extensionEnabled, setExtensionEnabled] = useState(false)
 
 	// this function doesn't get the updated state values since it's inside a event listener
 	const onHoverElementHandler = useCallback(
-		(ele: HTMLElement) => {
-			if (isElementSelected) return
-
+		(ele: HTMLElement | null) => {
 			setInspectedElement(ele)
 		},
-		[isElementSelected, inspectedElement]
+		[inspectedElement]
 	)
 
 	// this function doesn't get the updated state values since it's inside a event listener
 	const onSelectElementHandler = useCallback(
 		(ele: HTMLElement) => {
 			setSelectedElement(ele)
-
-			setIsElementSelected(true)
 		},
-		[isElementSelected, selectedElement]
+		[selectedElement]
 	)
 
 	const init = useCallback(() => {
@@ -93,7 +87,7 @@ const App = () => {
 		<>
 			<InspectedElementHighlighter element={inspectedElement} />
 
-			{isElementSelected && (
+			{selectedElement !== null && (
 				<InspectedElementHighlighter element={selectedElement} selected />
 			)}
 		</>

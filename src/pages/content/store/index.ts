@@ -17,6 +17,11 @@ export const selectedElementAtomState = atom<HTMLElement | null>({
 	default: null
 })
 
+export const inspectedElementState = atom<HTMLElement | null>({
+	key: 'inspected-element-atom',
+	default: null
+})
+
 export const selectedElementState = selector<HTMLElement | null>({
 	key: 'selected-element',
 

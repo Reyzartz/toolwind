@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import { usePopper } from 'react-popper'
 import { AddClassName, ClassNameTag } from '.'
-import { useRecoilValue } from 'recoil'
-import { selectedElementState } from '../store'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { inspectedElementState, selectedElementState } from '../store'
 import { useCSSClasses } from '../store/cssClassStore'
+import { ParentElementSelector } from './parentElementSelector'
 
 export const SelectedElementPopup = () => {
 	const element = useRecoilValue(selectedElementState) as HTMLElement
@@ -14,6 +15,8 @@ export const SelectedElementPopup = () => {
 	const [referenceElement, setReferenceElement] = useState(null)
 	const [popperElement, setPopperElement] = useState(null)
 	const [arrowElement, setArrowElement] = useState(null)
+
+	const setInspectedElement = useSetRecoilState(inspectedElementState)
 
 	const { styles, attributes } = usePopper(referenceElement, popperElement, {
 		placement: 'bottom-end',
@@ -51,7 +54,12 @@ export const SelectedElementPopup = () => {
 				style={{ ...styles.popper, zIndex: 10000 }}
 				{...attributes.popper}
 			>
-				<div className=':uno: bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'>
+				<div
+					className=':uno: bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase'
+					onMouseEnter={() => setInspectedElement(null)}
+				>
+					<ParentElementSelector />
+
 					<div className=':uno: p-3 w-72 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
 						{cssClasses.map((cssClass, ind) => (
 							<ClassNameTag

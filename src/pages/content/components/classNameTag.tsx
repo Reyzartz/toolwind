@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { MouseEventHandler, useCallback, useState } from 'react'
 import { CSSClass, CSSClassObject } from '../../../types/common'
 import { searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
@@ -37,6 +37,14 @@ export const ClassNameTag = ({
 			setIsEditing(true)
 		}, [])
 
+	const onDeleteHandler: MouseEventHandler<HTMLButtonElement> = useCallback(
+		(e) => {
+			e.stopPropagation()
+			onDelete(id)
+		},
+		[onDelete, id]
+	)
+
 	return (
 		<div className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer text-indigo-200'>
 			{isEditing ? (
@@ -57,7 +65,7 @@ export const ClassNameTag = ({
 
 			{!isEditing && (
 				<button
-					onClick={() => onDelete(id)}
+					onClick={onDeleteHandler}
 					className=':uno: pr-2 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
 				>
 					⤫
