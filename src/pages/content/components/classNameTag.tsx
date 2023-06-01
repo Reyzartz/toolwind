@@ -1,7 +1,7 @@
 import { MouseEventHandler, useCallback, useState } from 'react'
 import { CSSClass, CSSClassObject } from '../../../types/common'
-import { searchForCss } from '../utils'
 import { ClassNameInput } from './classNameInput'
+import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
 
 interface ClassNameTagProps {
 	cssClass: CSSClass
@@ -16,12 +16,13 @@ export const ClassNameTag = ({
 }: ClassNameTagProps) => {
 	const [isEditing, setIsEditing] = useState(false)
 	const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
+	const { getSuggestionList } = useTailwindIntellisense()
 
 	const onChangeHandler = useCallback(
-		(value: string) => {
+		async (value: string) => {
 			onUpdate(id, value)
 
-			setSuggestedClasses(searchForCss(value))
+			setSuggestedClasses(await getSuggestionList(value))
 		},
 		[id, onUpdate]
 	)

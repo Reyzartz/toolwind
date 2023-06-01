@@ -4,26 +4,36 @@ import {
 	Fragment,
 	KeyboardEvent,
 	useCallback,
-	useEffect
+	useEffect,
+	useMemo,
+	useState
 } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { CSSClassObject, CSSProperty } from '../../../types/common'
 import { activeCssClassState } from '../store'
-import { getCssClassObjectFromClassName } from '../utils'
+import {
+	getCssClassObjectFromClassName,
+	getCssClassPropertiesFromCssText
+} from '../utils'
+import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
 
 interface CssPropertiesDisplayProps {
 	className: string
-	cssProperties?: CSSProperty[]
 	setActiveOption: (className: string) => void
 }
 
 const CssPropertiesDisplay = ({
 	className,
-	cssProperties,
 	setActiveOption
 }: CssPropertiesDisplayProps) => {
+	const { getCssText } = useTailwindIntellisense()
+	const [cssProperties, setCssProperties] = useState<CSSProperty[]>([])
+
 	useEffect(() => {
 		setActiveOption(className)
+		getCssText(className).then((res) =>
+			setCssProperties(getCssClassPropertiesFromCssText(res ?? ''))
+		)
 	}, [className])
 
 	return (
@@ -31,7 +41,7 @@ const CssPropertiesDisplay = ({
 			<span className=':uno: text-orange-500'>.{className}</span>{' '}
 			<span className=':uno: text-purple-500'>&#123;</span>
 			<div>
-				{cssProperties?.map(({ key, value }) => (
+				{cssProperties.map(({ key, value }) => (
 					<div key={key}>
 						<span>{key}</span>:{' '}
 						<span className=':uno: text-red-500'>{value}</span>
@@ -56,6 +66,8 @@ const ClassNameInput = ({
 	defaultValue,
 	onBlur
 }: ClassNameInputProps) => {
+	const { getCssText } = useTailwindIntellisense()
+
 	const setActiveClassOption = useSetRecoilState(activeCssClassState)
 
 	const onTextInputChangeHandler = useCallback(
@@ -78,8 +90,10 @@ const ClassNameInput = ({
 		}
 	}, [classNames.length, defaultValue])
 
-	const setActiveOptionHandler = useCallback((name: string) => {
-		setActiveClassOption(getCssClassObjectFromClassName(name))
+	const setActiveOptionHandler = useCallback(async (name: string) => {
+		const cssText = await getCssText(name)
+
+		setActiveClassOption(getCssClassObjectFromClassName(name, cssText))
 	}, [])
 
 	const onBlurHandler = useCallback(() => {
@@ -125,7 +139,6 @@ const ClassNameInput = ({
 					{classNames.length > 0 && activeOption !== null && (
 						<CssPropertiesDisplay
 							className={activeOption.name}
-							cssProperties={activeOption.cssProperty}
 							setActiveOption={setActiveOptionHandler}
 						/>
 					)}

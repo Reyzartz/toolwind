@@ -3,8 +3,11 @@ export interface CSSClass {
 	className: string
 	customClass: boolean
 	defaultClassName: string
-	cssProperties?: CSSProperty[]
-	isColorProperty: boolean
+	cssText: string | null
+	meta: {
+		color?: string
+		variants?: string[]
+	}
 }
 
 export interface CSSProperty {

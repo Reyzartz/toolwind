@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { ClassNameInput } from '.'
 import { CSSClassObject } from '../../../types/common'
-import { searchForCss } from '../utils'
+import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
 
 interface AddClassNameProps {
 	addClassName: (className: string) => void
@@ -9,13 +9,14 @@ interface AddClassNameProps {
 
 const AddClassName = ({ addClassName }: AddClassNameProps) => {
 	const [isEditing, setIsEditing] = useState(false)
+	const { getSuggestionList } = useTailwindIntellisense()
 
 	const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
 	const [className, setClassName] = useState('')
 
-	const onChangeHandler = useCallback((value: string) => {
+	const onChangeHandler = useCallback(async (value: string) => {
 		setClassName(value)
-		setSuggestedClasses(searchForCss(value))
+		setSuggestedClasses(await getSuggestionList(value))
 	}, [])
 
 	const onBlurHandler = useCallback(() => {
