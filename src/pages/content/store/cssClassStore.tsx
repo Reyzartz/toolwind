@@ -12,7 +12,7 @@ export const useCSSClasses = () => {
 
 	const selectedElement = useRecoilValue(selectedElementState)
 
-	const { getCssText } = useTailwindIntellisense()
+	const { getCssText, getClassColor } = useTailwindIntellisense()
 
 	useLayoutEffect(() => {
 		setClassNameToElement()
@@ -69,7 +69,13 @@ export const useCSSClasses = () => {
 		async (className: string) => {
 			const cssText = await getCssText(className)
 
-			const newClassObject = getCssClassObjectFromClassName(className, cssText)
+			const color = await getClassColor(className)
+
+			const newClassObject = getCssClassObjectFromClassName(
+				className,
+				cssText,
+				color
+			)
 
 			setCssClassesHandler([...cssClasses, newClassObject])
 		},

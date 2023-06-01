@@ -22,7 +22,8 @@ export const isCustomClass = (name: string) => {
 
 export const getCssClassObjectFromClassName = (
 	className: string,
-	cssText: string | null = null
+	cssText: string | null = null,
+	color: string | null = null
 ): CSSClass => {
 	return {
 		id: crypto.randomUUID(),
@@ -30,7 +31,9 @@ export const getCssClassObjectFromClassName = (
 		defaultClassName: className,
 		customClass: isCustomClass(className),
 		cssText,
-		meta: {}
+		meta: {
+			color
+		}
 	}
 }
 

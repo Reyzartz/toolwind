@@ -11,7 +11,7 @@ export const ContentStyles = () => {
 
 	useEffect(() => {
 		setCssText(
-			[activeCssClass, ...cssClasses].reduce((cssText, cssClass) => {
+			[...cssClasses, activeCssClass].reduce((cssText, cssClass) => {
 				return typeof cssClass?.cssText === 'string'
 					? cssText + cssClass?.cssText
 					: cssText

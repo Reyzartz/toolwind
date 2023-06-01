@@ -5,7 +5,7 @@ export interface CSSClass {
 	defaultClassName: string
 	cssText: string | null
 	meta: {
-		color?: string
+		color: string | null
 		variants?: string[]
 	}
 }
@@ -17,7 +17,8 @@ export interface CSSProperty {
 
 export interface CSSClassObject {
 	name: string
-	cssProperty?: Array<CSSProperty>
+	color?: string
+	isVariant?: boolean
 }
 
 export interface ExtensionStateMessageAction {

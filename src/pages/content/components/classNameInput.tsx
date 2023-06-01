@@ -157,10 +157,21 @@ const ClassNameInput = ({
 								>
 									{({ active }) => (
 										<li
-											className={`:uno: flex justify-between text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md ${
+											className={`:uno: flex gap-2 items-baseline text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md ${
 												active ? 'bg-indigo-800' : ''
 											}`}
 										>
+											{cssObject.color === undefined ? (
+												<span className=':uno: font-semibold text-orange-400'>
+													{cssObject.isVariant ? `{}` : '☲'}
+												</span>
+											) : (
+												<span
+													className=':uno: w-3 h-3 inline-block border border-gray-900 rounded-1'
+													style={{ background: cssObject.color }}
+												/>
+											)}
+
 											{cssObject.name}
 										</li>
 									)}
