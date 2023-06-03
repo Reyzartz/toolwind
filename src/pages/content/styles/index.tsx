@@ -3,21 +3,34 @@ import { useCSSClasses } from '../store/cssClassStore'
 import './styles.css'
 import { useRecoilValue } from 'recoil'
 import { activeCssClassState } from '../store'
+import { CSSClass } from '../../../types/common'
 
 export const ContentStyles = () => {
 	const { cssClasses } = useCSSClasses()
 	const activeCssClass = useRecoilValue(activeCssClassState)
+	const [addedCssClasses, serAddedCssClasses] = useState<CSSClass[]>([])
 	const [cssText, setCssText] = useState('')
 
 	useEffect(() => {
+		serAddedCssClasses((prev) => [
+			...new Map(
+				prev
+					.concat(cssClasses)
+					.filter((cssClass) => cssClass.cssText !== null)
+					.map((cssClass) => [cssClass.className, cssClass])
+			).values()
+		])
+	}, [cssClasses])
+
+	useEffect(() => {
 		setCssText(
-			[...cssClasses, activeCssClass].reduce((cssText, cssClass) => {
+			[...addedCssClasses, activeCssClass].reduce((cssText, cssClass) => {
 				return typeof cssClass?.cssText === 'string'
 					? cssText + cssClass?.cssText
 					: cssText
 			}, '')
 		)
-	}, [cssClasses, activeCssClass])
+	}, [addedCssClasses, activeCssClass])
 
 	return <style>{cssText}</style>
 }
