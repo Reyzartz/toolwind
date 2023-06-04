@@ -5,7 +5,6 @@ import {
 	KeyboardEvent,
 	useCallback,
 	useEffect,
-	useMemo,
 	useState
 } from 'react'
 import { useSetRecoilState } from 'recoil'
@@ -78,8 +77,8 @@ const ClassNameInput = ({
 	)
 
 	const onChangeHandler = useCallback(
-		({ name }: CSSClassObject) => {
-			onChange(name)
+		({ name, variants }: CSSClassObject) => {
+			onChange([...variants, name].join(':'))
 		},
 		[onChange]
 	)
@@ -105,13 +104,17 @@ const ClassNameInput = ({
 	const onKeyupHandler = useCallback(
 		(e: KeyboardEvent<HTMLInputElement>) => {
 			if (e.code === 'Enter') {
-				onChange(e.currentTarget.value)
+				onChange(e.currentTarget.defaultValue)
 				setActiveClassOption(null)
 				onBlur()
 			}
 		},
-		[onBlur]
+		[onBlur, onChange]
 	)
+
+	const onFocusHandler = useCallback(() => {
+		onChange('')
+	}, [onChange])
 
 	return (
 		<Combobox
@@ -127,6 +130,7 @@ const ClassNameInput = ({
 						onChange={onTextInputChangeHandler}
 						displayValue={({ name }: CSSClassObject) => name}
 						onKeyUpCapture={onKeyupHandler}
+						onFocus={onFocusHandler}
 						//TODO: Fix this it's getting triggered before onClick and it closing the modal
 						onBlur={onBlurHandler}
 						autoFocus

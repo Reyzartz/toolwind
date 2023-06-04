@@ -18,7 +18,7 @@ export function getClassNames(el: HTMLElement) {
 }
 
 export const isCustomClass = (name: string) => {
-	return name.indexOf('[') < name.indexOf(']') || name.includes(':')
+	return name.indexOf('[') < name.indexOf(']')
 }
 
 export const getCssClassObjectFromClassName = (

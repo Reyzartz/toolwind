@@ -41,7 +41,7 @@ const AddClassName = ({ addClassName }: AddClassNameProps) => {
 				<ClassNameInput
 					classNames={suggestedClasses}
 					onChange={onChangeHandler}
-					defaultValue={{ name: className }}
+					defaultValue={{ name: className, variants: [] }}
 					onBlur={onBlurHandler}
 				/>
 			) : (

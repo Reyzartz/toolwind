@@ -52,7 +52,7 @@ export const ClassNameTag = ({
 				<ClassNameInput
 					classNames={suggestedClasses}
 					onChange={onChangeHandler}
-					defaultValue={{ name: className }}
+					defaultValue={{ name: className, variants: [] }}
 					onBlur={onBlurHandler}
 				/>
 			) : (

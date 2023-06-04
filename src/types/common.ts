@@ -19,6 +19,7 @@ export interface CSSClassObject {
 	name: string
 	color?: string
 	isVariant?: boolean
+	variants: string[]
 }
 
 export interface ExtensionStateMessageAction {
