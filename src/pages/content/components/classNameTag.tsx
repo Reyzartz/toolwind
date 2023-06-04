@@ -58,11 +58,11 @@ export const ClassNameTag = ({
 			) : (
 				<button
 					onClick={onClickHandler}
-					className=':uno: flex items-baseline gap-2 px-2 py-1 text-sm text-inherit border-none bg-transparent'
+					className=':uno: flex items-center gap-1 px-1.5 py-1 text-sm text-inherit border-none bg-transparent'
 				>
 					{meta.color !== null && (
 						<span
-							className=':uno: w-3 h-3 inline-block border border-gray-900 rounded-1'
+							className=':uno: w-4 h-4 inline-block border border-gray-900 rounded-1'
 							style={{ background: meta.color }}
 						/>
 					)}
@@ -74,7 +74,7 @@ export const ClassNameTag = ({
 			{!isEditing && (
 				<button
 					onClick={onDeleteHandler}
-					className=':uno: pr-2 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
+					className=':uno: pr-1.5 z-0 font-bold leading-none bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500'
 				>
 					⤫
 				</button>

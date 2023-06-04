@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import AutoComplete from 'tailwindcss-autocomplete'
-import { getCssClassPropertiesFromCssText } from '../utils'
 
-const autocomplete = new AutoComplete({})
+export const autocomplete = new AutoComplete({})
+
+console.count('inc')
 
 export const useTailwindIntellisense = () => {
 	const getSuggestionList = useCallback(async (className: string = '') => {

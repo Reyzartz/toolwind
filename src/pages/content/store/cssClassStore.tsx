@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { activeCssClassState, cssClassesState, selectedElementState } from '.'
 import { CSSClass } from '../../../types/common'
-import { getCssClassObjectFromClassName, isCustomClass } from '../utils'
+import { getCssClassObjectFromClassName } from '../utils'
 import { useTailwindIntellisense } from './useTailwindIntellisense'
 
 export const useCSSClasses = () => {
@@ -52,12 +52,7 @@ export const useCSSClasses = () => {
 			const updatedClassObjects = cssClasses.map((cssClass) => {
 				if (id !== cssClass.id) return cssClass
 
-				return {
-					...cssClass,
-					className,
-					customClass: isCustomClass(className),
-					cssText
-				}
+				return getCssClassObjectFromClassName(className, cssText)
 			})
 
 			setCssClassesHandler(updatedClassObjects)
@@ -69,13 +64,7 @@ export const useCSSClasses = () => {
 		async (className: string) => {
 			const cssText = await getCssText(className)
 
-			const color = await getClassColor(className)
-
-			const newClassObject = getCssClassObjectFromClassName(
-				className,
-				cssText,
-				color
-			)
+			const newClassObject = getCssClassObjectFromClassName(className, cssText)
 
 			setCssClassesHandler([...cssClasses, newClassObject])
 		},
