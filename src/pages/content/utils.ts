@@ -23,12 +23,13 @@ export const isCustomClass = (name: string) => {
 
 export const getCssClassObjectFromClassName = (
 	className: string,
-	cssText: string | null = null
+	cssText: string | null = null,
+	defaultClassName: string | null = null
 ): CSSClass => {
 	return {
 		id: crypto.randomUUID(),
 		className,
-		defaultClassName: className,
+		defaultClassName,
 		customClass: isCustomClass(className),
 		cssText,
 		meta: {
@@ -37,7 +38,10 @@ export const getCssClassObjectFromClassName = (
 	}
 }
 
-export const getClassObjects = (el: HTMLElement | null): CSSClass[] => {
+export const getClassObjects = (
+	el: HTMLElement | null,
+	isModifiedElement = true
+): CSSClass[] => {
 	if (
 		el === null ||
 		typeof el.className !== 'string' ||
@@ -49,22 +53,13 @@ export const getClassObjects = (el: HTMLElement | null): CSSClass[] => {
 
 	return classNames
 		.filter((name) => !name.includes('toolwind') && name.trim().length > 0)
-		.map((className) => getCssClassObjectFromClassName(className))
-}
-
-export const getTailwindVariables = (el: HTMLElement | null): CSSClass[] => {
-	if (
-		el === null ||
-		typeof el.className !== 'string' ||
-		el.className.trim().length === 0
-	)
-		return []
-
-	const classNames = el.className.split(' ')
-
-	return classNames
-		.filter((name) => !name.includes('toolwind') && name.trim().length > 0)
-		.map((className) => getCssClassObjectFromClassName(className))
+		.map((className) =>
+			getCssClassObjectFromClassName(
+				className,
+				null,
+				isModifiedElement ? null : className
+			)
+		)
 }
 
 // this is later going to be change to accept only tailwind classes from the sites spreadsheets
@@ -88,12 +83,63 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 }
 
 export const onMessageListener = (
-	actionType: Message['actionType'],
-	callback: (action: Message['action']) => void
+	messageType: Message['messageType'],
+	callback: (message: Message['message']) => void
 ) => {
-	runtime.onMessage.addListener((request: Message, _sender) => {
-		if (request.actionType === actionType) {
-			callback(request.action)
+	chrome.runtime.onMessage.addListener((request: Message, _sender) => {
+		if (request.messageType === messageType) {
+			callback(request.message)
 		}
 	})
 }
+
+export const sendMessage = async ({
+	messageType,
+	message,
+	callback
+}: {
+	messageType: Message['messageType']
+	message?: Message['message']
+	callback?: (response: any) => void
+}) => {
+	chrome.runtime.sendMessage<Message>(
+		{
+			messageType,
+			message
+		},
+		callback as any
+	)
+}
+
+export const getXPathFromElement = (
+	element: HTMLElement
+): string | undefined => {
+	if (element.tagName == 'HTML' || element.parentNode === null)
+		return '/HTML[1]'
+	if (element === document.body) return '/HTML[1]/BODY[1]'
+
+	var ix = 0
+	var siblings = element.parentNode.childNodes as NodeListOf<HTMLElement>
+	for (var i = 0; i < siblings.length; i++) {
+		var sibling = siblings[i]
+		if (sibling === element)
+			return (
+				getXPathFromElement(element.parentNode as HTMLElement) +
+				'/' +
+				element.tagName +
+				'[' +
+				(ix + 1) +
+				']'
+			)
+		if (sibling.nodeType === 1 && sibling.tagName === element.tagName) ix++
+	}
+}
+
+export const getElementFromXPath = (xpath: string): HTMLElement | null =>
+	document.evaluate(
+		xpath,
+		document,
+		null,
+		XPathResult.FIRST_ORDERED_NODE_TYPE,
+		null
+	).singleNodeValue as HTMLElement | null

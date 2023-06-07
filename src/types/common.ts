@@ -2,7 +2,7 @@ export interface CSSClass {
 	id: string
 	className: string
 	customClass: boolean
-	defaultClassName: string
+	defaultClassName: string | null
 	cssText: string | null
 	meta: {
 		color: string | null
@@ -22,15 +22,28 @@ export interface CSSClassObject {
 	variants: string[]
 }
 
+export interface ModifiedElement {
+	xpath: string
+	originalClassNames: string[]
+	updatedClassNames: string[]
+	tagName: string
+}
+
 export interface ExtensionStateMessageAction {
 	state: 'enabled' | 'disabled'
 }
 
-export type TActionType = 'EXTENSION_STATE'
+export type TMessageType =
+	| 'EXTENSION_STATE'
+	| 'MODIFIED_ELEMENTS_UPDATED'
+	| 'DELETE_MODIFIED_ELEMENT'
+	| 'FETCH_MODIFIED_ELEMENTS'
+	| 'HOVER_ELEMENT'
+	| 'SELECT_ELEMENT'
 
 export interface Message {
-	actionType: TActionType
-	action: ExtensionStateMessageAction
+	messageType: TMessageType
+	message: any
 }
 
 export type TStorageItemKeys = 'toolwind_extension_state'

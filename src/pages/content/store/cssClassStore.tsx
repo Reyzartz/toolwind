@@ -52,7 +52,11 @@ export const useCSSClasses = () => {
 			const updatedClassObjects = cssClasses.map((cssClass) => {
 				if (id !== cssClass.id) return cssClass
 
-				return getCssClassObjectFromClassName(className, cssText)
+				return getCssClassObjectFromClassName(
+					className,
+					cssText,
+					cssClass.defaultClassName
+				)
 			})
 
 			setCssClassesHandler(updatedClassObjects)

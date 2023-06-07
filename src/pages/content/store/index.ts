@@ -1,6 +1,11 @@
 import { atom, DefaultValue, selector } from 'recoil'
-import { CSSClass } from '../../../types/common'
-import { getClassObjects } from '../utils'
+import { CSSClass, ModifiedElement } from '../../../types/common'
+import { getClassNames, getClassObjects } from '../utils'
+
+export const defaultCssClassesState = atom<string[]>({
+	key: 'default-css-classes',
+	default: []
+})
 
 export const cssClassesState = atom<CSSClass[]>({
 	key: 'css-classes',
@@ -30,7 +35,13 @@ export const selectedElementState = selector<HTMLElement | null>({
 		set(selectedElementAtomState, element)
 
 		if (element !== null && !(element instanceof DefaultValue)) {
-			set(cssClassesState, getClassObjects(element))
+			set(cssClassesState, getClassObjects(element, false))
+			set(defaultCssClassesState, getClassNames(element))
 		}
 	}
+})
+
+export const modifiedElementsState = atom<ModifiedElement[]>({
+	key: 'modified-elements',
+	default: []
 })
