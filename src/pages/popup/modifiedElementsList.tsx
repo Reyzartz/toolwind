@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
-import { onMessageListener, sendMessage } from '../content/utils'
+import { onMessageListener, sendMessage } from '../content/helpers/utils'
 import { ModifiedElement } from '../../types/common'
 import { sendMessageToContentScript } from './utils'
 
 const ModifiedElementsList = () => {
 	const [elementsList, setElementList] = useState<ModifiedElement[]>([])
 
-	const fetchElementsList = () => {
-		sendMessage({
+	const fetchElementsList = async () => {
+		const response = await sendMessageToContentScript({
 			messageType: 'FETCH_MODIFIED_ELEMENTS',
-			callback: (res) => {
-				setElementList(res)
-			}
+			message: null
 		})
+
+		setElementList(Array.isArray(response) ? response : [])
 	}
 
 	useEffect(() => {
@@ -20,7 +20,7 @@ const ModifiedElementsList = () => {
 
 		sendMessageToContentScript({
 			messageType: 'SELECT_ELEMENT',
-			message: null
+			message: { xpath: null }
 		})
 
 		onMessageListener('MODIFIED_ELEMENTS_UPDATED', (updatedItems) => {
@@ -31,14 +31,14 @@ const ModifiedElementsList = () => {
 	const onMouseEnterHandler = useCallback((xpath: string | null = null) => {
 		sendMessageToContentScript({
 			messageType: 'HOVER_ELEMENT',
-			message: xpath
+			message: { xpath }
 		})
 	}, [])
 
 	const onClickHandler = useCallback((xpath: string) => {
 		sendMessageToContentScript({
 			messageType: 'SELECT_ELEMENT',
-			message: xpath
+			message: { xpath }
 		})
 
 		window.close()

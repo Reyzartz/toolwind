@@ -19,7 +19,7 @@ function App() {
 		setItemToStorage('toolwind_extension_state', value ? 'enabled' : 'disabled')
 
 		sendMessageToContentScript({
-			messageType: 'EXTENSION_STATE',
+			messageType: 'UPDATE_EXTENSION_ACTIVE_STATE',
 			message: { state: value ? 'enabled' : 'disabled' }
 		})
 	}, [])

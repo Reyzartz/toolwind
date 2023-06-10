@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getClassNames } from '../utils'
+import { getClassNames } from '../helpers/utils'
 import { ClassNamesTooltip, SelectedElementPopup } from '.'
 
 interface ElementOverlayProps {

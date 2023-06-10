@@ -3,7 +3,7 @@ import { usePopper } from 'react-popper'
 import { AddClassName, ClassNameTag } from '.'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { inspectedElementState, selectedElementState } from '../store'
-import { useCSSClasses } from '../store/cssClassStore'
+import { useCSSClasses } from '../hooks/useCssClasses'
 import { ParentElementSelector } from './parentElementSelector'
 
 export const SelectedElementPopup = () => {

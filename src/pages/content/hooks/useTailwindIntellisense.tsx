@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import AutoComplete from 'tailwindcss-autocomplete'
-import { isCustomClass } from '../utils'
+import { isCustomClass } from '../helpers/utils'
 
 export const autocomplete = new AutoComplete({})
 

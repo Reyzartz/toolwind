@@ -13,8 +13,8 @@ import { activeCssClassState } from '../store'
 import {
 	getCssClassObjectFromClassName,
 	getCssClassPropertiesFromCssText
-} from '../utils'
-import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
+} from '../helpers/utils'
+import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
 
 interface CssPropertiesDisplayProps {
 	className: string

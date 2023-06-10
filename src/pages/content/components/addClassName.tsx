@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { ClassNameInput } from '.'
 import { CSSClassObject } from '../../../types/common'
-import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
+import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
 
 interface AddClassNameProps {
 	addClassName: (className: string) => void

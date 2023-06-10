@@ -34,7 +34,7 @@ export interface ExtensionStateMessageAction {
 }
 
 export type TMessageType =
-	| 'EXTENSION_STATE'
+	| 'UPDATE_EXTENSION_ACTIVE_STATE'
 	| 'MODIFIED_ELEMENTS_UPDATED'
 	| 'DELETE_MODIFIED_ELEMENT'
 	| 'FETCH_MODIFIED_ELEMENTS'

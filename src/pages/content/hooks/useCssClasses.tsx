@@ -1,8 +1,12 @@
 import { useCallback, useLayoutEffect } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { activeCssClassState, cssClassesState, selectedElementState } from '.'
+import {
+	activeCssClassState,
+	cssClassesState,
+	selectedElementState
+} from '../store'
 import { CSSClass } from '../../../types/common'
-import { getCssClassObjectFromClassName } from '../utils'
+import { getCssClassObjectFromClassName } from '../helpers/utils'
 import { useTailwindIntellisense } from './useTailwindIntellisense'
 
 export const useCSSClasses = () => {

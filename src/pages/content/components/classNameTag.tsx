@@ -1,7 +1,7 @@
 import { MouseEventHandler, useCallback, useState } from 'react'
 import { CSSClass, CSSClassObject } from '../../../types/common'
 import { ClassNameInput } from './classNameInput'
-import { useTailwindIntellisense } from '../store/useTailwindIntellisense'
+import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
 
 interface ClassNameTagProps {
 	cssClass: CSSClass

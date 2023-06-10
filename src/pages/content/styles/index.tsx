@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useCSSClasses } from '../store/cssClassStore'
+import { useCSSClasses } from '../hooks/useCssClasses'
 import './styles.css'
 import { useRecoilValue } from 'recoil'
 import { activeCssClassState } from '../store'

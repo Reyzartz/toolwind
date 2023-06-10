@@ -1,6 +1,7 @@
 import { runtime } from 'webextension-polyfill'
-import { CSSClass, Message } from '../../types/common'
-import { autocomplete } from './store/useTailwindIntellisense'
+import { CSSClass, Message } from '../../../types/common'
+import { EXTENSION_ID } from '../../../constants'
+import { autocomplete } from '../hooks/useTailwindIntellisense'
 
 export function getClassNames(el: HTMLElement) {
 	if (
@@ -86,29 +87,20 @@ export const onMessageListener = (
 	messageType: Message['messageType'],
 	callback: (message: Message['message']) => void
 ) => {
-	chrome.runtime.onMessage.addListener((request: Message, _sender) => {
+	runtime.onMessage.addListener((request: Message, _sender) => {
 		if (request.messageType === messageType) {
 			callback(request.message)
 		}
 	})
 }
 
-export const sendMessage = async ({
-	messageType,
-	message,
-	callback
-}: {
-	messageType: Message['messageType']
-	message?: Message['message']
-	callback?: (response: any) => void
-}) => {
-	chrome.runtime.sendMessage<Message>(
-		{
-			messageType,
-			message
-		},
-		callback as any
-	)
+export const sendMessage = async ({ messageType, message }: Message) => {
+	const response = await runtime.sendMessage(EXTENSION_ID, {
+		messageType,
+		message
+	})
+
+	return response
 }
 
 export const getXPathFromElement = (
@@ -135,11 +127,12 @@ export const getXPathFromElement = (
 	}
 }
 
-export const getElementFromXPath = (xpath: string): HTMLElement | null =>
-	document.evaluate(
+export const getElementFromXPath = (xpath: string): HTMLElement | null => {
+	return document.evaluate(
 		xpath,
 		document,
 		null,
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
 		null
 	).singleNodeValue as HTMLElement | null
+}
