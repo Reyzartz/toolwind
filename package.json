@@ -11,6 +11,10 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@codemirror/lang-json": "^6.0.1",
+		"@codemirror/lint": "^6.2.2",
+		"@uiw/codemirror-theme-github": "^4.21.2",
+		"@uiw/react-codemirror": "^4.21.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"recoil": "^0.7.7",

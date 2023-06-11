@@ -48,7 +48,7 @@ const App = () => {
 
 		const addEventListenerHandler = () => {
 			document.addEventListener('mouseover', mouseoverEventHandler)
-			document.addEventListener('click', clickEventListener, true)
+			document.addEventListener('click', clickEventListener)
 			document.documentElement.addEventListener(
 				'mouseleave',
 				mouseleaveWindowEventHandler
@@ -57,7 +57,7 @@ const App = () => {
 
 		const removeEventListenerHandler = () => {
 			document.removeEventListener('mouseover', mouseoverEventHandler)
-			document.removeEventListener('click', clickEventListener, true)
+			document.removeEventListener('click', clickEventListener)
 			document.documentElement.removeEventListener(
 				'mouseleave',
 				mouseleaveWindowEventHandler

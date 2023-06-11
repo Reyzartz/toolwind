@@ -40,10 +40,11 @@ export type TMessageType =
 	| 'FETCH_MODIFIED_ELEMENTS'
 	| 'HOVER_ELEMENT'
 	| 'SELECT_ELEMENT'
+	| 'UPDATE_CONFIG'
 
 export interface Message {
 	messageType: TMessageType
 	message: any
 }
 
-export type TStorageItemKeys = 'toolwind_extension_state'
+export type TStorageItemKeys = 'toolwind_extension_state' | 'tw_config'

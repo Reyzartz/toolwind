@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { onMessageListener, sendMessage } from '../content/helpers/utils'
-import { ModifiedElement } from '../../types/common'
-import { sendMessageToContentScript } from './utils'
+import { onMessageListener, sendMessage } from '../../content/helpers/utils'
+import { ModifiedElement } from '../../../types/common'
+import { sendMessageToContentScript } from '../utils'
 
 const ModifiedElementsList = () => {
 	const [elementsList, setElementList] = useState<ModifiedElement[]>([])

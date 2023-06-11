@@ -8,9 +8,11 @@ import {
 	inspectedElementState
 } from '../store'
 import { getElementFromXPath, sendMessage } from './utils'
+import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
 
 export const OnMessageEventListeners = () => {
 	const setSelectedElement = useSetRecoilState(selectedElementState)
+	const { setConfig } = useTailwindIntellisense()
 
 	const onMessageHandler = useRecoilTransaction_UNSTABLE(
 		({ get, set }) =>
@@ -18,9 +20,6 @@ export const OnMessageEventListeners = () => {
 				{ message, messageType }: Message,
 				sendResponse: (response: any) => void
 			) => {
-				console.log('message', message)
-				console.log('type', messageType)
-
 				switch (messageType) {
 					case 'FETCH_MODIFIED_ELEMENTS':
 						const modifiedElements = get(modifiedElementsState)
@@ -63,6 +62,10 @@ export const OnMessageEventListeners = () => {
 						}
 
 						break
+
+					case 'UPDATE_CONFIG':
+						setConfig(message.config)
+						break
 				}
 			},
 		[setSelectedElement]
@@ -87,6 +90,8 @@ export const OnMessageEventListeners = () => {
 					const element = getElementFromXPath(xpath)
 
 					if (element !== null) {
+						// TODO: Add scroll into view
+
 						setSelectedElement(element)
 					}
 				}
