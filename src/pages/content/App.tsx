@@ -35,20 +35,20 @@ const App = () => {
 		}
 
 		const clickEventListener = (e: MouseEvent) => {
-			e.stopPropagation()
-			e.preventDefault()
-
 			if (
 				e.target !== null &&
 				!(e.target as HTMLElement).matches('toolwind-root *')
 			) {
+				e.stopPropagation()
+				e.preventDefault()
+
 				setSelectedElement(e.target as HTMLElement)
 			}
 		}
 
 		const addEventListenerHandler = () => {
 			document.addEventListener('mouseover', mouseoverEventHandler)
-			document.addEventListener('click', clickEventListener)
+			document.addEventListener('click', clickEventListener, true)
 			document.documentElement.addEventListener(
 				'mouseleave',
 				mouseleaveWindowEventHandler
@@ -57,7 +57,7 @@ const App = () => {
 
 		const removeEventListenerHandler = () => {
 			document.removeEventListener('mouseover', mouseoverEventHandler)
-			document.removeEventListener('click', clickEventListener)
+			document.removeEventListener('click', clickEventListener, true)
 			document.documentElement.removeEventListener(
 				'mouseleave',
 				mouseleaveWindowEventHandler

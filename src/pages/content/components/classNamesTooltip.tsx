@@ -1,68 +1,57 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { usePopper } from 'react-popper'
+import { useRecoilValue } from 'recoil'
+import { inspectedElementState } from '../store'
+import { getClassNames, getElementPosition } from '../helpers/utils'
 
-interface ClassNamesTooltipProps {
-  classNames: string[]
-  tagName: string
-  rect: DOMRect
-}
+export const ClassNamesTooltip = () => {
+	const inspectedElement = useRecoilValue(inspectedElementState)
 
-export const ClassNamesTooltip = ({
-  classNames,
-  tagName,
-  rect
-}: ClassNamesTooltipProps) => {
-  const [referenceElement, setReferenceElement] = useState(null)
-  const [popperElement, setPopperElement] = useState(null)
-  const [arrowElement, setArrowElement] = useState(null)
+	const [referenceElement, setReferenceElement] = useState(null)
+	const [popperElement, setPopperElement] = useState(null)
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: 'bottom-end',
+	const { styles, attributes } = usePopper(referenceElement, popperElement, {
+		placement: 'top-end'
+	})
 
-    modifiers: [
-      { name: 'arrow', options: { element: arrowElement, padding: 8 } },
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 8]
-        }
-      }
-    ]
-  })
+	const position = useMemo(
+		() => getElementPosition(inspectedElement),
+		[inspectedElement]
+	)
 
-  return (
-    <>
-      <div
-        ref={setReferenceElement as any}
-        className=':uno: fixed z-[-10000]'
-        style={{
-          top: rect.y,
-          left: rect.x,
-          width: rect.width,
-          height: rect.height
-        }}
-      />
+	const classNames = useMemo(
+		() => getClassNames(inspectedElement),
+		[inspectedElement]
+	)
 
-      <div
-        id='toolwind-tooltip'
-        key={`${rect.y + rect.x}`}
-        ref={setPopperElement as any}
-        style={{ ...styles.popper, zIndex: 10000 }}
-        {...attributes.popper}
-      >
-        <div className=':uno: bg-purple-600 min-w-[48px] border border-solid border-white shadow-md px-3 py-1 rounded-md text-sm text-slate-200 lowercase'>
-          {`${tagName}# ${
-            classNames.length === 0 ? '' : classNames.join(', ')
-          }`}
-        </div>
+	if (inspectedElement === null) return null
 
-        <div
-          id='toolwind-arrow'
-          ref={setArrowElement as any}
-          style={styles.arrow}
-          className=':uno: bg-purple-600 border border-solid border-white'
-        />
-      </div>
-    </>
-  )
+	return (
+		<>
+			<div
+				ref={setReferenceElement as any}
+				className=':uno: absolute z-[-10000]'
+				style={{
+					top: position.y,
+					left: position.x + 2,
+					width: inspectedElement.offsetWidth,
+					height: inspectedElement.offsetHeight
+				}}
+			/>
+
+			<div
+				id='toolwind-tooltip'
+				key={`${position.y}+${position.x}`}
+				ref={setPopperElement as any}
+				style={{ ...styles.popper, zIndex: 10000 }}
+				{...attributes.popper}
+			>
+				<div className=':uno: bg-purple-600 min-w-[48px] shadow-md px-3 py-1 rounded-t-md text-xs text-slate-200 lowercase'>
+					{`<${inspectedElement.tagName}>${
+						classNames.length === 0 ? '' : '.' + classNames.join('.')
+					}`}
+				</div>
+			</div>
+		</>
+	)
 }

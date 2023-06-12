@@ -58,6 +58,12 @@ export const OnMessageEventListeners = () => {
 							const element = getElementFromXPath(message.xpath)
 							if (element === null) return
 
+							element.scrollIntoView({
+								behavior: 'smooth',
+								block: 'center',
+								inline: 'center'
+							})
+
 							set(inspectedElementState, element)
 						}
 
@@ -90,8 +96,6 @@ export const OnMessageEventListeners = () => {
 					const element = getElementFromXPath(xpath)
 
 					if (element !== null) {
-						// TODO: Add scroll into view
-
 						setSelectedElement(element)
 					}
 				}

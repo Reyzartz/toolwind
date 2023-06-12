@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getClassNames } from '../helpers/utils'
+import { getElementPosition } from '../helpers/utils'
 import { ClassNamesTooltip, SelectedElementPopup } from '.'
 
 interface ElementOverlayProps {
@@ -13,58 +13,68 @@ const InspectedElementHighlighter = ({
 }: ElementOverlayProps): JSX.Element | null => {
 	const rect = useMemo(() => element?.getClientRects()[0], [element])
 
+	const position = useMemo(() => getElementPosition(element), [element])
+
 	if (element === null || rect === undefined) return null
 
 	return (
 		<>
-			{selected ? (
-				<SelectedElementPopup />
-			) : (
-				<ClassNamesTooltip
-					classNames={getClassNames(element)}
-					tagName={element.nodeName}
-					rect={rect}
-				/>
-			)}
+			{selected ? <SelectedElementPopup /> : <ClassNamesTooltip />}
 
 			{/* inspected Element Highted  */}
 			<div
 				id='toolwind-highlight-bar-t'
-				className=':uno: border-t border-solid border-purple-600 fixed z-[10000]'
+				className={`:uno: border-t absolute z-[10000] ${
+					selected
+						? 'border-solid border-indigo-600'
+						: 'border-dashed border-purple-600'
+				}`}
 				style={{
-					top: rect.y,
-					left: rect.x,
-					width: rect.width
+					top: position.y,
+					left: position.x,
+					width: element.offsetWidth
 				}}
 			/>
 
 			<div
 				id='toolwind-highlight-bar-b'
-				className=':uno: border-b border-solid border-purple-600 fixed z-[10000]'
+				className={`:uno: border-b absolute z-[10000] ${
+					selected
+						? 'border-solid border-indigo-600'
+						: 'border-dashed border-purple-600'
+				}`}
 				style={{
-					top: rect.y + rect.height,
-					left: rect.x,
-					width: rect.width
+					top: position.y + element.offsetHeight,
+					left: position.x,
+					width: element.offsetWidth
 				}}
 			/>
 
 			<div
 				id='toolwind-highlight-bar-l'
-				className=':uno: border-l border-solid border-purple-600 fixed z-[10000]'
+				className={`:uno: border-l absolute z-[10000] ${
+					selected
+						? 'border-solid border-indigo-600'
+						: 'border-dashed border-purple-600'
+				}`}
 				style={{
-					top: rect.y,
-					left: rect.x,
-					height: rect.height
+					top: position.y,
+					left: position.x,
+					height: element.offsetHeight
 				}}
 			/>
 
 			<div
 				id='toolwind-highlight-bar-r'
-				className=':uno: border-r border-solid border-purple-600 fixed z-[10000]'
+				className={`:uno: border-r absolute z-[10000] ${
+					selected
+						? 'border-solid border-indigo-600'
+						: 'border-dashed border-purple-600'
+				}`}
 				style={{
-					top: rect.y,
-					left: rect.x + rect.width,
-					height: rect.height
+					top: position.y,
+					left: position.x + element.offsetWidth,
+					height: element.offsetHeight
 				}}
 			/>
 		</>

@@ -3,7 +3,7 @@ import { CSSClass, Message } from '../../../types/common'
 import { EXTENSION_ID } from '../../../constants'
 import { autocomplete } from '../hooks/useTailwindIntellisense'
 
-export function getClassNames(el: HTMLElement) {
+export function getClassNames(el: HTMLElement | null) {
 	if (
 		el === null ||
 		typeof el.className !== 'string' ||
@@ -95,10 +95,16 @@ export const onMessageListener = (
 }
 
 export const sendMessage = async ({ messageType, message }: Message) => {
-	const response = await runtime.sendMessage(EXTENSION_ID, {
-		messageType,
-		message
-	})
+	let response
+
+	try {
+		response = await runtime.sendMessage(EXTENSION_ID, {
+			messageType,
+			message
+		})
+	} catch {
+		response = null
+	}
 
 	return response
 }
@@ -135,4 +141,17 @@ export const getElementFromXPath = (xpath: string): HTMLElement | null => {
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
 		null
 	).singleNodeValue as HTMLElement | null
+}
+
+export const getElementPosition = (element: HTMLElement | null) => {
+	let x = 0
+	let y = 0
+
+	while (element) {
+		x += element.offsetLeft - element.scrollLeft + element.clientLeft
+		y += element.offsetTop - element.scrollTop + element.clientTop
+		element = element.offsetParent as HTMLElement
+	}
+
+	return { x, y }
 }

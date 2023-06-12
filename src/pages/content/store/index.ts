@@ -39,8 +39,6 @@ export const selectedElementState = selector<HTMLElement | null>({
 	set: ({ set, get }, element = null) => {
 		// added the previous selected element to modifiedList
 
-		console.log('in sec')
-
 		const prevSelectedElement = get(selectedElementAtomState)
 
 		if (prevSelectedElement !== null) {
@@ -69,10 +67,10 @@ export const selectedElementState = selector<HTMLElement | null>({
 
 				set(modifiedElementsState, updatedList)
 
-				sendMessage({
-					messageType: 'MODIFIED_ELEMENTS_UPDATED',
-					message: updatedList
-				})
+					sendMessage({
+						messageType: 'MODIFIED_ELEMENTS_UPDATED',
+						message: updatedList
+					})
 			}
 		}
 

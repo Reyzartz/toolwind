@@ -5,9 +5,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { inspectedElementState, selectedElementState } from '../store'
 import { useCSSClasses } from '../hooks/useCssClasses'
 import { ParentElementSelector } from './parentElementSelector'
+import { getElementPosition } from '../helpers/utils'
 
 export const SelectedElementPopup = () => {
-	const element = useRecoilValue(selectedElementState) as HTMLElement
+	const selectedElement = useRecoilValue(selectedElementState) as HTMLElement
 
 	const { addCssClass, removeCssClass, cssClasses, updateCssClass } =
 		useCSSClasses()
@@ -32,24 +33,27 @@ export const SelectedElementPopup = () => {
 		]
 	})
 
-	const rect = useMemo(() => element.getClientRects()[0], [element])
+	const position = useMemo(
+		() => getElementPosition(selectedElement),
+		[selectedElement]
+	)
 
 	return (
 		<>
 			<div
 				ref={setReferenceElement as any}
-				className=':uno: fixed z-[-10000]'
+				className=':uno: absolute z-[-10000]'
 				style={{
-					top: rect.y,
-					left: rect.x,
-					width: rect.width,
-					height: rect.height
+					top: position.y,
+					left: position.x,
+					width: selectedElement.offsetWidth,
+					height: selectedElement.offsetHeight
 				}}
 			/>
 
 			<div
 				id='toolwind-tooltip'
-				key={`${rect.y + rect.x}`}
+				key={`${position.y + position.x}`}
 				ref={setPopperElement as any}
 				style={{ ...styles.popper, zIndex: 10000 }}
 				{...attributes.popper}
