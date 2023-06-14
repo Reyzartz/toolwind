@@ -3,11 +3,12 @@ import {
 	ChangeEvent,
 	Fragment,
 	KeyboardEvent,
+	MouseEventHandler,
 	useCallback,
 	useEffect,
 	useState
 } from 'react'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 import { CSSClassObject, CSSProperty } from '../../../types/common'
 import { activeCssClassState } from '../store'
 import {
@@ -17,27 +18,28 @@ import {
 import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
 
 interface CssPropertiesDisplayProps {
-	className: string
-	setActiveOption: (className: string) => void
+	option: CSSClassObject
+	setActiveOption: (cssClass: CSSClassObject) => void
 }
 
 const CssPropertiesDisplay = ({
-	className,
+	option,
 	setActiveOption
 }: CssPropertiesDisplayProps) => {
 	const { getCssText } = useTailwindIntellisense()
 	const [cssProperties, setCssProperties] = useState<CSSProperty[]>([])
 
 	useEffect(() => {
-		setActiveOption(className)
-		getCssText(className).then((res) =>
+		setActiveOption(option)
+
+		getCssText(option.name).then((res) =>
 			setCssProperties(getCssClassPropertiesFromCssText(res ?? ''))
 		)
-	}, [className])
+	}, [option])
 
 	return (
-		<div className=':uno: absolute left-45 top-full m-4 min-w-56 z-[10001] bg-indigo-900 text-indigo-400 text-xs border px-2 py-1 border-indigo-600 rounded-md'>
-			<span className=':uno: text-orange-500'>.{className}</span>{' '}
+		<div className=':uno: absolute left-45 top-full m-4 min-w-48 z-[10001] bg-indigo-900 text-indigo-400 text-xs border px-2 py-1 border-indigo-600 rounded-md'>
+			<span className=':uno: text-orange-500'>.{option.name}</span>{' '}
 			<span className=':uno: text-purple-500'>&#123;</span>
 			<div>
 				{cssProperties.map(({ key, value }) => (
@@ -53,107 +55,130 @@ const CssPropertiesDisplay = ({
 }
 
 interface ClassNameInputProps {
-	onChange: (value: string) => void
-	onBlur: () => void
-	classNames: CSSClassObject[]
-	defaultValue?: CSSClassObject
+	onSave: (value: string) => void
+	defaultValue?: CSSClassObject | null
 }
 
 const ClassNameInput = ({
-	classNames,
-	onChange,
-	defaultValue,
-	onBlur
+	defaultValue = null,
+	onSave
 }: ClassNameInputProps) => {
-	const { getCssText } = useTailwindIntellisense()
+	const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
+	const [query, setQuery] = useState('')
 
-	const setActiveClassOption = useSetRecoilState(activeCssClassState)
+	const { getCssText, getSuggestionList } = useTailwindIntellisense()
+
+	const [activeOption, setActiveClassOption] =
+		useRecoilState(activeCssClassState)
 
 	const onTextInputChangeHandler = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
-			onChange(event.target.value)
+			const value = event.target.value
+			setQuery(value)
+
+			getSuggestionList(value).then((list) => {
+				setSuggestedClasses(list)
+			})
 		},
-		[onChange]
+		[]
 	)
 
-	const onChangeHandler = useCallback(
+	const onClickHandler = useCallback(
 		({ name, variants }: CSSClassObject) => {
-			onChange([...variants, name].join(':'))
+			onSave([...variants, name].join(':'))
 		},
-		[onChange]
+		[onSave]
 	)
 
 	useEffect(() => {
-		if (classNames.length === 0) {
+		const defaultValueName = defaultValue?.name ?? ''
+
+		getSuggestionList(defaultValueName).then((list) => {
+			setSuggestedClasses(list)
+
 			setActiveClassOption(null)
-		}
-	}, [classNames.length, defaultValue])
+		})
 
-	const setActiveOptionHandler = useCallback(async (name: string) => {
-		const cssText = await getCssText(name)
+		setQuery(defaultValueName)
 
-		setActiveClassOption(getCssClassObjectFromClassName(name, cssText))
+		return () => setActiveClassOption(null)
 	}, [])
 
-	const onBlurHandler = useCallback(() => {
-		setActiveClassOption(null)
+	const setActiveOptionHandler = useCallback(
+		async (cssClass: CSSClassObject) => {
+			const className =
+				cssClass.variants.length > 0
+					? `${cssClass.variants.join(':')}:${cssClass.name}`
+					: cssClass.name
 
-		onBlur()
-	}, [onBlur])
+			const cssText = await getCssText(className)
+
+			setActiveClassOption(getCssClassObjectFromClassName(className, cssText))
+		},
+		[]
+	)
 
 	const onKeyupHandler = useCallback(
 		(e: KeyboardEvent<HTMLInputElement>) => {
 			if (e.code === 'Enter') {
-				onChange(e.currentTarget.defaultValue)
+				if (activeOption !== null) {
+					onSave(activeOption.className)
+				}
+
 				setActiveClassOption(null)
-				onBlur()
+			} else if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
+				setQuery(activeOption?.className ?? '')
 			}
 		},
-		[onBlur, onChange]
+		[onSave, activeOption]
 	)
 
-	const onFocusHandler = useCallback(() => {
-		onChange('')
-	}, [onChange])
+	const onCancelHandler: MouseEventHandler<HTMLButtonElement> = useCallback(
+		(e) => {
+			e.stopPropagation()
+
+			setActiveClassOption(null)
+			onSave(defaultValue?.name ?? '')
+		},
+		[onSave]
+	)
 
 	return (
-		<Combobox
-			as='div'
-			className=':uno: relative'
-			onChange={onChangeHandler}
-			defaultValue={defaultValue}
-		>
+		<Combobox as='div' className=':uno: relative' defaultValue={defaultValue}>
 			{({ activeOption }) => (
 				<>
-					<Combobox.Input
-						className=':uno: !mx-2 !my-1 text-inherit !bg-transparent !text-sm focus:!outline-none focus:!border-b border-indigo-600'
-						onChange={onTextInputChangeHandler}
-						displayValue={({ name }: CSSClassObject) => name}
-						onKeyUpCapture={onKeyupHandler}
-						onFocus={onFocusHandler}
-						//TODO: Fix this it's getting triggered before onClick and it closing the modal
-						onBlur={onBlurHandler}
-						autoFocus
-					/>
+					<div className=':uno: flex items-center border-b border-indigo-600 my-1 mx-2'>
+						<Combobox.Input
+							className=':uno: !m-0 text-inherit !bg-transparent !text-sm focus:!outline-none '
+							onChange={onTextInputChangeHandler}
+							value={query}
+							displayValue={({ name }: CSSClassObject) => name}
+							onKeyUpCapture={onKeyupHandler}
+							autoFocus
+						/>
 
-					<span className=':uno: absolute top-1 left-2 text-sm text-inherit opacity-50'>
-						{activeOption?.name}
-					</span>
+						<button
+							onClick={onCancelHandler}
+							className=':uno: pr-1.5 z-0 font-bold leading-4 bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500 text-xl'
+						>
+							⤫
+						</button>
+					</div>
 
-					{classNames.length > 0 && activeOption !== null && (
+					{suggestedClasses.length > 0 && activeOption !== null && (
 						<CssPropertiesDisplay
-							className={activeOption.name}
+							option={activeOption}
 							setActiveOption={setActiveOptionHandler}
 						/>
 					)}
 
-					{classNames.length > 0 && (
+					{suggestedClasses.length > 0 && (
 						<Combobox.Options
 							as='ul'
-							className=':uno: flex flex-col mt-2 absolute z-[10000] top-full max-h-48 left-0 overflow-scroll w-48 bg-indigo-900 rounded-lg border border-indigo-600 p-2'
+							className=':uno: flex flex-col mt-1.5 absolute z-[10000] top-full max-h-48 left-0 overflow-scroll w-48 bg-indigo-900 rounded-lg border border-indigo-600 p-2'
 							static
 						>
-							{classNames.map((cssObject, ind) => (
+							{suggestedClasses.map((cssObject, ind) => (
 								<Combobox.Option
 									key={cssObject.name + ind}
 									value={cssObject}
@@ -164,6 +189,10 @@ const ClassNameInput = ({
 											className={`:uno: flex gap-2 items-baseline text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md ${
 												active ? 'bg-indigo-800' : ''
 											}`}
+											onClick={(e) => {
+												e.stopPropagation()
+												onClickHandler(cssObject)
+											}}
 										>
 											{cssObject.color === undefined ? (
 												<span className=':uno: font-semibold text-orange-400'>

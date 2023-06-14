@@ -53,8 +53,6 @@ export const OnMessageEventListeners = () => {
 						if (message.xpath === null) {
 							set(inspectedElementState, null)
 						} else {
-							console.log('message.xpath hover', message.xpath)
-
 							const element = getElementFromXPath(message.xpath)
 							if (element === null) return
 

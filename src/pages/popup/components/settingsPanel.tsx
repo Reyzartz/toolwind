@@ -32,9 +32,7 @@ const SettingsPanel = () => {
 			})
 
 			setItemToStorage('tw_config', config)
-		} catch (error) {
-			console.log(error)
-		}
+		} catch (error) {}
 	}, [])
 
 	return (

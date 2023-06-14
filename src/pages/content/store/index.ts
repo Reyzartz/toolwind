@@ -17,6 +17,11 @@ export const cssClassesState = atom<CSSClass[]>({
 	default: []
 })
 
+export const isAddingClassState = atom<boolean>({
+	key: 'is-adding-class',
+	default: false
+})
+
 export const activeCssClassState = atom<CSSClass | null>({
 	key: 'active-css-class',
 	default: null
@@ -67,10 +72,10 @@ export const selectedElementState = selector<HTMLElement | null>({
 
 				set(modifiedElementsState, updatedList)
 
-					sendMessage({
-						messageType: 'MODIFIED_ELEMENTS_UPDATED',
-						message: updatedList
-					})
+				sendMessage({
+					messageType: 'MODIFIED_ELEMENTS_UPDATED',
+					message: updatedList
+				})
 			}
 		}
 

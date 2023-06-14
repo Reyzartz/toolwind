@@ -1,8 +1,9 @@
-import { useCallback, useLayoutEffect } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
 	activeCssClassState,
 	cssClassesState,
+	isAddingClassState,
 	selectedElementState
 } from '../store'
 import { CSSClass } from '../../../types/common'
@@ -11,6 +12,7 @@ import { useTailwindIntellisense } from './useTailwindIntellisense'
 
 export const useCSSClasses = () => {
 	const [cssClasses, setCssClasses] = useRecoilState(cssClassesState)
+	const [isAdding, setIsAdding] = useRecoilState(isAddingClassState)
 
 	const activeCssClass = useRecoilValue(activeCssClassState)
 
@@ -29,7 +31,9 @@ export const useCSSClasses = () => {
 	const setClassNameToElement = useCallback(() => {
 		if (selectedElement === null) return
 
-		const classNames = cssClasses.map(({ className }) => className)
+		const classNames = cssClasses
+			.filter(({ state }) => state === 'active')
+			.map(({ className }) => className)
 
 		if (activeCssClass !== null) {
 			classNames.push(activeCssClass.className)
@@ -49,19 +53,54 @@ export const useCSSClasses = () => {
 		[cssClasses]
 	)
 
-	const updateCssClass = useCallback(
-		async (id: String, className: string) => {
-			const cssText = await getCssText(className)
+	const setIsAddingHandler = useCallback((value: boolean) => {
+		setIsAdding(value)
 
+		if (value) {
 			const updatedClassObjects = cssClasses.map((cssClass) => {
-				if (id !== cssClass.id) return cssClass
-
-				return getCssClassObjectFromClassName(
-					className,
-					cssText,
-					cssClass.defaultClassName
-				)
+				return {
+					...cssClass,
+					state: cssClass.state === 'editing' ? 'active' : cssClass.state
+				}
 			})
+
+			setCssClassesHandler(updatedClassObjects)
+		}
+	}, [])
+
+	const updateCssClass = useCallback(
+		async (id: String, updatedCssClass: Partial<CSSClass>) => {
+			if (updatedCssClass.state === 'editing') {
+				setIsAdding(false)
+			}
+
+			const updatedClassObjects = await Promise.all(
+				cssClasses.map(async (cssClass) => {
+					if (id !== cssClass.id)
+						return updatedCssClass.state === 'editing' &&
+							cssClass.state === 'editing'
+							? ({ ...cssClass, state: 'active' } as CSSClass)
+							: cssClass
+
+					if (updatedCssClass.className !== undefined) {
+						const cssText = await getCssText(updatedCssClass.className)
+
+						return {
+							...getCssClassObjectFromClassName(
+								updatedCssClass.className,
+								cssText,
+								cssClass.defaultClassName
+							),
+							...updatedCssClass
+						}
+					}
+
+					return {
+						...cssClass,
+						...updatedCssClass
+					}
+				})
+			)
 
 			setCssClassesHandler(updatedClassObjects)
 		},
@@ -80,6 +119,8 @@ export const useCSSClasses = () => {
 	)
 
 	return {
+		isAdding,
+		setIsAdding: setIsAddingHandler,
 		cssClasses,
 		removeCssClass,
 		addCssClass,

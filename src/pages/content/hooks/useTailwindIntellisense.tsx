@@ -36,7 +36,7 @@ export const useTailwindIntellisense = () => {
 		})
 	}, [])
 
-	const getCssText = useCallback(async (className: string) => {
+	const getCssText = useCallback(async (className: string): Promise<string> => {
 		const result = await autocomplete.getClassCssText(className)
 
 		return result

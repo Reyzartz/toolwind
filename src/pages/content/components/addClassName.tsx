@@ -1,48 +1,37 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { ClassNameInput } from '.'
-import { CSSClassObject } from '../../../types/common'
-import { useTailwindIntellisense } from '../hooks/useTailwindIntellisense'
+import { useCSSClasses } from '../hooks/useCssClasses'
 
-interface AddClassNameProps {
-	addClassName: (className: string) => void
-}
+const AddClassName = () => {
+	const { isAdding, setIsAdding, addCssClass } = useCSSClasses()
 
-const AddClassName = ({ addClassName }: AddClassNameProps) => {
-	const [isEditing, setIsEditing] = useState(false)
-	const { getSuggestionList } = useTailwindIntellisense()
+	const onAddHandler = useCallback(
+		(className: string) => {
+			if (className.trim().length > 0) {
+				addCssClass(className)
+			}
+			setIsAdding(false)
+		},
+		[setIsAdding]
+	)
 
-	const [suggestedClasses, setSuggestedClasses] = useState<CSSClassObject[]>([])
-	const [className, setClassName] = useState('')
-
-	const onChangeHandler = useCallback(async (value: string) => {
-		setClassName(value)
-		setSuggestedClasses(await getSuggestionList(value))
-	}, [])
-
-	const onBlurHandler = useCallback(() => {
-		setSuggestedClasses([])
-		setClassName('')
-		setIsEditing(false)
-
-		if (className.trim().length > 0) {
-			addClassName(className)
-		}
-	}, [addClassName, className])
 
 	const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
-		useCallback((e) => {
-			e.stopPropagation()
-			setIsEditing(true)
-		}, [])
+		useCallback(
+			(e) => {
+				e.stopPropagation()
+
+				setIsAdding(true)
+			},
+			[setIsAdding]
+		)
 
 	return (
 		<div>
-			{isEditing ? (
+			{isAdding ? (
 				<ClassNameInput
-					classNames={suggestedClasses}
-					onChange={onChangeHandler}
-					defaultValue={{ name: className, variants: [] }}
-					onBlur={onBlurHandler}
+					defaultValue={{ name: '', variants: [] }}
+					onSave={onAddHandler}
 				/>
 			) : (
 				<button

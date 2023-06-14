@@ -4,6 +4,7 @@ export interface CSSClass {
 	customClass: boolean
 	defaultClassName: string | null
 	cssText: string | null
+	state: 'active' | 'removed' | 'editing'
 	meta: {
 		color: string | null
 		variants?: string[]

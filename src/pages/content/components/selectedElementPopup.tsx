@@ -10,8 +10,7 @@ import { getElementPosition } from '../helpers/utils'
 export const SelectedElementPopup = () => {
 	const selectedElement = useRecoilValue(selectedElementState) as HTMLElement
 
-	const { addCssClass, removeCssClass, cssClasses, updateCssClass } =
-		useCSSClasses()
+	const { cssClasses } = useCSSClasses()
 
 	const [referenceElement, setReferenceElement] = useState(null)
 	const [popperElement, setPopperElement] = useState(null)
@@ -66,15 +65,10 @@ export const SelectedElementPopup = () => {
 
 					<div className=':uno: p-3 w-72 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2'>
 						{cssClasses.map((cssClass, ind) => (
-							<ClassNameTag
-								key={ind}
-								cssClass={cssClass}
-								onDelete={removeCssClass}
-								onUpdate={updateCssClass}
-							/>
+							<ClassNameTag key={ind} cssClass={cssClass} />
 						))}
 
-						<AddClassName addClassName={addCssClass} />
+						<AddClassName />
 					</div>
 				</div>
 

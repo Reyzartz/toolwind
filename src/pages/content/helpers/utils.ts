@@ -31,6 +31,7 @@ export const getCssClassObjectFromClassName = (
 		id: crypto.randomUUID(),
 		className,
 		defaultClassName,
+		state: 'active',
 		customClass: isCustomClass(className),
 		cssText,
 		meta: {
