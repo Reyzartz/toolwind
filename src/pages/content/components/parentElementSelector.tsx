@@ -28,7 +28,7 @@ export const ParentElementSelector = () => {
 	}
 
 	return (
-		<div className=':uno: flex gap-3 pb-2 item-center'>
+		<div className=':uno: flex gap-3 item-center'>
 			{grandParentElement !== null && (
 				<>
 					<button
