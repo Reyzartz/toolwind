@@ -8,13 +8,16 @@ interface ClassNameTagProps {
 }
 
 export const ClassNameTag = ({
-	cssClass: { id, className, meta, state }
+	cssClass: { id, className, meta, state, defaultClassName }
 }: ClassNameTagProps) => {
-	const { updateCssClass } = useCSSClasses()
+	const { updateCssClass, removeCssClass } = useCSSClasses()
 
-	const onUpdateHandler = useCallback((value: string) => {
-		updateCssClass(id, { className: value, state: 'active' })
-	}, [])
+	const onUpdateHandler = useCallback(
+		(value: string) => {
+			updateCssClass(id, { className: value, state: 'active' })
+		},
+		[updateCssClass]
+	)
 
 	const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
 		useCallback(
@@ -24,20 +27,28 @@ export const ClassNameTag = ({
 
 				updateCssClass(id, { state: 'editing' })
 			},
-			[id, state]
+			[id, state, updateCssClass]
 		)
 
 	const onDeleteHandler: MouseEventHandler<HTMLButtonElement> = useCallback(
 		(e) => {
 			e.stopPropagation()
 
-			updateCssClass(id, { state: 'removed' })
+			if (defaultClassName === null) {
+				removeCssClass(id)
+			} else {
+				updateCssClass(id, { state: 'removed' })
+			}
 		},
-		[id]
+		[id, updateCssClass]
 	)
 
 	return (
-		<div className=':uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer text-indigo-200'>
+		<div
+			className={`:uno: relative bg-indigo-900 border border-solid border-indigo-600 rounded-[4px] max-w-max flex cursor-pointer  ${
+				state === 'removed' ? 'text-neutral-400' : 'text-neutral-200'
+			}`}
+		>
 			{state === 'editing' ? (
 				<ClassNameInput
 					defaultValue={{ name: className, variants: [] }}

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ClassNameInput } from '.'
 import { useCSSClasses } from '../hooks/useCssClasses'
 
@@ -12,19 +12,20 @@ const AddClassName = () => {
 			}
 			setIsAdding(false)
 		},
-		[setIsAdding]
+		[setIsAdding, addCssClass]
 	)
-
 
 	const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
 		useCallback(
 			(e) => {
 				e.stopPropagation()
-
 				setIsAdding(true)
 			},
 			[setIsAdding]
 		)
+
+	// close the input component when it unloaded
+	useEffect(() => () => setIsAdding(false), [])
 
 	return (
 		<div>

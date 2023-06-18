@@ -32,10 +32,14 @@ const CssPropertiesDisplay = ({
 	useEffect(() => {
 		setActiveOption(option)
 
-		getCssText(option.name).then((res) =>
-			setCssProperties(getCssClassPropertiesFromCssText(res ?? ''))
-		)
+		if (!option.isVariant) {
+			getCssText(option.name).then((res) =>
+				setCssProperties(getCssClassPropertiesFromCssText(res ?? ''))
+			)
+		}
 	}, [option])
+
+	if (option.isVariant) return null
 
 	return (
 		<div className=':uno: absolute left-45 top-full m-4 min-w-48 z-[10001] bg-indigo-900 text-indigo-400 text-xs border px-2 py-1 border-indigo-600 rounded-md'>
@@ -80,14 +84,21 @@ const ClassNameInput = ({
 				setSuggestedClasses(list)
 			})
 		},
-		[]
+		[getSuggestionList]
 	)
 
 	const onClickHandler = useCallback(
 		({ name, variants }: CSSClassObject) => {
+			// triggered if the active option is an variant
+			if (activeOption !== null && activeOption.className.endsWith(':')) {
+				setQuery(activeOption.className)
+
+				return
+			}
+
 			onSave([...variants, name].join(':'))
 		},
-		[onSave]
+		[onSave, activeOption]
 	)
 
 	useEffect(() => {
@@ -102,7 +113,7 @@ const ClassNameInput = ({
 		setQuery(defaultValueName)
 
 		return () => setActiveClassOption(null)
-	}, [])
+	}, [getSuggestionList])
 
 	const setActiveOptionHandler = useCallback(
 		async (cssClass: CSSClassObject) => {
@@ -121,6 +132,13 @@ const ClassNameInput = ({
 	const onKeyupHandler = useCallback(
 		(e: KeyboardEvent<HTMLInputElement>) => {
 			if (e.code === 'Enter') {
+				// triggered if the active option is an variant
+				if (activeOption !== null && activeOption.className.endsWith(':')) {
+					setQuery(activeOption.className)
+
+					return
+				}
+
 				if (activeOption !== null) {
 					onSave(activeOption.className)
 				}

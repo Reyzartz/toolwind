@@ -24,7 +24,10 @@ const InspectedElementHighlighter = ({
 			intervalId.current = setInterval(() => {
 				setRect((prev) => {
 					const updatedRect = element?.getClientRects()[0]
-					return prev?.x === updatedRect?.x && prev?.y === updatedRect?.y
+					return prev?.x === updatedRect?.x &&
+						prev?.y === updatedRect?.y &&
+						prev?.height === updatedRect?.height &&
+						prev?.width === updatedRect?.width
 						? prev
 						: updatedRect
 				})

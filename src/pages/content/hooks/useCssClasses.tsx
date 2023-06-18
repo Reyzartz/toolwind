@@ -53,20 +53,23 @@ export const useCSSClasses = () => {
 		[cssClasses]
 	)
 
-	const setIsAddingHandler = useCallback((value: boolean) => {
-		setIsAdding(value)
+	const setIsAddingHandler = useCallback(
+		(value: boolean) => {
+			setIsAdding(value)
 
-		if (value) {
-			const updatedClassObjects = cssClasses.map((cssClass) => {
-				return {
-					...cssClass,
-					state: cssClass.state === 'editing' ? 'active' : cssClass.state
-				}
-			})
+			if (value) {
+				const updatedClassObjects = cssClasses.map((cssClass) => {
+					return {
+						...cssClass,
+						state: cssClass.state === 'editing' ? 'active' : cssClass.state
+					}
+				})
 
-			setCssClassesHandler(updatedClassObjects)
-		}
-	}, [])
+				setCssClassesHandler(updatedClassObjects)
+			}
+		},
+		[cssClasses]
+	)
 
 	const updateCssClass = useCallback(
 		async (id: String, updatedCssClass: Partial<CSSClass>) => {
@@ -76,11 +79,12 @@ export const useCSSClasses = () => {
 
 			const updatedClassObjects = await Promise.all(
 				cssClasses.map(async (cssClass) => {
-					if (id !== cssClass.id)
+					if (id !== cssClass.id) {
 						return updatedCssClass.state === 'editing' &&
 							cssClass.state === 'editing'
 							? ({ ...cssClass, state: 'active' } as CSSClass)
 							: cssClass
+					}
 
 					if (updatedCssClass.className !== undefined) {
 						const cssText = await getCssText(updatedCssClass.className)
