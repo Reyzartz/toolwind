@@ -49,9 +49,9 @@ export const selectedElementState = selector<HTMLElement | null>({
 		if (prevSelectedElement !== null) {
 			const xpath = getXPathFromElement(prevSelectedElement) as string
 
-			const updatedClassNames = get(cssClassesState).map(
-				(cssClass) => cssClass.className
-			)
+			const updatedClassNames = get(cssClassesState)
+				.filter(({ state }) => state === 'active')
+				.map((cssClass) => cssClass.className)
 
 			const originalClassNames = get(defaultCssClassesState)
 

@@ -22,7 +22,8 @@ const App = () => {
 
 			if (
 				e.target !== null &&
-				!(e.target as HTMLElement).matches('toolwind-root *')
+				!(e.target as HTMLElement).matches('toolwind-root *') &&
+				!(e.target as HTMLElement).matches('toolwind-root *,svg, svg *')
 			) {
 				setInspectedElement(e.target as HTMLElement)
 			}
@@ -37,7 +38,7 @@ const App = () => {
 		const clickEventListener = (e: MouseEvent) => {
 			if (
 				e.target !== null &&
-				!(e.target as HTMLElement).matches('toolwind-root *')
+				!(e.target as HTMLElement).matches('toolwind-root *,svg, svg *')
 			) {
 				e.stopPropagation()
 				e.preventDefault()
@@ -92,6 +93,7 @@ const App = () => {
 	return extensionEnabled ? (
 		<>
 			<OnMessageEventListeners />
+
 			<InspectedElementHighlighter element={inspectedElement} />
 
 			{selectedElement !== null && (
