@@ -1,64 +1,64 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from "react";
 // @ts-ignore
-import AutoComplete from 'tailwindcss-autocomplete'
-import { isCustomClass } from '../helpers/utils'
-import { getItemFromStorage } from '../../popup/utils'
+import AutoComplete from "tailwindcss-autocomplete";
+import { isCustomClass } from "../../../helpers/cssClasses";
+import { getItemFromStorage } from "../../../helpers/storage";
 
-export let autocomplete: AutoComplete
+export let autocomplete: AutoComplete;
 
 export const useTailwindIntellisense = () => {
-	const [config, setConfig] = useState({})
+  const [config, setConfig] = useState({});
 
-	useEffect(() => {
-		if (autocomplete === undefined) {
-			getItemFromStorage('tw_config').then((config) => {
-				autocomplete = new AutoComplete(config ?? {})
-			})
-		}
-	}, [])
+  useEffect(() => {
+    if (autocomplete === undefined) {
+      getItemFromStorage("tw_config").then((config) => {
+        autocomplete = new AutoComplete(config ?? {});
+      });
+    }
+  }, []);
 
-	const getSuggestionList = useCallback(async (className: string = '') => {
-		if (isCustomClass(className)) return []
+  const getSuggestionList = useCallback(async (className: string = "") => {
+    if (isCustomClass(className)) return [];
 
-		const results = await autocomplete.getSuggestionList(className)
+    const results = await autocomplete.getSuggestionList(className);
 
-		// @ts-ignore
-		return results.slice(0, 50).map((item) => {
-			return {
-				name: item.label as string,
-				color:
-					typeof item.documentation === 'string'
-						? (item.documentation as string)
-						: undefined,
-				isVariant: item.data._type === 'variant',
-				variants: item.data?.variants ?? []
-			}
-		})
-	}, [])
+    // @ts-ignore
+    return results.slice(0, 50).map((item) => {
+      return {
+        name: item.label as string,
+        color:
+          typeof item.documentation === "string"
+            ? (item.documentation as string)
+            : undefined,
+        isVariant: item.data._type === "variant",
+        variants: item.data?.variants ?? [],
+      };
+    });
+  }, []);
 
-	const getCssText = useCallback(async (className: string): Promise<string> => {
-		const result = await autocomplete.getClassCssText(className)
+  const getCssText = useCallback(async (className: string): Promise<string> => {
+    const result = await autocomplete.getClassCssText(className);
 
-		return result
-	}, [])
+    return result;
+  }, []);
 
-	const getClassColor = useCallback(async (className: string) => {
-		const result = await autocomplete.getColor(className)
+  const getClassColor = useCallback(async (className: string) => {
+    const result = await autocomplete.getColor(className);
 
-		return result
-	}, [])
+    return result;
+  }, []);
 
-	const setConfigHandler = useCallback((config: Object) => {
-		setConfig(config)
+  const setConfigHandler = useCallback((config: Object) => {
+    setConfig(config);
 
-		autocomplete = new AutoComplete(config)
-	}, [])
+    autocomplete = new AutoComplete(config);
+  }, []);
 
-	return {
-		config,
-		setConfig: setConfigHandler,
-		getSuggestionList,
-		getCssText,
-		getClassColor
-	}
-}
+  return {
+    config,
+    setConfig: setConfigHandler,
+    getSuggestionList,
+    getCssText,
+    getClassColor,
+  };
+};

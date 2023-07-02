@@ -1,108 +1,108 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
-import { getItemFromStorage } from '../popup/utils'
-import { InspectedElementHighlighter } from './components'
-import { inspectedElementState, selectedElementState } from './store'
-import { onMessageListener } from './helpers/utils'
-import { OnMessageEventListeners } from './helpers/onMessageEventListeners'
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { InspectedElementHighlighter } from "../../components/inspectedElementHighlighter";
+import { onMessageListener } from "../../helpers/message";
+import { getItemFromStorage } from "../../helpers/storage";
+import { useMessageEventListeners } from "./hooks/useMessageEventListeners";
+import { inspectedElementState, selectedElementState } from "./store";
 
 const App = () => {
-	const [inspectedElement, setInspectedElement] = useRecoilState(
-		inspectedElementState
-	)
+  const [inspectedElement, setInspectedElement] = useRecoilState(
+    inspectedElementState
+  );
 
-	const [selectedElement, setSelectedElement] =
-		useRecoilState(selectedElementState)
+  useMessageEventListeners();
 
-	const [extensionEnabled, setExtensionEnabled] = useState(false)
+  const [selectedElement, setSelectedElement] =
+    useRecoilState(selectedElementState);
 
-	const init = useCallback(() => {
-		const mouseoverEventHandler = (e: MouseEvent) => {
-			e.stopPropagation()
+  const [extensionEnabled, setExtensionEnabled] = useState(false);
 
-			if (
-				e.target !== null &&
-				!(e.target as HTMLElement).matches('toolwind-root *') &&
-				!(e.target as HTMLElement).matches('toolwind-root *,svg, svg *')
-			) {
-				setInspectedElement(e.target as HTMLElement)
-			}
-		}
+  const init = useCallback(() => {
+    const mouseoverEventHandler = (e: MouseEvent) => {
+      e.stopPropagation();
 
-		const mouseleaveWindowEventHandler = (e: MouseEvent) => {
-			e.stopPropagation()
+      if (
+        e.target !== null &&
+        !(e.target as HTMLElement).matches("toolwind-root *") &&
+        !(e.target as HTMLElement).matches("toolwind-root *,svg, svg *")
+      ) {
+        setInspectedElement(e.target as HTMLElement);
+      }
+    };
 
-			setInspectedElement(null)
-		}
+    const mouseleaveWindowEventHandler = (e: MouseEvent) => {
+      e.stopPropagation();
 
-		const clickEventListener = (e: MouseEvent) => {
-			if (
-				e.target !== null &&
-				!(e.target as HTMLElement).matches('toolwind-root *,svg, svg *')
-			) {
-				e.stopPropagation()
-				e.preventDefault()
+      setInspectedElement(null);
+    };
 
-				setSelectedElement(e.target as HTMLElement)
-			}
-		}
+    const clickEventListener = (e: MouseEvent) => {
+      if (
+        e.target !== null &&
+        !(e.target as HTMLElement).matches("toolwind-root *,svg, svg *")
+      ) {
+        e.stopPropagation();
+        e.preventDefault();
 
-		const addEventListenerHandler = () => {
-			document.addEventListener('mouseover', mouseoverEventHandler)
-			document.addEventListener('click', clickEventListener, true)
-			document.documentElement.addEventListener(
-				'mouseleave',
-				mouseleaveWindowEventHandler
-			)
-		}
+        setSelectedElement(e.target as HTMLElement);
+      }
+    };
 
-		const removeEventListenerHandler = () => {
-			document.removeEventListener('mouseover', mouseoverEventHandler)
-			document.removeEventListener('click', clickEventListener, true)
-			document.documentElement.removeEventListener(
-				'mouseleave',
-				mouseleaveWindowEventHandler
-			)
-		}
+    const addEventListenerHandler = () => {
+      document.addEventListener("mouseover", mouseoverEventHandler);
+      document.addEventListener("click", clickEventListener, true);
+      document.documentElement.addEventListener(
+        "mouseleave",
+        mouseleaveWindowEventHandler
+      );
+    };
 
-		onMessageListener('UPDATE_EXTENSION_ACTIVE_STATE', ({ state }) => {
-			switch (state) {
-				case 'enabled':
-					addEventListenerHandler()
-					setExtensionEnabled(true)
-					break
-				case 'disabled':
-					removeEventListenerHandler()
-					setExtensionEnabled(false)
-			}
-		})
+    const removeEventListenerHandler = () => {
+      document.removeEventListener("mouseover", mouseoverEventHandler);
+      document.removeEventListener("click", clickEventListener, true);
+      document.documentElement.removeEventListener(
+        "mouseleave",
+        mouseleaveWindowEventHandler
+      );
+    };
 
-		getItemFromStorage('toolwind_extension_state').then((res) => {
-			setExtensionEnabled(res === 'enabled')
+    onMessageListener("UPDATE_EXTENSION_ACTIVE_STATE", ({ state }) => {
+      switch (state) {
+        case "enabled":
+          addEventListenerHandler();
+          setExtensionEnabled(true);
+          break;
+        case "disabled":
+          removeEventListenerHandler();
+          setExtensionEnabled(false);
+      }
+    });
 
-			if (res === 'enabled') {
-				addEventListenerHandler()
-			}
-		})
-	}, [])
+    getItemFromStorage("toolwind_extension_state").then((res) => {
+      setExtensionEnabled(res === "enabled");
 
-	useEffect(() => {
-		init()
-	}, [])
+      if (res === "enabled") {
+        addEventListenerHandler();
+      }
+    });
+  }, []);
 
-	return extensionEnabled ? (
-		<>
-			<OnMessageEventListeners />
+  useEffect(() => {
+    init();
+  }, []);
 
-			<InspectedElementHighlighter element={inspectedElement} />
+  return extensionEnabled ? (
+    <>
+      <InspectedElementHighlighter element={inspectedElement} />
 
-			{selectedElement !== null && (
-				<InspectedElementHighlighter element={selectedElement} selected />
-			)}
-		</>
-	) : (
-		<></>
-	)
-}
+      {selectedElement !== null && (
+        <InspectedElementHighlighter element={selectedElement} selected />
+      )}
+    </>
+  ) : (
+    <></>
+  );
+};
 
-export { App }
+export { App };
