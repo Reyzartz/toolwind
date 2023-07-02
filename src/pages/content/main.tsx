@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
+import "./index.css";
 import { ContentStyles } from "./styles";
-
-import "virtual:uno.css";
 
 // Main function for root
 import { RecoilRoot } from "recoil";

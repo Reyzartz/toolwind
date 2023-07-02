@@ -30,7 +30,7 @@ export const ClassNamesTooltip = React.memo(
       <>
         <div
           ref={setReferenceElement as any}
-          className=":uno: fixed pointer-events-none bg-purple-400/50 z-[10000]"
+          className="fixed pointer-events-none bg-purple-400/50 z-[10000]"
           style={{
             top: rect.y,
             left: rect.x,
@@ -47,7 +47,7 @@ export const ClassNamesTooltip = React.memo(
           {...attributes.popper}
         >
           <div
-            className=":uno: bg-purple-600 min-w-12 truncate shadow-md px-3 py-1 rounded-t-md text-xs text-slate-200 lowercase"
+            className="bg-purple-600 min-w-12 truncate shadow-md px-3 py-1 rounded-t-md text-xs text-slate-200 lowercase"
             style={{
               maxWidth: inspectedElement.offsetWidth,
             }}

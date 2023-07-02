@@ -54,25 +54,25 @@ const ModifiedElementsList = () => {
   }, []);
 
   return (
-    <div className=":uno: flex gap-2 flex-col p-3 overflow-y-scroll">
+    <div className="flex gap-2 flex-col p-3 overflow-y-scroll">
       {elementsList.map((ele) => (
         <div
           key={ele.xpath}
-          className=":uno: rounded-md border border-solid border-indigo-400 text-xs text-slate-4 hover:border-indigo-300 overflow-hidden cursor-pointer flex gap-2 items-center group relative"
+          className="rounded-md border border-solid border-indigo-400 text-xs text-slate-4 hover:border-indigo-300 overflow-hidden cursor-pointer flex gap-2 items-center group relative"
           onMouseEnter={() => onMouseEnterHandler(ele.xpath)}
           onMouseLeave={() => onMouseEnterHandler()}
           onClick={() => onClickHandler(ele.xpath)}
         >
-          <span className=":uno: pl-2 pr-1 py-1.5 bg-white text-indigo-900 transition-all lowercase">
+          <span className="pl-2 pr-1 py-1.5 bg-white text-indigo-900 transition-all lowercase">
             {ele.tagName}:
           </span>
 
-          <span className=":uno: max-w-full truncate">
+          <span className="max-w-full truncate">
             {ele.updatedClassNames.join(", ")}
           </span>
 
           <div
-            className=":uno: text-lg pr-2 pl-10 absolute -right-full group-hover:right-0 transition-all hover:text-white"
+            className="text-lg pr-2 pl-10 absolute -right-full group-hover:right-0 transition-all hover:text-white"
             style={{
               background:
                 "linear-gradient(to left, rgba(49,46,129), transparent)",

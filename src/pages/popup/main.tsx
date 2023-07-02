@@ -1,14 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import App from "./app";
 import "./index.css";
 
-import "virtual:uno.css";
+const root = document.getElementById("toolwind-popup-root");
 
-ReactDOM.createRoot(
-  document.getElementById("toolwind-popup-root") as HTMLElement
-).render(
+ReactDOM.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
+  root
 );

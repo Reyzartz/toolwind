@@ -37,7 +37,7 @@ const AddClassName = () => {
       ) : (
         <button
           onClick={onClickHandler}
-          className=":uno: text-sm text-indigo-400 py-1 px-2 rounded-1 hover:text-indigo-200"
+          className="text-sm text-indigo-400 py-1 px-2 rounded-1 hover:text-indigo-200"
         >
           + Add Class
         </button>

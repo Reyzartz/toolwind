@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-// @ts-ignore
+// @ts-expect-error
 import AutoComplete from "tailwindcss-autocomplete";
 import { isCustomClass } from "../../../helpers/cssClasses";
 import { getItemFromStorage } from "../../../helpers/storage";

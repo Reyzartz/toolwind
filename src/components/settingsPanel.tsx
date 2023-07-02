@@ -33,7 +33,7 @@ const SettingsPanel = () => {
 
   return (
     <div>
-      <h3 className=":uno: text-xs font-semibold text-indigo-300 mb-2">
+      <h3 className="text-xs font-semibold text-indigo-300 mb-2">
         Tailwind Config:
       </h3>
 

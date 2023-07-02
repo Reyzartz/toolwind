@@ -12,7 +12,7 @@ const manifest = defineManifest(async () => ({
   description: packageJson.description,
   background: { service_worker: "src/pages/background/index.ts" },
   action: {
-    default_popup: "src/pages/popup/index.html",
+    default_popup: "index.html",
     default_icon: {
       "16": "icons/logo-16.png",
       "24": "icons/logo-24.png",

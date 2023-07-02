@@ -31,11 +31,11 @@ export const ParentElementSelector = () => {
   };
 
   return (
-    <div className=":uno: flex gap-3 item-center">
+    <div className="flex gap-3 item-center">
       {grandParentElement !== null && (
         <>
           <button
-            className=":uno: text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
+            className="text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
             onMouseEnter={() => setInspectedElement(grandParentElement)}
             onMouseLeave={() => setInspectedElement(null)}
             onClick={(e) => selectedElementHandler(e, grandParentElement)}
@@ -43,14 +43,14 @@ export const ParentElementSelector = () => {
             {grandParentElement.nodeName}
           </button>
 
-          <span className=":uno: text-indigo-200 font-semibold">❯</span>
+          <span className="text-indigo-200 font-semibold">❯</span>
         </>
       )}
 
       {parentElement !== null && (
         <>
           <button
-            className=":uno: text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
+            className="text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
             onMouseEnter={() => setInspectedElement(parentElement)}
             onMouseLeave={() => setInspectedElement(null)}
             onClick={(e) => selectedElementHandler(e, parentElement)}
@@ -58,11 +58,11 @@ export const ParentElementSelector = () => {
             {parentElement?.nodeName}
           </button>
 
-          <span className=":uno: text-indigo-200 font-semibold">❯</span>
+          <span className="text-indigo-200 font-semibold">❯</span>
         </>
       )}
 
-      <button className=":uno: text-indigo-200 font-semibold  text-xs">
+      <button className="text-indigo-200 font-semibold  text-xs">
         {selectedElement?.nodeName}
       </button>
     </div>

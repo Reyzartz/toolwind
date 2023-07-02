@@ -42,18 +42,17 @@ const CssPropertiesDisplay = ({
   if (option.isVariant) return null;
 
   return (
-    <div className=":uno: absolute left-45 top-full m-4 min-w-48 z-[10001] bg-indigo-900 text-indigo-400 text-xs border px-2 py-1 border-indigo-600 rounded-md">
-      <span className=":uno: text-orange-500">.{option.name}</span>{" "}
-      <span className=":uno: text-purple-500">&#123;</span>
+    <div className="absolute left-45 top-full m-4 min-w-48 z-[10001] bg-indigo-900 text-indigo-400 text-xs border px-2 py-1 border-indigo-600 rounded-md">
+      <span className="text-orange-500">.{option.name}</span>{" "}
+      <span className="text-purple-500">&#123;</span>
       <div>
         {cssProperties.map(({ key, value }) => (
           <div key={key}>
-            <span>{key}</span>:{" "}
-            <span className=":uno: text-red-500">{value}</span>
+            <span>{key}</span>: <span className="text-red-500">{value}</span>
           </div>
         ))}
       </div>
-      <span className=":uno: text-purple-500">&#125;</span>
+      <span className="text-purple-500">&#125;</span>
     </div>
   );
 };
@@ -164,12 +163,12 @@ const ClassNameInput = ({
   );
 
   return (
-    <Combobox as="div" className=":uno: relative" defaultValue={defaultValue}>
+    <Combobox as="div" className="relative" defaultValue={defaultValue}>
       {({ activeOption }) => (
         <>
-          <div className=":uno: flex items-center border-b border-indigo-600 my-1 mx-2">
+          <div className="flex items-center border-b border-indigo-600 my-1 mx-2">
             <Combobox.Input
-              className=":uno: !m-0 text-inherit !bg-transparent !text-sm focus:!outline-none "
+              className="!m-0 text-inherit !bg-transparent !text-sm focus:!outline-none "
               onChange={onTextInputChangeHandler}
               value={query}
               displayValue={({ name }: CSSClassObject) => name}
@@ -179,7 +178,7 @@ const ClassNameInput = ({
 
             <button
               onClick={onCancelHandler}
-              className=":uno: pr-1.5 z-0 font-bold leading-4 bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500 text-xl"
+              className="pr-1.5 z-0 font-bold leading-4 bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500 text-xl"
             >
               ⤫
             </button>
@@ -195,7 +194,7 @@ const ClassNameInput = ({
           {suggestedClasses.length > 0 && (
             <Combobox.Options
               as="ul"
-              className=":uno: flex flex-col mt-1.5 absolute z-[10000] top-full max-h-48 left-0 overflow-scroll w-48 bg-indigo-900 rounded-lg border border-indigo-600 p-2"
+              className="flex flex-col mt-1.5 absolute z-[10000] top-full max-h-48 left-0 overflow-scroll w-48 bg-indigo-900 rounded-lg border border-indigo-600 p-2"
               static
             >
               {suggestedClasses.map((cssObject, ind) => (
@@ -206,7 +205,7 @@ const ClassNameInput = ({
                 >
                   {({ active }) => (
                     <li
-                      className={`:uno: flex gap-2 items-baseline text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md ${
+                      className={`flex gap-2 items-baseline text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md ${
                         active ? "bg-indigo-800" : ""
                       }`}
                       onClick={(e) => {
@@ -215,12 +214,12 @@ const ClassNameInput = ({
                       }}
                     >
                       {cssObject.color === undefined ? (
-                        <span className=":uno: font-semibold text-orange-400">
+                        <span className="font-semibold text-orange-400">
                           {cssObject.isVariant ? `{}` : "☲"}
                         </span>
                       ) : (
                         <span
-                          className=":uno: w-3 h-3 inline-block border border-gray-900 rounded-1"
+                          className="w-3 h-3 inline-block border border-gray-900 rounded-1"
                           style={{ background: cssObject.color }}
                         />
                       )}

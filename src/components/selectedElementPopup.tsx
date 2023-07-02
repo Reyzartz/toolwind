@@ -49,7 +49,7 @@ export const SelectedElementPopup = React.memo(
       <>
         <div
           ref={setReferenceElement as any}
-          className={`:uno: border border-solid fixed z-[10000] pointer-events-none border-indigo-600`}
+          className={`border border-solid fixed z-[10000] pointer-events-none border-indigo-600`}
           style={{
             top: rect.y,
             left: rect.x,
@@ -66,21 +66,21 @@ export const SelectedElementPopup = React.memo(
           {...attributes.popper}
         >
           <div
-            className=":uno: bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase"
+            className="bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase"
             onMouseEnter={() => setInspectedElement(null)}
           >
-            <div className=":uno: flex justify-between w-full items-center mb-2">
+            <div className="flex justify-between w-full items-center mb-2">
               <ParentElementSelector />
 
               <button
                 onClick={() => setSelectedElement(null)}
-                className=":uno: pr-1.5 font-bold leading-1 bg-transparent border-none h-full text-slate-400 hover:text-slate-500 text-2xl"
+                className="pr-1.5 font-bold leading-1 bg-transparent border-none h-full text-slate-400 hover:text-slate-500 text-2xl"
               >
                 ⤫
               </button>
             </div>
 
-            <div className=":uno: p-3 w-72 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2">
+            <div className="p-3 w-72 bg-indigo-800 border border-indigo-600 rounded-md flex flex-wrap gap-2">
               {cssClasses.map((cssClass, ind) => (
                 <ClassNameTag key={ind} cssClass={cssClass} />
               ))}
@@ -93,7 +93,7 @@ export const SelectedElementPopup = React.memo(
             id="toolwind-arrow"
             ref={setArrowElement as any}
             style={styles.arrow}
-            className=":uno: bg-indigo-900 border-transparent"
+            className="bg-indigo-900 border-transparent"
           />
         </div>
       </>
