@@ -1,22 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
-import "./index.css";
 import { ContentStyles } from "./styles";
 
 // Main function for root
 import { RecoilRoot } from "recoil";
 (() => {
-  const root = document.createElement("toolwind-root");
+  const rootElement = document.createElement("div");
+  rootElement.attachShadow({ mode: "open" });
+  rootElement.id = "toolwind";
 
-  document.querySelector("html")?.append(root);
+  document.body.append(rootElement);
+
+  const root = rootElement.shadowRoot ?? rootElement;
 
   // TODO: remove the root when the extension is toggled off
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <RecoilRoot>
-        <App />
         <ContentStyles />
+        <App />
       </RecoilRoot>
     </React.StrictMode>
   );

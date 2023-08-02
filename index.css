@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #toolwind-arrow,
 #toolwind-arrow::before {
   position: absolute;
@@ -11,29 +15,29 @@
 
 #toolwind-arrow::before {
   visibility: visible;
-  content: '';
+  content: "";
   background: inherit;
   transform: rotate(45deg);
   border: inherit;
   box-sizing: border-box;
 }
 
-#toolwind-tooltip[data-popper-placement^='top'] > #toolwind-arrow {
+#toolwind-tooltip[data-popper-placement^="top"] > #toolwind-arrow {
   bottom: -4px;
   border-width: 0px 1px 1px 0px;
 }
 
-#toolwind-tooltip[data-popper-placement^='bottom'] > #toolwind-arrow {
+#toolwind-tooltip[data-popper-placement^="bottom"] > #toolwind-arrow {
   top: -4px;
   border-width: 1px 0px 0px 1px;
 }
 
-#toolwind-tooltip[data-popper-placement^='left'] > #toolwind-arrow {
+#toolwind-tooltip[data-popper-placement^="left"] > #toolwind-arrow {
   right: -4px;
   border-width: 1px 1px 0px 0px;
 }
 
-#toolwind-tooltip[data-popper-placement^='right'] > #toolwind-arrow {
+#toolwind-tooltip[data-popper-placement^="right"] > #toolwind-arrow {
   left: -4px;
   border-width: 0px 0px 1px 1px;
 }

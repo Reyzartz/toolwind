@@ -9,7 +9,7 @@ export default defineConfig({
     crx({
       manifest,
       contentScripts: {
-        injectCss: true,
+        injectCss: false,
       },
     }),
   ],
