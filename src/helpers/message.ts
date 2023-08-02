@@ -1,39 +1,47 @@
-import { runtime, tabs } from "webextension-polyfill";
+import { Tabs, runtime, tabs } from "webextension-polyfill";
 import { getActiveTab } from "./tabs";
-import { Message } from "@toolwind/types/common";
+import { TMessage } from "@toolwind/types/common";
 
-export const sendMessageToPopup = async ({ messageType, message }: Message) => {
-  let response;
+export const sendMessage = async ({ to, action }: TMessage): Promise<void> => {
+  let activeTab: Tabs.Tab;
 
-  try {
-    response = await runtime.sendMessage({
-      messageType,
-      message,
-    });
-  } catch {
-    response = null;
+  const from =
+    location.protocol === "chrome-extension:"
+      ? "service_worker"
+      : "content_script";
+
+  console.log(`${from}-${to}`);
+
+  switch (`${from}-${to}`) {
+    case "service_worker-content_script":
+      try {
+        activeTab = await getActiveTab();
+
+        if (activeTab?.id === undefined) return;
+
+        await tabs.sendMessage(activeTab.id, action);
+      } catch {}
+      break;
+
+    case "content_script-service_worker":
+      await runtime.sendMessage(action);
+      break;
+
+    case "content_script-content_script":
+    case "service_worker-service_worker":
+      postMessage(action);
+      break;
   }
-
-  return response;
 };
 
-export const sendMessageToContentScript = async function (message: Message) {
-  const activeTab = await getActiveTab();
-
-  if (activeTab.id === undefined) return;
-
-  const response = await tabs.sendMessage(activeTab.id, message);
-
-  return response;
-};
-
-export const onMessageListener = (
-  messageType: Message["messageType"],
-  callback: (message: Message["message"]) => void
+export const addMessageListener = async (
+  callback: (props: TMessage["action"]) => void
 ) => {
-  runtime.onMessage.addListener((request: Message, _sender) => {
-    if (request.messageType === messageType) {
-      callback(request.message);
-    }
+  runtime.onMessage.addListener((action: TMessage["action"]) => {
+    callback(action);
+  });
+
+  addEventListener("message", (message: MessageEvent<TMessage["action"]>) => {
+    callback(message.data);
   });
 };

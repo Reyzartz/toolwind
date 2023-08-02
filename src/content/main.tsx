@@ -24,5 +24,3 @@ import { RecoilRoot } from "recoil";
     </React.StrictMode>
   );
 })();
-
-export {};

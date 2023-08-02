@@ -1,7 +1,4 @@
-import {
-  onMessageListener,
-  sendMessageToContentScript,
-} from "@toolwind/helpers/message";
+import { addMessageListener, sendMessage } from "@toolwind/helpers/message";
 import { ModifiedElement } from "@toolwind/types/common";
 import { useCallback, useEffect, useState } from "react";
 
@@ -9,9 +6,11 @@ const ModifiedElementsList = () => {
   const [elementsList, setElementList] = useState<ModifiedElement[]>([]);
 
   const fetchElementsList = async () => {
-    const response = await sendMessageToContentScript({
-      messageType: "FETCH_MODIFIED_ELEMENTS",
-      message: null,
+    const response = await sendMessage({
+      to: "content_script",
+      action: {
+        type: "FETCH_MODIFIED_ELEMENTS",
+      },
     });
 
     setElementList(Array.isArray(response) ? response : []);
@@ -20,36 +19,44 @@ const ModifiedElementsList = () => {
   useEffect(() => {
     fetchElementsList();
 
-    sendMessageToContentScript({
-      messageType: "SELECT_ELEMENT",
-      message: { xpath: null },
+    sendMessage({
+      to: "content_script",
+      action: { type: "SELECT_ELEMENT", data: { xpath: null } },
     });
 
-    onMessageListener("MODIFIED_ELEMENTS_UPDATED", (updatedItems) => {
-      setElementList(updatedItems);
+    addMessageListener((message) => {
+      if (message.type === "MODIFIED_ELEMENTS_UPDATED") {
+        setElementList(message.data);
+      }
     });
   }, []);
 
   const onMouseEnterHandler = useCallback((xpath: string | null = null) => {
-    sendMessageToContentScript({
-      messageType: "HOVER_ELEMENT",
-      message: { xpath },
+    sendMessage({
+      to: "content_script",
+      action: {
+        type: "HOVER_ELEMENT",
+        data: { xpath },
+      },
     });
   }, []);
 
   const onClickHandler = useCallback((xpath: string) => {
-    sendMessageToContentScript({
-      messageType: "SELECT_ELEMENT",
-      message: { xpath },
+    sendMessage({
+      to: "content_script",
+      action: { type: "SELECT_ELEMENT", data: { xpath } },
     });
 
     window.close();
   }, []);
 
   const onDeleteHandler = useCallback((item: ModifiedElement) => {
-    sendMessageToContentScript({
-      messageType: "DELETE_MODIFIED_ELEMENT",
-      message: item,
+    sendMessage({
+      to: "content_script",
+      action: {
+        type: "DELETE_MODIFIED_ELEMENT",
+        data: item,
+      },
     });
   }, []);
 

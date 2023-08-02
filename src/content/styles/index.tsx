@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useCSSClasses } from "../hooks/useCssClasses";
 import { activeCssClassState } from "../store";
-import defaultStyles from "../../../index.css?inline";
 
 export const ContentStyles = () => {
   const { cssClasses } = useCSSClasses();
@@ -32,7 +31,7 @@ export const ContentStyles = () => {
     );
   }, [addedCssClasses, activeCssClass]);
 
-  return <style>{defaultStyles + cssText}</style>;
+  return <style>{cssText}</style>;
 };
 
 export {};

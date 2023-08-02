@@ -1,7 +1,5 @@
 import { InspectedElementHighlighter } from "@toolwind/components/inspectedElementHighlighter";
-import { onMessageListener } from "@toolwind/helpers/message";
-import { getItemFromStorage } from "@toolwind/helpers/storage";
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useMessageEventListeners } from "./hooks/useMessageEventListeners";
 import { inspectedElementState, selectedElementState } from "./store";
@@ -15,8 +13,6 @@ const App = () => {
 
   const [selectedElement, setSelectedElement] =
     useRecoilState(selectedElementState);
-
-  const [extensionEnabled, setExtensionEnabled] = useState(false);
 
   const init = useCallback(() => {
     const mouseoverEventHandler = (e: MouseEvent) => {
@@ -67,32 +63,18 @@ const App = () => {
       );
     };
 
-    onMessageListener("UPDATE_EXTENSION_ACTIVE_STATE", ({ state }) => {
-      switch (state) {
-        case "enabled":
-          addEventListenerHandler();
-          setExtensionEnabled(true);
-          break;
-        case "disabled":
-          removeEventListenerHandler();
-          setExtensionEnabled(false);
-      }
-    });
+    addEventListenerHandler();
 
-    getItemFromStorage("toolwind_extension_state").then((res) => {
-      setExtensionEnabled(res === "enabled");
-
-      if (res === "enabled") {
-        addEventListenerHandler();
-      }
-    });
+    return () => removeEventListenerHandler();
   }, []);
 
   useEffect(() => {
-    init();
+    const unmount = init();
+
+    return unmount;
   }, []);
 
-  return extensionEnabled ? (
+  return (
     <>
       <InspectedElementHighlighter element={inspectedElement} />
 
@@ -100,8 +82,6 @@ const App = () => {
         <InspectedElementHighlighter element={selectedElement} selected />
       )}
     </>
-  ) : (
-    <></>
   );
 };
 

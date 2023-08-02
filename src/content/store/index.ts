@@ -1,5 +1,5 @@
 import { getClassNames, getClassObjects } from "@toolwind/helpers/cssClasses";
-import { sendMessageToPopup } from "@toolwind/helpers/message";
+import { sendMessage } from "@toolwind/helpers/message";
 import { getXPathFromElement } from "@toolwind/helpers/xpath";
 import { CSSClass, ModifiedElement } from "@toolwind/types/common";
 import { DefaultValue, atom, selector } from "recoil";
@@ -69,9 +69,12 @@ export const selectedElementState = selector<HTMLElement | null>({
 
         set(modifiedElementsState, updatedList);
 
-        sendMessageToPopup({
-          messageType: "MODIFIED_ELEMENTS_UPDATED",
-          message: updatedList,
+        sendMessage({
+          to: "service_worker",
+          action: {
+            type: "MODIFIED_ELEMENTS_UPDATED",
+            data: updatedList,
+          },
         });
       }
     }

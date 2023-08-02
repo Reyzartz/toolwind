@@ -1,36 +1,31 @@
 import { ModifiedElementsList } from "@toolwind/components/modifiedElementsList";
 import { SettingsPanel } from "@toolwind/components/settingsPanel";
 import { Toggle } from "@toolwind/components/toggle";
-import { sendMessageToContentScript } from "@toolwind/helpers/message";
+import { sendMessage } from "@toolwind/helpers/message";
 import {
   getItemFromStorage,
   setItemToStorage,
 } from "@toolwind/helpers/storage";
-import { ExtensionStateMessageAction } from "@toolwind/types/common";
 import { useCallback, useEffect, useState } from "react";
 
 function App() {
-  const [extensionState, setExtensionState] =
-    useState<ExtensionStateMessageAction["state"]>("disabled");
+  const [extensionState, setExtensionState] = useState(false);
 
   const [showSettingsPanel, setShowSettingPanel] = useState(false);
 
   const onToggleHandler = useCallback((value: boolean) => {
-    setExtensionState(value ? "enabled" : "disabled");
+    setExtensionState(value);
 
-    setItemToStorage(
-      "toolwind_extension_state",
-      value ? "enabled" : "disabled"
-    );
+    setItemToStorage("toolwind_enabled", value);
 
-    sendMessageToContentScript({
-      messageType: "UPDATE_EXTENSION_ACTIVE_STATE",
-      message: { state: value ? "enabled" : "disabled" },
+    sendMessage({
+      to: "content_script",
+      action: { type: "TOGGLE_TOOLWIND", data: value },
     });
   }, []);
 
   useEffect(() => {
-    getItemFromStorage("toolwind_extension_state").then((res) => {
+    getItemFromStorage("toolwind_enabled").then((res) => {
       setExtensionState(res);
     });
   }, []);
@@ -45,10 +40,7 @@ function App() {
           {!showSettingsPanel ? "Toolwind" : "Settings"}
         </span>
 
-        <Toggle
-          onToggle={onToggleHandler}
-          checked={extensionState === "enabled"}
-        />
+        <Toggle onToggle={onToggleHandler} checked={extensionState} />
 
         <div
           className="cursor-pointer border-0 border-l border-solid border-indigo-600 w-9 h-9 flex items-center justify-center hover:bg-indigo-800 active:bg-indigo-900 text-2xl text-slate-200"

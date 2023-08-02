@@ -1,15 +1,15 @@
-import { sendMessageToPopup } from "@toolwind/helpers/message";
+import { addMessageListener, sendMessage } from "@toolwind/helpers/message";
 import { getElementFromXPath } from "@toolwind/helpers/xpath";
-import { Message } from "postcss";
 import { useEffect } from "react";
 import { useRecoilTransaction_UNSTABLE, useSetRecoilState } from "recoil";
-import { Runtime, runtime } from "webextension-polyfill";
+import { runtime } from "webextension-polyfill";
 import {
   inspectedElementState,
   modifiedElementsState,
   selectedElementState,
 } from "../store";
 import { useTailwindIntellisense } from "./useTailwindIntellisense";
+import { TMessage } from "@toolwind/types/common";
 
 export const useMessageEventListeners = () => {
   const setSelectedElement = useSetRecoilState(selectedElementState);
@@ -17,34 +17,40 @@ export const useMessageEventListeners = () => {
 
   const onMessageHandler = useRecoilTransaction_UNSTABLE(
     ({ get, set }) =>
-      (
-        { message, messageType }: Message,
-        sendResponse: (response: any) => void
-      ) => {
+      (action: TMessage["action"]) => {
         console.log("Listening to Messages");
 
-        switch (messageType) {
+        switch (action.type) {
           case "FETCH_MODIFIED_ELEMENTS":
             const modifiedElements = get(modifiedElementsState);
 
-            sendResponse(modifiedElements);
+            sendMessage({
+              to: "service_worker",
+              action: {
+                type: "MODIFIED_ELEMENTS_UPDATED",
+                data: modifiedElements,
+              },
+            });
 
             break;
 
           case "DELETE_MODIFIED_ELEMENT":
-            const element = getElementFromXPath(message.xpath);
+            const element = getElementFromXPath(action.data.xpath);
             if (element === null) return;
 
-            element.className = message.originalClassNames.join(" ");
+            element.className = action.data.originalClassNames.join(" ");
 
             set(modifiedElementsState, (prev) => {
               const updatedList = prev.filter(
-                (item) => message.xpath !== item.xpath
+                (item) => action.data.xpath !== item.xpath
               );
 
-              sendMessageToPopup({
-                messageType: "MODIFIED_ELEMENTS_UPDATED",
-                message: updatedList,
+              sendMessage({
+                to: "service_worker",
+                action: {
+                  type: "MODIFIED_ELEMENTS_UPDATED",
+                  data: updatedList,
+                },
               });
 
               return updatedList;
@@ -53,10 +59,10 @@ export const useMessageEventListeners = () => {
             break;
 
           case "HOVER_ELEMENT":
-            if (message.xpath === null) {
+            if (action.data.xpath === null) {
               set(inspectedElementState, null);
             } else {
-              const element = getElementFromXPath(message.xpath);
+              const element = getElementFromXPath(action.data.xpath);
               if (element === null) return;
 
               element.scrollIntoView({
@@ -71,7 +77,7 @@ export const useMessageEventListeners = () => {
             break;
 
           case "UPDATE_CONFIG":
-            setConfig(message.config);
+            setConfig(action.data.config);
             break;
         }
       },
@@ -79,16 +85,12 @@ export const useMessageEventListeners = () => {
   );
 
   useEffect(() => {
-    const eventListenerCallback = (
-      message: Message,
-      _sender: Runtime.MessageSender,
-      sendResponse: () => void
-    ) => {
+    const eventListenerCallback = (message: TMessage["action"]) => {
       // selectors are currently not supported by useRecoilTransaction Yet
 
-      if (message.messageType === "SELECT_ELEMENT") {
+      if (message.type === "SELECT_ELEMENT") {
         const {
-          message: { xpath },
+          data: { xpath },
         } = message;
 
         if (xpath === null) {
@@ -101,11 +103,11 @@ export const useMessageEventListeners = () => {
           }
         }
       } else {
-        onMessageHandler(message, sendResponse);
+        onMessageHandler(message);
       }
     };
 
-    runtime.onMessage.addListener(eventListenerCallback);
+    addMessageListener(eventListenerCallback);
 
     return function removeEventListener() {
       runtime.onMessage.removeListener(eventListenerCallback);

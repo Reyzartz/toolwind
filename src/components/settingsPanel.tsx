@@ -1,6 +1,6 @@
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { lintGutter, linter } from "@codemirror/lint";
-import { sendMessageToContentScript } from "@toolwind/helpers/message";
+import { sendMessage } from "@toolwind/helpers/message";
 import {
   getItemFromStorage,
   setItemToStorage,
@@ -25,9 +25,12 @@ const SettingsPanel = () => {
     try {
       const config = JSON.parse(value);
 
-      sendMessageToContentScript({
-        messageType: "UPDATE_CONFIG",
-        message: { config },
+      sendMessage({
+        to: "content_script",
+        action: {
+          type: "UPDATE_CONFIG",
+          data: { config },
+        },
       });
 
       setItemToStorage("tw_config", config);

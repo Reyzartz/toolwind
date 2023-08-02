@@ -34,18 +34,68 @@ export interface ExtensionStateMessageAction {
   state: "enabled" | "disabled";
 }
 
-export type TMessageType =
-  | "UPDATE_EXTENSION_ACTIVE_STATE"
-  | "MODIFIED_ELEMENTS_UPDATED"
-  | "DELETE_MODIFIED_ELEMENT"
-  | "FETCH_MODIFIED_ELEMENTS"
-  | "HOVER_ELEMENT"
-  | "SELECT_ELEMENT"
-  | "UPDATE_CONFIG";
-
-export interface Message {
-  messageType: TMessageType;
-  message: any;
+export interface IToggleToolwindMessage {
+  to: "content_script";
+  action: {
+    type: "TOGGLE_TOOLWIND";
+    data: boolean;
+  };
 }
 
-export type TStorageItemKeys = "toolwind_extension_state" | "tw_config";
+export interface ISelectElementMessage {
+  to: "content_script";
+  action: {
+    type: "SELECT_ELEMENT";
+    data: { xpath: null | string };
+  };
+}
+
+export interface IHoverElementMessage {
+  to: "content_script";
+  action: {
+    type: "HOVER_ELEMENT";
+    data: { xpath: null | string };
+  };
+}
+
+export interface IModifiedElementUpdatedMessage {
+  to: "service_worker";
+  action: {
+    type: "MODIFIED_ELEMENTS_UPDATED";
+    data: ModifiedElement[];
+  };
+}
+
+export interface IDeleteModifiedElementMessage {
+  to: "content_script";
+  action: {
+    type: "DELETE_MODIFIED_ELEMENT";
+    data: ModifiedElement;
+  };
+}
+
+export interface IFetchModifiedElementMessage {
+  to: "content_script";
+  action: {
+    type: "FETCH_MODIFIED_ELEMENTS";
+  };
+}
+
+export interface IUpdateConfigMessage {
+  to: "content_script";
+  action: {
+    type: "UPDATE_CONFIG";
+    data: { config: Record<string, any> };
+  };
+}
+
+export type TMessage =
+  | IToggleToolwindMessage
+  | ISelectElementMessage
+  | IHoverElementMessage
+  | IModifiedElementUpdatedMessage
+  | IDeleteModifiedElementMessage
+  | IFetchModifiedElementMessage
+  | IUpdateConfigMessage;
+
+export type TStorageItemKeys = "toolwind_enabled" | "tw_config";
