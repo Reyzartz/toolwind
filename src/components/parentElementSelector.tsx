@@ -1,9 +1,9 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   inspectedElementState,
   selectedElementState,
-} from "../pages/content/store";
+} from "@toolwind/content/store";
 import { useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 export const ParentElementSelector = () => {
   const [selectedElement, setSelectedElement] =

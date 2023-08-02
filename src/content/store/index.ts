@@ -1,8 +1,8 @@
-import { atom, DefaultValue, selector } from "recoil";
-import { CSSClass, ModifiedElement } from "../../../types/common";
-import { getClassNames, getClassObjects } from "../../../helpers/cssClasses";
-import { sendMessageToPopup } from "../../../helpers/message";
-import { getXPathFromElement } from "../../../helpers/xpath";
+import { getClassNames, getClassObjects } from "@toolwind/helpers/cssClasses";
+import { sendMessageToPopup } from "@toolwind/helpers/message";
+import { getXPathFromElement } from "@toolwind/helpers/xpath";
+import { CSSClass, ModifiedElement } from "@toolwind/types/common";
+import { DefaultValue, atom, selector } from "recoil";
 
 export const defaultCssClassesState = atom<string[]>({
   key: "default-css-classes",

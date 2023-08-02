@@ -10,7 +10,6 @@ const manifest = defineManifest(async () => ({
   name: packageJson.displayName ?? packageJson.name,
   version: `${major}.${minor}.${patch}.${label}`,
   description: packageJson.description,
-  background: { service_worker: "src/pages/background/index.ts" },
   action: {
     default_popup: "index.html",
     default_icon: {
@@ -29,7 +28,7 @@ const manifest = defineManifest(async () => ({
   content_scripts: [
     {
       matches: ["http://*/*", "https://*/*", "<all_urls>"],
-      js: ["src/pages/content/main.tsx"],
+      js: ["src/content/main.tsx"],
     },
   ],
   web_accessible_resources: [

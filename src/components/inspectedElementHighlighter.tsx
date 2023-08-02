@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SelectedElementPopup } from "./selectedElementPopup";
 import { ClassNamesTooltip } from "./classNamesTooltip";
+import { SelectedElementPopup } from "./selectedElementPopup";
 
 interface ElementOverlayProps {
   element: HTMLElement | null;

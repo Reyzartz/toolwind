@@ -1,8 +1,8 @@
+import { inspectedElementState } from "@toolwind/content/store";
+import { getClassNames } from "@toolwind/helpers/cssClasses";
 import React, { useMemo, useState } from "react";
 import { usePopper } from "react-popper";
 import { useRecoilValue } from "recoil";
-import { inspectedElementState } from "../pages/content/store";
-import { getClassNames } from "../helpers/cssClasses";
 
 export interface IClassNamesTooltipProps {
   rect: DOMRect;

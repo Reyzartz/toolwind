@@ -1,5 +1,6 @@
-import react from "@vitejs/plugin-react";
 import { crx } from "@crxjs/vite-plugin";
+import react from "@vitejs/plugin-react";
+import path from "node:path";
 import { defineConfig } from "vite";
 import manifest from "./src/manifest";
 
@@ -13,4 +14,10 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      src: path.resolve(__dirname, "./src"),
+      "@toolwind": path.resolve(__dirname, "./src"),
+    },
+  },
 });

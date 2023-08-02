@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { useCSSClasses } from "../hooks/useCssClasses";
+import { CSSClass } from "@toolwind/types/common";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { useCSSClasses } from "../hooks/useCssClasses";
 import { activeCssClassState } from "../store";
-import { CSSClass } from "../../../types/common";
-import defaultStyles from "../../../../index.css?inline";
+import defaultStyles from "../../../index.css?inline";
 
 export const ContentStyles = () => {
   const { cssClasses } = useCSSClasses();

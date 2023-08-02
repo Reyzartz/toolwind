@@ -1,10 +1,13 @@
+import { ModifiedElementsList } from "@toolwind/components/modifiedElementsList";
+import { SettingsPanel } from "@toolwind/components/settingsPanel";
+import { Toggle } from "@toolwind/components/toggle";
+import { sendMessageToContentScript } from "@toolwind/helpers/message";
+import {
+  getItemFromStorage,
+  setItemToStorage,
+} from "@toolwind/helpers/storage";
+import { ExtensionStateMessageAction } from "@toolwind/types/common";
 import { useCallback, useEffect, useState } from "react";
-import { ExtensionStateMessageAction } from "../../types/common";
-import { Toggle } from "../../components/toggle";
-import { ModifiedElementsList } from "../../components/modifiedElementsList";
-import { SettingsPanel } from "../../components/settingsPanel";
-import { getItemFromStorage, setItemToStorage } from "../../helpers/storage";
-import { sendMessageToContentScript } from "../../helpers/message";
 
 function App() {
   const [extensionState, setExtensionState] =

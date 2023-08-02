@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { ModifiedElement } from "../types/common";
 import {
   onMessageListener,
   sendMessageToContentScript,
-} from "../helpers/message";
+} from "@toolwind/helpers/message";
+import { ModifiedElement } from "@toolwind/types/common";
+import { useCallback, useEffect, useState } from "react";
 
 const ModifiedElementsList = () => {
   const [elementsList, setElementList] = useState<ModifiedElement[]>([]);

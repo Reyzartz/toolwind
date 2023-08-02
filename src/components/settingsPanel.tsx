@@ -1,10 +1,13 @@
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { lintGutter, linter } from "@codemirror/lint";
+import { sendMessageToContentScript } from "@toolwind/helpers/message";
+import {
+  getItemFromStorage,
+  setItemToStorage,
+} from "@toolwind/helpers/storage";
 import { githubDark } from "@uiw/codemirror-theme-github";
-import CodeMirror from "@uiw/react-codemirror";
+import ReactCodeMirror from "@uiw/react-codemirror";
 import { useCallback, useEffect, useState } from "react";
-import { sendMessageToContentScript } from "../helpers/message";
-import { getItemFromStorage, setItemToStorage } from "../helpers/storage";
 
 const DEFAULT_CONFIG = {};
 
@@ -38,7 +41,7 @@ const SettingsPanel = () => {
       </h3>
 
       {defaultValue !== undefined && (
-        <CodeMirror
+        <ReactCodeMirror
           value={defaultValue}
           height="364px"
           style={{ fontSize: "14px" }}

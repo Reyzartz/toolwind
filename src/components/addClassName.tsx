@@ -1,5 +1,5 @@
+import { useCSSClasses } from "@toolwind/content/hooks/useCssClasses";
 import { useCallback, useEffect } from "react";
-import { useCSSClasses } from "../pages/content/hooks/useCssClasses";
 import { ClassNameInput } from "./classNameInput";
 
 const AddClassName = () => {

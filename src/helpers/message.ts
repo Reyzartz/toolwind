@@ -1,6 +1,6 @@
 import { runtime, tabs } from "webextension-polyfill";
-import { Message } from "../types/common";
 import { getActiveTab } from "./tabs";
+import { Message } from "@toolwind/types/common";
 
 export const sendMessageToPopup = async ({ messageType, message }: Message) => {
   let response;

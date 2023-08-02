@@ -1,7 +1,7 @@
-import { MouseEventHandler, useCallback, useState } from "react";
-import { CSSClass } from "../types/common";
+import { useCSSClasses } from "@toolwind/content/hooks/useCssClasses";
+import { CSSClass } from "@toolwind/types/common";
+import { MouseEventHandler, useCallback } from "react";
 import { ClassNameInput } from "./classNameInput";
-import { useCSSClasses } from "../pages/content/hooks/useCssClasses";
 
 interface ClassNameTagProps {
   cssClass: CSSClass;

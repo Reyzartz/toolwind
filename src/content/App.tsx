@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { InspectedElementHighlighter } from "@toolwind/components/inspectedElementHighlighter";
+import { onMessageListener } from "@toolwind/helpers/message";
+import { getItemFromStorage } from "@toolwind/helpers/storage";
+import { useState, useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { InspectedElementHighlighter } from "../../components/inspectedElementHighlighter";
-import { onMessageListener } from "../../helpers/message";
-import { getItemFromStorage } from "../../helpers/storage";
 import { useMessageEventListeners } from "./hooks/useMessageEventListeners";
 import { inspectedElementState, selectedElementState } from "./store";
 

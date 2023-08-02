@@ -1,4 +1,11 @@
 import { Combobox } from "@headlessui/react";
+import { useTailwindIntellisense } from "@toolwind/content/hooks/useTailwindIntellisense";
+import { activeCssClassState } from "@toolwind/content/store";
+import {
+  getCssClassObjectFromClassName,
+  getCssClassPropertiesFromCssText,
+} from "@toolwind/helpers/cssClasses";
+import { CSSClassObject, CSSProperty } from "@toolwind/types/common";
 import {
   ChangeEvent,
   Fragment,
@@ -9,13 +16,6 @@ import {
   useState,
 } from "react";
 import { useRecoilState } from "recoil";
-import { CSSClassObject, CSSProperty } from "../types/common";
-import { activeCssClassState } from "../pages/content/store";
-import {
-  getCssClassObjectFromClassName,
-  getCssClassPropertiesFromCssText,
-} from "../helpers/cssClasses";
-import { useTailwindIntellisense } from "../pages/content/hooks/useTailwindIntellisense";
 
 interface CssPropertiesDisplayProps {
   option: CSSClassObject;

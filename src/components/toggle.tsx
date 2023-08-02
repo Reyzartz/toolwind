@@ -1,5 +1,5 @@
-import { useCallback } from "react";
 import { Switch } from "@headlessui/react";
+import { useCallback } from "react";
 
 interface ToggleProps {
   checked?: boolean;

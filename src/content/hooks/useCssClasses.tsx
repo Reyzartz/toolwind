@@ -1,3 +1,5 @@
+import { getCssClassObjectFromClassName } from "@toolwind/helpers/cssClasses";
+import { CSSClass } from "@toolwind/types/common";
 import { useCallback, useLayoutEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -6,8 +8,6 @@ import {
   isAddingClassState,
   selectedElementState,
 } from "../store";
-import { CSSClass } from "../../../types/common";
-import { getCssClassObjectFromClassName } from "../../../helpers/cssClasses";
 import { useTailwindIntellisense } from "./useTailwindIntellisense";
 
 export const useCSSClasses = () => {

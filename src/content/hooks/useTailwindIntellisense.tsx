@@ -1,9 +1,8 @@
+import { isCustomClass } from "@toolwind/helpers/cssClasses";
+import { getItemFromStorage } from "@toolwind/helpers/storage";
 import { useCallback, useEffect, useState } from "react";
 // @ts-expect-error
 import AutoComplete from "tailwindcss-autocomplete";
-import { isCustomClass } from "../../../helpers/cssClasses";
-import { getItemFromStorage } from "../../../helpers/storage";
-
 export let autocomplete: AutoComplete;
 
 export const useTailwindIntellisense = () => {

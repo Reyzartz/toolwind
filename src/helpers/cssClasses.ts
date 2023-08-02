@@ -1,5 +1,5 @@
-import { CSSClass } from "../types/common";
-import { autocomplete } from "../pages/content/hooks/useTailwindIntellisense";
+import { autocomplete } from "@toolwind/content/hooks/useTailwindIntellisense";
+import { CSSClass } from "@toolwind/types/common";
 
 export function getClassNames(el: HTMLElement | null) {
   if (

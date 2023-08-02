@@ -1,15 +1,15 @@
+import { sendMessageToPopup } from "@toolwind/helpers/message";
+import { getElementFromXPath } from "@toolwind/helpers/xpath";
+import { Message } from "postcss";
 import { useEffect } from "react";
-import { useSetRecoilState, useRecoilTransaction_UNSTABLE } from "recoil";
+import { useRecoilTransaction_UNSTABLE, useSetRecoilState } from "recoil";
 import { Runtime, runtime } from "webextension-polyfill";
-import { Message } from "../../../types/common";
 import {
-  selectedElementState,
-  modifiedElementsState,
   inspectedElementState,
+  modifiedElementsState,
+  selectedElementState,
 } from "../store";
 import { useTailwindIntellisense } from "./useTailwindIntellisense";
-import { sendMessageToPopup } from "../../../helpers/message";
-import { getElementFromXPath } from "../../../helpers/xpath";
 
 export const useMessageEventListeners = () => {
   const setSelectedElement = useSetRecoilState(selectedElementState);

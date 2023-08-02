@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { usePopper } from "react-popper";
-import { useSetRecoilState } from "recoil";
+import { useCSSClasses } from "@toolwind/content/hooks/useCssClasses";
 import {
   inspectedElementState,
   selectedElementState,
-} from "../pages/content/store";
-import { useCSSClasses } from "../pages/content/hooks/useCssClasses";
-import { ParentElementSelector } from "./parentElementSelector";
-import { ClassNameTag } from "./classNameTag";
+} from "@toolwind/content/store";
+import React, { useState } from "react";
+import { usePopper } from "react-popper";
+import { useSetRecoilState } from "recoil";
 import { AddClassName } from "./addClassName";
+import { ClassNameTag } from "./classNameTag";
+import { ParentElementSelector } from "./parentElementSelector";
 
 export interface ISelectedElementPopupProps {
   rect: DOMRect;

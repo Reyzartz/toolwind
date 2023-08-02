@@ -1,5 +1,5 @@
+import { TStorageItemKeys } from "@toolwind/types/common";
 import { storage } from "webextension-polyfill";
-import { TStorageItemKeys } from "../types/common";
 import { getActiveTab } from "./tabs";
 
 export const getItemFromStorage = async (
