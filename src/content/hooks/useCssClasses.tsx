@@ -20,14 +20,6 @@ export const useCSSClasses = () => {
 
   const { getCssText } = useTailwindIntellisense();
 
-  useLayoutEffect(() => {
-    setClassNameToElement();
-  }, [activeCssClass, cssClasses]);
-
-  const setCssClassesHandler = useCallback((updatedCssClasses: CSSClass[]) => {
-    setCssClasses(updatedCssClasses);
-  }, []);
-
   const setClassNameToElement = useCallback(() => {
     if (selectedElement === null) return;
 
@@ -41,6 +33,17 @@ export const useCSSClasses = () => {
 
     selectedElement.className = classNames.join(" ");
   }, [cssClasses, activeCssClass, selectedElement]);
+
+  useLayoutEffect(() => {
+    setClassNameToElement();
+  }, [activeCssClass, cssClasses, setClassNameToElement]);
+
+  const setCssClassesHandler = useCallback(
+    (updatedCssClasses: CSSClass[]) => {
+      setCssClasses(updatedCssClasses);
+    },
+    [setCssClasses]
+  );
 
   const removeCssClass = useCallback(
     (id: string) => {

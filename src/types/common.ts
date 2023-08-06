@@ -11,12 +11,7 @@ export interface CSSClass {
   };
 }
 
-export interface CSSProperty {
-  key: string;
-  value: string;
-}
-
-export interface CSSClassObject {
+export interface CSSClassSuggestionItem {
   name: string;
   color?: string;
   isVariant?: boolean;

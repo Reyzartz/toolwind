@@ -1,7 +1,6 @@
 import { addMessageListener } from "@toolwind/helpers/message";
 import { renderReactComponent } from "@toolwind/helpers/renderReactComponent";
 import { getItemFromStorage } from "@toolwind/helpers/storage";
-import { InspectElementApp } from "./inspectElementApp";
 import { App } from "./App";
 
 let appDestroyer: () => void;

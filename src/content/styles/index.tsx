@@ -1,37 +1,65 @@
 import { CSSClass } from "@toolwind/types/common";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useCSSClasses } from "../hooks/useCssClasses";
 import { activeCssClassState } from "../store";
 
-export const ContentStyles = () => {
+const TOOLWIND_STYLE_ELEMENT_ID = "toolwind-styles";
+
+export const ContentStyles = memo(() => {
   const { cssClasses } = useCSSClasses();
   const activeCssClass = useRecoilValue(activeCssClassState);
-  const [addedCssClasses, serAddedCssClasses] = useState<CSSClass[]>([]);
-  const [cssText, setCssText] = useState("");
+  const [addedCssClasses, setAddedCssClasses] = useState<CSSClass[]>([]);
 
   useEffect(() => {
-    serAddedCssClasses((prev) => [
+    let updatedAddedCssClasses: CSSClass[] = [
       ...new Map(
-        prev
+        addedCssClasses
           .concat(cssClasses)
           .filter((cssClass) => cssClass.cssText !== null)
           .map((cssClass) => [cssClass.className, cssClass])
       ).values(),
-    ]);
-  }, [cssClasses]);
+    ];
 
-  useEffect(() => {
-    setCssText(
-      [...addedCssClasses, activeCssClass].reduce((cssText, cssClass) => {
+    setAddedCssClasses(updatedAddedCssClasses);
+
+    const cssText = [...updatedAddedCssClasses, activeCssClass].reduce(
+      (cssText, cssClass) => {
         return typeof cssClass?.cssText === "string"
           ? cssText + cssClass?.cssText
           : cssText;
-      }, "")
+      },
+      ""
     );
-  }, [addedCssClasses, activeCssClass]);
 
-  return <style>{cssText}</style>;
-};
+    /**
+     * Attaching newly added classes to the document
+     */
 
-export {};
+    let toolwindStyleElement: HTMLStyleElement | null = document.querySelector(
+      `#${TOOLWIND_STYLE_ELEMENT_ID}`
+    );
+
+    if (toolwindStyleElement) {
+      toolwindStyleElement.innerText = cssText;
+    } else {
+      const toolwindStyleElement = document.createElement("style");
+      toolwindStyleElement.id = TOOLWIND_STYLE_ELEMENT_ID;
+
+      toolwindStyleElement.innerText = cssText;
+
+      document.head.append(toolwindStyleElement);
+    }
+
+    return;
+  }, [cssClasses, activeCssClass]);
+
+  useEffect(
+    // removing style when the app is removed
+    () => () =>
+      document.querySelector(`#${TOOLWIND_STYLE_ELEMENT_ID}`)?.remove(),
+    []
+  );
+
+  return <div />;
+});

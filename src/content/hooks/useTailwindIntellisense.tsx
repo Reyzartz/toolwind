@@ -1,5 +1,6 @@
 import { isCustomClass } from "@toolwind/helpers/cssClasses";
 import { getItemFromStorage } from "@toolwind/helpers/storage";
+import { CSSClassSuggestionItem } from "@toolwind/types/common";
 import { useCallback, useEffect, useState } from "react";
 // @ts-expect-error
 import AutoComplete from "tailwindcss-autocomplete";
@@ -16,24 +17,27 @@ export const useTailwindIntellisense = () => {
     }
   }, []);
 
-  const getSuggestionList = useCallback(async (className: string = "") => {
-    if (isCustomClass(className)) return [];
+  const getSuggestionList = useCallback(
+    async (className: string = ""): Promise<CSSClassSuggestionItem[]> => {
+      if (isCustomClass(className)) return [];
 
-    const results = await autocomplete.getSuggestionList(className);
+      const results = await autocomplete.getSuggestionList(className);
 
-    // @ts-ignore
-    return results.slice(0, 50).map((item) => {
-      return {
-        name: item.label as string,
-        color:
-          typeof item.documentation === "string"
-            ? (item.documentation as string)
-            : undefined,
-        isVariant: item.data._type === "variant",
-        variants: item.data?.variants ?? [],
-      };
-    });
-  }, []);
+      // @ts-ignore
+      return results.slice(0, 50).map((item) => {
+        return {
+          name: item.label as string,
+          color:
+            typeof item.documentation === "string"
+              ? (item.documentation as string)
+              : undefined,
+          isVariant: item.data._type === "variant",
+          variants: item.data?.variants ?? [],
+        };
+      });
+    },
+    []
+  );
 
   const getCssText = useCallback(async (className: string): Promise<string> => {
     const result = await autocomplete.getClassCssText(className);

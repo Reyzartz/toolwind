@@ -10,8 +10,6 @@ export const sendMessage = async ({ to, action }: TMessage): Promise<void> => {
       ? "service_worker"
       : "content_script";
 
-  console.log(`${from}-${to}`);
-
   switch (`${from}-${to}`) {
     case "service_worker-content_script":
       try {

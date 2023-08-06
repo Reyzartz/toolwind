@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useMessageEventListeners } from "./hooks/useMessageEventListeners";
 import { inspectedElementState, selectedElementState } from "./store";
+import { ContentStyles } from "./styles";
 
 const App = () => {
   const [inspectedElement, setInspectedElement] = useRecoilState(
@@ -20,8 +21,7 @@ const App = () => {
 
       if (
         e.target !== null &&
-        !(e.target as HTMLElement).matches("toolwind-root *") &&
-        !(e.target as HTMLElement).matches("toolwind-root *,svg, svg *")
+        !(e.target as HTMLElement).matches("#toolwind,svg, svg *")
       ) {
         setInspectedElement(e.target as HTMLElement);
       }
@@ -36,7 +36,7 @@ const App = () => {
     const clickEventListener = (e: MouseEvent) => {
       if (
         e.target !== null &&
-        !(e.target as HTMLElement).matches("toolwind-root *,svg, svg *")
+        !(e.target as HTMLElement).matches("#toolwind,svg, svg *")
       ) {
         e.stopPropagation();
         e.preventDefault();
@@ -76,6 +76,8 @@ const App = () => {
 
   return (
     <>
+      <ContentStyles />
+
       <InspectedElementHighlighter element={inspectedElement} />
 
       {selectedElement !== null && (
