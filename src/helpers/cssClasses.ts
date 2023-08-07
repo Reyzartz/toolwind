@@ -1,5 +1,5 @@
 import { autocomplete } from "@toolwind/content/hooks/useTailwindIntellisense";
-import { CSSClass, CSSClassSuggestionItem } from "@toolwind/types/common";
+import { type CSSClass, type CSSClassSuggestionItem } from "@toolwind/types/common";
 
 export function getClassNames(el: HTMLElement | null) {
   if (
@@ -76,5 +76,5 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 export const getClassNameFromCSSClassSuggestionItem = (
   item: CSSClassSuggestionItem
 ) => {
-  return [...item!.variants, item!.name].join(":");
+  return [...item.variants, item.name].join(":");
 };

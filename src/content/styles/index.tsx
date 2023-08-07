@@ -1,8 +1,9 @@
-import { CSSClass } from "@toolwind/types/common";
+import { type CSSClass } from "@toolwind/types/common";
 import { memo, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useCSSClasses } from "../hooks/useCssClasses";
 import { activeCssClassState } from "../store";
+import { useUnmount } from "react-use";
 
 const TOOLWIND_STYLE_ELEMENT_ID = "toolwind-styles";
 
@@ -12,18 +13,18 @@ export const ContentStyles = memo(() => {
   const [addedCssClasses, setAddedCssClasses] = useState<CSSClass[]>([]);
 
   useEffect(() => {
-    let updatedAddedCssClasses: CSSClass[] = [
+    setAddedCssClasses((prev) => [
       ...new Map(
-        addedCssClasses
+        prev
           .concat(cssClasses)
           .filter((cssClass) => cssClass.cssText !== null)
           .map((cssClass) => [cssClass.className, cssClass])
       ).values(),
-    ];
+    ]);
+  }, [cssClasses]);
 
-    setAddedCssClasses(updatedAddedCssClasses);
-
-    const cssText = [...updatedAddedCssClasses, activeCssClass].reduce(
+  useEffect(() => {
+    const cssText = [...addedCssClasses, activeCssClass].reduce(
       (cssText, cssClass) => {
         return typeof cssClass?.cssText === "string"
           ? cssText + cssClass?.cssText
@@ -36,11 +37,10 @@ export const ContentStyles = memo(() => {
      * Attaching newly added classes to the document
      */
 
-    let toolwindStyleElement: HTMLStyleElement | null = document.querySelector(
-      `#${TOOLWIND_STYLE_ELEMENT_ID}`
-    );
+    const toolwindStyleElement: HTMLStyleElement | null =
+      document.querySelector(`#${TOOLWIND_STYLE_ELEMENT_ID}`);
 
-    if (toolwindStyleElement) {
+    if (toolwindStyleElement != null) {
       toolwindStyleElement.innerText = cssText;
     } else {
       const toolwindStyleElement = document.createElement("style");
@@ -50,16 +50,14 @@ export const ContentStyles = memo(() => {
 
       document.head.append(toolwindStyleElement);
     }
+  }, [cssClasses, activeCssClass, addedCssClasses]);
 
-    return;
-  }, [cssClasses, activeCssClass]);
-
-  useEffect(
+  useUnmount(
     // removing style when the app is removed
-    () => () =>
-      document.querySelector(`#${TOOLWIND_STYLE_ELEMENT_ID}`)?.remove(),
-    []
+    () => document.querySelector(`#${TOOLWIND_STYLE_ELEMENT_ID}`)?.remove()
   );
 
   return <div />;
 });
+
+ContentStyles.displayName = "ContentStyles";

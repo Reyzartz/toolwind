@@ -9,7 +9,7 @@ import {
   selectedElementState,
 } from "../store";
 import { useTailwindIntellisense } from "./useTailwindIntellisense";
-import { TMessage } from "@toolwind/types/common";
+import { type TMessage } from "@toolwind/types/common";
 
 export const useMessageEventListeners = () => {
   const setSelectedElement = useSetRecoilState(selectedElementState);
@@ -21,10 +21,10 @@ export const useMessageEventListeners = () => {
         console.log("Listening to Messages");
 
         switch (action.type) {
-          case "FETCH_MODIFIED_ELEMENTS":
+          case "FETCH_MODIFIED_ELEMENTS": {
             const modifiedElements = get(modifiedElementsState);
 
-            sendMessage({
+            void sendMessage({
               to: "service_worker",
               action: {
                 type: "MODIFIED_ELEMENTS_UPDATED",
@@ -33,8 +33,9 @@ export const useMessageEventListeners = () => {
             });
 
             break;
+          }
 
-          case "DELETE_MODIFIED_ELEMENT":
+          case "DELETE_MODIFIED_ELEMENT": {
             const element = getElementFromXPath(action.data.xpath);
             if (element === null) return;
 
@@ -45,7 +46,7 @@ export const useMessageEventListeners = () => {
                 (item) => action.data.xpath !== item.xpath
               );
 
-              sendMessage({
+              void sendMessage({
                 to: "service_worker",
                 action: {
                   type: "MODIFIED_ELEMENTS_UPDATED",
@@ -57,6 +58,7 @@ export const useMessageEventListeners = () => {
             });
 
             break;
+          }
 
           case "HOVER_ELEMENT":
             if (action.data.xpath === null) {
@@ -107,10 +109,10 @@ export const useMessageEventListeners = () => {
       }
     };
 
-    addMessageListener(eventListenerCallback);
+    void addMessageListener(eventListenerCallback);
 
     return function removeEventListener() {
       runtime.onMessage.removeListener(eventListenerCallback);
     };
-  }, []);
+  }, [onMessageHandler, setSelectedElement]);
 };

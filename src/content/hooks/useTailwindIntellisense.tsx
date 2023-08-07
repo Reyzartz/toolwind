@@ -1,30 +1,30 @@
 import { isCustomClass } from "@toolwind/helpers/cssClasses";
 import { getItemFromStorage } from "@toolwind/helpers/storage";
-import { CSSClassSuggestionItem } from "@toolwind/types/common";
-import { useCallback, useEffect, useState } from "react";
-// @ts-expect-error
+import { type CSSClassSuggestionItem } from "@toolwind/types/common";
+import { useCallback, useState } from "react";
+import { useMount } from "react-use";
+// @ts-expect-error it is broken Gomen'nasai
 import AutoComplete from "tailwindcss-autocomplete";
 export let autocomplete: AutoComplete;
 
 export const useTailwindIntellisense = () => {
   const [config, setConfig] = useState({});
 
-  useEffect(() => {
+  useMount(() => {
     if (autocomplete === undefined) {
-      getItemFromStorage("tw_config").then((config) => {
+      void getItemFromStorage("tw_config").then((config) => {
         autocomplete = new AutoComplete(config ?? {});
       });
     }
-  }, []);
+  });
 
   const getSuggestionList = useCallback(
-    async (className: string = ""): Promise<CSSClassSuggestionItem[]> => {
+    async (className = ""): Promise<CSSClassSuggestionItem[]> => {
       if (isCustomClass(className)) return [];
 
       const results = await autocomplete.getSuggestionList(className);
 
-      // @ts-ignore
-      return results.slice(0, 50).map((item) => {
+      return results.slice(0, 50).map((item: any) => {
         return {
           name: item.label as string,
           color:
@@ -51,7 +51,7 @@ export const useTailwindIntellisense = () => {
     return result;
   }, []);
 
-  const setConfigHandler = useCallback((config: Object) => {
+  const setConfigHandler = useCallback((config: Record<string, any>) => {
     setConfig(config);
 
     autocomplete = new AutoComplete(config);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ClassNamesTooltip } from "./classNamesTooltip";
 import { SelectedElementPopup } from "./selectedElementPopup";
 
@@ -7,54 +7,51 @@ interface ElementOverlayProps {
   selected?: boolean;
 }
 
-const InspectedElementHighlighter = ({
-  element,
-  selected = false,
-}: ElementOverlayProps): JSX.Element | null => {
-  const [rect, setRect] = useState(element?.getClientRects()[0]);
-  const intervalId = useRef<number | null>(null);
+const InspectedElementHighlighter = React.memo(
+  ({ element, selected = false }: ElementOverlayProps): JSX.Element | null => {
+    const [rect, setRect] = useState(element?.getClientRects()[0]);
+    const intervalId = useRef<number | null>(null);
 
-  const setRectHandler = useCallback(() => {}, [element]);
+    useEffect(() => {
+      if (selected) {
+        if (typeof intervalId.current === "number") {
+          clearInterval(intervalId.current);
+        }
 
-  useEffect(() => {
-    if (selected) {
-      if (typeof intervalId.current === "number") {
-        clearInterval(intervalId.current);
+        intervalId.current = setInterval(() => {
+          setRect((prev) => {
+            const updatedRect = element?.getClientRects()[0];
+            return prev?.x === updatedRect?.x &&
+              prev?.y === updatedRect?.y &&
+              prev?.height === updatedRect?.height &&
+              prev?.width === updatedRect?.width
+              ? prev
+              : updatedRect;
+          });
+        }, 100);
+      } else {
+        setRect(element?.getClientRects()[0]);
       }
 
-      intervalId.current = setInterval(() => {
-        setRect((prev) => {
-          const updatedRect = element?.getClientRects()[0];
-          return prev?.x === updatedRect?.x &&
-            prev?.y === updatedRect?.y &&
-            prev?.height === updatedRect?.height &&
-            prev?.width === updatedRect?.width
-            ? prev
-            : updatedRect;
-        });
+      return () => {
+        intervalId.current !== null && clearInterval(intervalId.current);
+      };
+    }, [element, selected]);
 
-        setRectHandler();
-      }, 100);
-    } else {
-      setRect(element?.getClientRects()[0]);
-    }
+    if (element === null || rect === undefined) return null;
 
-    return () => {
-      intervalId.current !== null && clearInterval(intervalId.current);
-    };
-  }, [element]);
+    return (
+      <>
+        {selected ? (
+          <SelectedElementPopup rect={rect} />
+        ) : (
+          <ClassNamesTooltip rect={rect} />
+        )}
+      </>
+    );
+  }
+);
 
-  if (element === null || rect === undefined) return null;
-
-  return (
-    <>
-      {selected ? (
-        <SelectedElementPopup rect={rect} />
-      ) : (
-        <ClassNamesTooltip rect={rect} />
-      )}
-    </>
-  );
-};
+InspectedElementHighlighter.displayName = "InspectedElementHighlighter";
 
 export { InspectedElementHighlighter };

@@ -1,6 +1,6 @@
-import { Tabs, runtime, tabs } from "webextension-polyfill";
+import { type Tabs, runtime, tabs } from "webextension-polyfill";
 import { getActiveTab } from "./tabs";
-import { TMessage } from "@toolwind/types/common";
+import { type TMessage } from "@toolwind/types/common";
 
 export const sendMessage = async ({ to, action }: TMessage): Promise<void> => {
   let activeTab: Tabs.Tab;

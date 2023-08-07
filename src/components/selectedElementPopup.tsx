@@ -67,13 +67,17 @@ export const SelectedElementPopup = React.memo(
         >
           <div
             className="bg-indigo-900 shadow-md p-3 rounded-lg text-sm text-slate-200 lowercase"
-            onMouseEnter={() => setInspectedElement(null)}
+            onMouseEnter={() => {
+              setInspectedElement(null);
+            }}
           >
             <div className="flex justify-between w-full items-center mb-2">
               <ParentElementSelector />
 
               <button
-                onClick={() => setSelectedElement(null)}
+                onClick={() => {
+                  setSelectedElement(null);
+                }}
                 className="pr-1.5 font-bold leading-1 bg-transparent border-none h-full text-slate-400 hover:text-slate-500 text-2xl"
               >
                 ⤫
@@ -100,3 +104,5 @@ export const SelectedElementPopup = React.memo(
     );
   }
 );
+
+SelectedElementPopup.displayName = "SelectedElementPopup";

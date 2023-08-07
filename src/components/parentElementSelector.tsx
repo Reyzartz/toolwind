@@ -36,9 +36,9 @@ export const ParentElementSelector = () => {
         <>
           <button
             className="text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
-            onMouseEnter={() => setInspectedElement(grandParentElement)}
-            onMouseLeave={() => setInspectedElement(null)}
-            onClick={(e) => selectedElementHandler(e, grandParentElement)}
+            onMouseEnter={() => { setInspectedElement(grandParentElement); }}
+            onMouseLeave={() => { setInspectedElement(null); }}
+            onClick={(e) => { selectedElementHandler(e, grandParentElement); }}
           >
             {grandParentElement.nodeName}
           </button>
@@ -51,9 +51,9 @@ export const ParentElementSelector = () => {
         <>
           <button
             className="text-indigo-200 font-semibold bg-indigo-700 rounded-md px-2 py-0.5 text-xs hover:bg-indigo-600"
-            onMouseEnter={() => setInspectedElement(parentElement)}
-            onMouseLeave={() => setInspectedElement(null)}
-            onClick={(e) => selectedElementHandler(e, parentElement)}
+            onMouseEnter={() => { setInspectedElement(parentElement); }}
+            onMouseLeave={() => { setInspectedElement(null); }}
+            onClick={(e) => { selectedElementHandler(e, parentElement); }}
           >
             {parentElement?.nodeName}
           </button>

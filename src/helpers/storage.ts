@@ -1,4 +1,4 @@
-import { TStorageItemKeys } from "@toolwind/types/common";
+import { type TStorageItemKeys } from "@toolwind/types/common";
 import { storage } from "webextension-polyfill";
 import { getActiveTab } from "./tabs";
 

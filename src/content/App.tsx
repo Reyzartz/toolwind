@@ -65,14 +65,18 @@ const App = () => {
 
     addEventListenerHandler();
 
-    return () => removeEventListenerHandler();
-  }, []);
+    return () => {
+      removeEventListenerHandler();
+    };
+  }, [setInspectedElement, setSelectedElement]);
 
   useEffect(() => {
     const unmount = init();
 
+    console.log("added event listeners");
+
     return unmount;
-  }, []);
+  }, [init]);
 
   return (
     <>

@@ -16,16 +16,16 @@ function App() {
   const onToggleHandler = useCallback((value: boolean) => {
     setExtensionState(value);
 
-    setItemToStorage("toolwind_enabled", value);
+    void setItemToStorage("toolwind_enabled", value);
 
-    sendMessage({
+    void sendMessage({
       to: "content_script",
       action: { type: "TOGGLE_TOOLWIND", data: value },
     });
   }, []);
 
   useEffect(() => {
-    getItemFromStorage("toolwind_enabled").then((res) => {
+    void getItemFromStorage("toolwind_enabled").then((res) => {
       setExtensionState(res);
     });
   }, []);
@@ -44,7 +44,9 @@ function App() {
 
         <div
           className="cursor-pointer border-0 border-l border-solid border-indigo-600 w-9 h-9 flex items-center justify-center hover:bg-indigo-800 active:bg-indigo-900 text-2xl text-slate-200"
-          onClick={() => setShowSettingPanel(!showSettingsPanel)}
+          onClick={() => {
+            setShowSettingPanel(!showSettingsPanel);
+          }}
         >
           {!showSettingsPanel ? (
             <img src="/icons/settings.svg" width="20" height="20" />

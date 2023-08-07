@@ -1,7 +1,7 @@
 import { getClassNames, getClassObjects } from "@toolwind/helpers/cssClasses";
 import { sendMessage } from "@toolwind/helpers/message";
 import { getXPathFromElement } from "@toolwind/helpers/xpath";
-import { CSSClass, ModifiedElement } from "@toolwind/types/common";
+import { type CSSClass, type ModifiedElement } from "@toolwind/types/common";
 import { DefaultValue, atom, selector } from "recoil";
 
 export const defaultCssClassesState = atom<string[]>({
@@ -69,7 +69,7 @@ export const selectedElementState = selector<HTMLElement | null>({
 
         set(modifiedElementsState, updatedList);
 
-        sendMessage({
+        void sendMessage({
           to: "service_worker",
           action: {
             type: "MODIFIED_ELEMENTS_UPDATED",

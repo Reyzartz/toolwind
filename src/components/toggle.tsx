@@ -9,7 +9,7 @@ interface ToggleProps {
 function Toggle({ checked = false, onToggle }: ToggleProps) {
   const onToggleHandler = useCallback((value: boolean) => {
     onToggle(value);
-  }, []);
+  }, [onToggle]);
 
   return (
     <Switch

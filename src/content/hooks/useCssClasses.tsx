@@ -1,5 +1,5 @@
 import { getCssClassObjectFromClassName } from "@toolwind/helpers/cssClasses";
-import { CSSClass } from "@toolwind/types/common";
+import { type CSSClass } from "@toolwind/types/common";
 import { useCallback, useLayoutEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -53,7 +53,7 @@ export const useCSSClasses = () => {
 
       setCssClassesHandler(updatedClassObjects);
     },
-    [cssClasses]
+    [cssClasses, setCssClassesHandler]
   );
 
   const setIsAddingHandler = useCallback(
@@ -71,11 +71,11 @@ export const useCSSClasses = () => {
         setCssClassesHandler(updatedClassObjects);
       }
     },
-    [cssClasses]
+    [cssClasses, setCssClassesHandler, setIsAdding]
   );
 
   const updateCssClass = useCallback(
-    async (id: String, updatedCssClass: Partial<CSSClass>) => {
+    async (id: string, updatedCssClass: Partial<CSSClass>) => {
       if (updatedCssClass.state === "editing") {
         setIsAdding(false);
       }
@@ -85,7 +85,7 @@ export const useCSSClasses = () => {
           if (id !== cssClass.id) {
             return updatedCssClass.state === "editing" &&
               cssClass.state === "editing"
-              ? ({ ...cssClass, state: "active" } as CSSClass)
+              ? ({ ...cssClass, state: "active" } satisfies CSSClass)
               : cssClass;
           }
 
@@ -111,7 +111,7 @@ export const useCSSClasses = () => {
 
       setCssClassesHandler(updatedClassObjects);
     },
-    [cssClasses]
+    [cssClasses, getCssText, setCssClassesHandler, setIsAdding]
   );
 
   const addCssClass = useCallback(
@@ -122,7 +122,7 @@ export const useCSSClasses = () => {
 
       setCssClassesHandler([...cssClasses, newClassObject]);
     },
-    [cssClasses]
+    [cssClasses, getCssText, setCssClassesHandler]
   );
 
   return {

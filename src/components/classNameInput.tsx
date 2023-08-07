@@ -5,10 +5,11 @@ import {
   getCssClassObjectFromClassName,
   isCustomClass,
 } from "@toolwind/helpers/cssClasses";
-import { CSSClassSuggestionItem } from "@toolwind/types/common";
+import { type CSSClassSuggestionItem } from "@toolwind/types/common";
 import clsx from "clsx";
-import { UseComboboxStateChange, useCombobox } from "downshift";
-import { useCallback, useEffect, useState } from "react";
+import { type UseComboboxStateChange, useCombobox } from "downshift";
+import { useCallback, useState } from "react";
+import { useMount, useUnmount } from "react-use";
 import { useRecoilState } from "recoil";
 
 interface ClassNameInputProps {
@@ -35,24 +36,23 @@ const ClassNameInput = ({
     }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
       // triggered if the active option is an variant
 
-      if (selectedItem === null || selectedItem.isVariant) return;
+      if (selectedItem === null || (selectedItem.isVariant ?? false)) return;
 
       onSave(getClassNameFromCSSClassSuggestionItem(selectedItem));
 
       return true;
     },
-    [onSave, activeOption]
+    [onSave]
   );
 
   const setActiveOptionHandler = useCallback(
     async (cssClass: CSSClassSuggestionItem | null) => {
       if (cssClass === null) {
         setActiveClassOption(null);
-
         return;
       }
 
-      const className = [...cssClass.variants, cssClass.name].join(":");
+      const className = getClassNameFromCSSClassSuggestionItem(cssClass);
 
       if (className === activeOption?.className) return;
 
@@ -60,7 +60,7 @@ const ClassNameInput = ({
 
       setActiveClassOption(getCssClassObjectFromClassName(className, cssText));
     },
-    [activeOption]
+    [activeOption?.className, getCssText, setActiveClassOption]
   );
 
   const onInputValueChange = useCallback(
@@ -68,38 +68,44 @@ const ClassNameInput = ({
       if (isCustomClass(inputValue)) {
         setSuggestedClasses([]);
 
-        getCssText(inputValue).then((cssText) => {
+        void getCssText(inputValue).then((cssText) => {
           setActiveClassOption(
             getCssClassObjectFromClassName(inputValue, cssText)
           );
         });
       }
 
-      getSuggestionList(inputValue).then((list) => {
+      void getSuggestionList(inputValue).then((list) => {
         setSuggestedClasses(list);
 
-        setActiveOptionHandler(list[0] ?? null);
+        void setActiveOptionHandler(list[0] ?? null);
       });
     },
-    [getSuggestionList, setActiveOptionHandler, activeOption]
+    [
+      getSuggestionList,
+      getCssText,
+      setActiveClassOption,
+      setActiveOptionHandler,
+    ]
   );
 
   const onActiveOptionChange = useCallback(
-    async ({
+    ({
       highlightedIndex = 0,
+      isOpen = false,
     }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
       const cssClass = suggestedClasses[highlightedIndex];
 
-      if (cssClass === undefined) return;
+      if (cssClass === undefined || !isOpen) return;
 
-      setActiveOptionHandler(cssClass);
+      void setActiveOptionHandler(cssClass);
     },
     [suggestedClasses, setActiveOptionHandler]
   );
 
   const onCancelHandler = useCallback(() => {
     onSave(defaultValue?.name ?? "");
-  }, [onSave]);
+  }, [defaultValue?.name, onSave]);
 
   const {
     getMenuProps,
@@ -119,20 +125,17 @@ const ClassNameInput = ({
     defaultSelectedItem: defaultValue,
   });
 
-  useEffect(() => {
-    if (defaultValue) {
+  useMount(() => {
+    if (defaultValue != null) {
       // setting Active option to defaultValue on umount
-      setActiveOptionHandler(defaultValue);
+      void setActiveOptionHandler(defaultValue);
     }
-  }, []);
+  });
 
-  useEffect(
-    () => () => {
-      // setting Active option to null on unmount
-      setActiveOptionHandler(null);
-    },
-    []
-  );
+  useUnmount(() => {
+    // setting Active option to null on unmount
+    void setActiveOptionHandler(null);
+  });
 
   const onKeyUpHandler: React.KeyboardEventHandler<HTMLInputElement> =
     useCallback(
@@ -140,14 +143,15 @@ const ClassNameInput = ({
         const value = (e.target as HTMLInputElement).value;
 
         if (e.code === "Enter" && isCustomClass(value)) {
-          return onSave(value);
+          onSave(value);
+          return;
         }
 
         if (e.code === "BracketLeft") {
-          return setInputValue(value + "]");
+          setInputValue(value + "]");
         }
       },
-      [onSave]
+      [onSave, setInputValue]
     );
 
   return (
@@ -190,7 +194,7 @@ const ClassNameInput = ({
           >
             {suggestedClass.color === undefined ? (
               <span className="font-semibold text-orange-400">
-                {suggestedClass.isVariant ? `{}` : "☲"}
+                {suggestedClass.isVariant === true ? `{}` : "☲"}
               </span>
             ) : (
               <span

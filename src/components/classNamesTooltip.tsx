@@ -61,3 +61,5 @@ export const ClassNamesTooltip = React.memo(
     );
   }
 );
+
+ClassNamesTooltip.displayName = "ClassNamesTooltip";

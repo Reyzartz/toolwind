@@ -1,1 +1,1 @@
-/// <reference types="vite/client" />
+/** @type {import('vite/client')} */

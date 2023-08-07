@@ -1,6 +1,6 @@
 import { useCSSClasses } from "@toolwind/content/hooks/useCssClasses";
-import { CSSClass } from "@toolwind/types/common";
-import { MouseEventHandler, useCallback } from "react";
+import { type CSSClass } from "@toolwind/types/common";
+import { type MouseEventHandler, useCallback } from "react";
 import { ClassNameInput } from "./classNameInput";
 
 interface ClassNameTagProps {
@@ -14,9 +14,9 @@ export const ClassNameTag = ({
 
   const onUpdateHandler = useCallback(
     (value: string) => {
-      updateCssClass(id, { className: value, state: "active" });
+      void updateCssClass(id, { className: value, state: "active" });
     },
-    [updateCssClass]
+    [id, updateCssClass]
   );
 
   const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
@@ -25,7 +25,7 @@ export const ClassNameTag = ({
         e.stopPropagation();
         if (state === "removed") return;
 
-        updateCssClass(id, { state: "editing" });
+        void updateCssClass(id, { state: "editing" });
       },
       [id, state, updateCssClass]
     );
@@ -37,10 +37,10 @@ export const ClassNameTag = ({
       if (defaultClassName === null) {
         removeCssClass(id);
       } else {
-        updateCssClass(id, { state: "removed" });
+        void updateCssClass(id, { state: "removed" });
       }
     },
-    [id, updateCssClass]
+    [defaultClassName, id, removeCssClass, updateCssClass]
   );
 
   return (

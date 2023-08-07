@@ -1,6 +1,7 @@
 import { useCSSClasses } from "@toolwind/content/hooks/useCssClasses";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { ClassNameInput } from "./classNameInput";
+import { useUnmount } from "react-use";
 
 const AddClassName = () => {
   const { isAdding, setIsAdding, addCssClass } = useCSSClasses();
@@ -8,8 +9,9 @@ const AddClassName = () => {
   const onAddHandler = useCallback(
     (className: string) => {
       if (className.trim().length > 0) {
-        addCssClass(className);
+        void addCssClass(className);
       }
+
       setIsAdding(false);
     },
     [setIsAdding, addCssClass]
@@ -25,7 +27,9 @@ const AddClassName = () => {
     );
 
   // close the input component when it unloaded
-  useEffect(() => () => setIsAdding(false), []);
+  useUnmount(() => {
+    setIsAdding(false);
+  });
 
   return (
     <div>

@@ -15,7 +15,7 @@ const SettingsPanel = () => {
   const [defaultValue, setDefaultValue] = useState<string>();
 
   useEffect(() => {
-    getItemFromStorage("tw_config").then((res) => {
+    void getItemFromStorage("tw_config").then((res) => {
       setDefaultValue(JSON.stringify(res ?? DEFAULT_CONFIG, null, 2));
     });
   }, []);
@@ -25,7 +25,7 @@ const SettingsPanel = () => {
     try {
       const config = JSON.parse(value);
 
-      sendMessage({
+      void sendMessage({
         to: "content_script",
         action: {
           type: "UPDATE_CONFIG",
@@ -33,7 +33,7 @@ const SettingsPanel = () => {
         },
       });
 
-      setItemToStorage("tw_config", config);
+      void setItemToStorage("tw_config", config);
     } catch (error) {}
   }, []);
 

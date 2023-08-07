@@ -19,5 +19,5 @@
       "@toolwind/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "tailwind.config.js", "postcss.config.js", ".eslintrc.js"]
 }

@@ -8,12 +8,12 @@ let appDestroyer: () => void;
 const init = async () => {
   const extensionEnabled = await getItemFromStorage("toolwind_enabled");
 
-  if (extensionEnabled) {
+  if (extensionEnabled === true) {
     appDestroyer = renderReactComponent(App);
   }
 };
 
-addMessageListener((action) => {
+void addMessageListener((action) => {
   switch (action.type) {
     case "TOGGLE_TOOLWIND":
       if (action.data) {
@@ -25,4 +25,4 @@ addMessageListener((action) => {
   }
 });
 
-init();
+void init();
