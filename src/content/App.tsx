@@ -1,94 +1,121 @@
-import { InspectedElementHighlighter } from "@toolwind/components/inspectedElementHighlighter";
-import { useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { useMessageEventListeners } from "./hooks/useMessageEventListeners";
-import { inspectedElementState, selectedElementState } from "./store";
-import { ContentStyles } from "./styles";
+import { InspectedElementHighlighter } from '@toolwind/components/inspectedElementHighlighter'
+import { useCallback, useEffect } from 'react'
+import { useRecoilCallback, useRecoilValue } from 'recoil'
+import { useMessageEventListeners } from './hooks/useMessageEventListeners'
+import { inspectedElementState, selectedElementState } from './store'
+import { ContentStyles } from './styles'
 
 const App = () => {
-  const [inspectedElement, setInspectedElement] = useRecoilState(
-    inspectedElementState
-  );
+	const inspectedElement = useRecoilValue(inspectedElementState)
 
-  useMessageEventListeners();
+	useMessageEventListeners()
 
-  const [selectedElement, setSelectedElement] =
-    useRecoilState(selectedElementState);
+	const selectedElement = useRecoilValue(selectedElementState)
 
-  const init = useCallback(() => {
-    const mouseoverEventHandler = (e: MouseEvent) => {
-      e.stopPropagation();
+	const setInspectedElementHandler = useRecoilCallback(
+		({ snapshot, set }) =>
+			async (ele: HTMLElement | null) => {
+				const selectedEle = await snapshot.getPromise(selectedElementState)
 
-      if (
-        e.target !== null &&
-        !(e.target as HTMLElement).matches("#toolwind,svg, svg *")
-      ) {
-        setInspectedElement(e.target as HTMLElement);
-      }
-    };
+				if (selectedEle === null) {
+					set(inspectedElementState, ele)
+				}
+			},
+		[]
+	)
 
-    const mouseleaveWindowEventHandler = (e: MouseEvent) => {
-      e.stopPropagation();
+	const setSelectedElementHandler = useRecoilCallback(
+		({ snapshot, set }) =>
+			async (ele: HTMLElement | null) => {
+				const selectedEle = await snapshot.getPromise(selectedElementState)
 
-      setInspectedElement(null);
-    };
+				if (selectedEle === null) {
+					set(selectedElementState, ele)
+					set(inspectedElementState, null)
+				} else {
+					set(inspectedElementState, ele)
+					set(selectedElementState, null)
+				}
+			},
+		[]
+	)
 
-    const clickEventListener = (e: MouseEvent) => {
-      if (
-        e.target !== null &&
-        !(e.target as HTMLElement).matches("#toolwind,svg, svg *")
-      ) {
-        e.stopPropagation();
-        e.preventDefault();
+	const init = useCallback(() => {
+		const mouseoverEventHandler = (e: MouseEvent) => {
+			e.stopPropagation()
 
-        setSelectedElement(e.target as HTMLElement);
-      }
-    };
+			if (
+				e.target !== null &&
+				!(e.target as HTMLElement).matches('#toolwind,svg, svg *')
+			) {
+				void setInspectedElementHandler(e.target as HTMLElement)
+			}
+		}
 
-    const addEventListenerHandler = () => {
-      document.addEventListener("mouseover", mouseoverEventHandler);
-      document.addEventListener("click", clickEventListener, true);
-      document.documentElement.addEventListener(
-        "mouseleave",
-        mouseleaveWindowEventHandler
-      );
-    };
+		const mouseleaveWindowEventHandler = (e: MouseEvent) => {
+			e.stopPropagation()
 
-    const removeEventListenerHandler = () => {
-      document.removeEventListener("mouseover", mouseoverEventHandler);
-      document.removeEventListener("click", clickEventListener, true);
-      document.documentElement.removeEventListener(
-        "mouseleave",
-        mouseleaveWindowEventHandler
-      );
-    };
+			void setInspectedElementHandler(null)
+		}
 
-    addEventListenerHandler();
+		const clickEventListener = (e: MouseEvent) => {
+			if (
+				e.target !== null &&
+				!(e.target as HTMLElement).matches('#toolwind,svg, svg *')
+			) {
+				e.stopPropagation()
+				e.preventDefault()
 
-    return () => {
-      removeEventListenerHandler();
-    };
-  }, [setInspectedElement, setSelectedElement]);
+				void setSelectedElementHandler(e.target as HTMLElement)
+			}
+		}
 
-  useEffect(() => {
-    const unmount = init();
+		const addEventListenerHandler = () => {
+			document.addEventListener('mouseover', mouseoverEventHandler)
+			document.addEventListener('click', clickEventListener, true)
+			document.documentElement.addEventListener(
+				'mouseleave',
+				mouseleaveWindowEventHandler
+			)
+		}
 
-    console.log("added event listeners");
+		const removeEventListenerHandler = () => {
+			document.removeEventListener('mouseover', mouseoverEventHandler)
+			document.removeEventListener('click', clickEventListener, true)
+			document.documentElement.removeEventListener(
+				'mouseleave',
+				mouseleaveWindowEventHandler
+			)
+		}
 
-    return unmount;
-  }, [init]);
+		addEventListenerHandler()
 
-  return (
-    <>
-      <ContentStyles />
+		return () => {
+			removeEventListenerHandler()
+		}
+	}, [setInspectedElementHandler, setSelectedElementHandler])
 
-      <InspectedElementHighlighter element={inspectedElement} />
+	useEffect(() => {
+		const unmount = init()
 
-      {selectedElement !== null && (
-        <InspectedElementHighlighter element={selectedElement} selected />
-      )}
-    </>
-  );
-};
+		console.log('added event listeners')
 
-export { App };
+		return unmount
+	}, [init])
+
+	return (
+		<>
+			<ContentStyles />
+
+			{inspectedElement !== null && (
+				<InspectedElementHighlighter element={inspectedElement} />
+			)}
+
+			{selectedElement !== null && (
+				<InspectedElementHighlighter element={selectedElement} selected />
+			)}
+		</>
+	)
+}
+
+export { App }

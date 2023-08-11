@@ -1,214 +1,268 @@
-import { useTailwindIntellisense } from "@toolwind/content/hooks/useTailwindIntellisense";
-import { activeCssClassState } from "@toolwind/content/store";
+import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
+import { activeCssClassState } from '@toolwind/content/store'
 import {
-  getClassNameFromCSSClassSuggestionItem,
-  getCssClassObjectFromClassName,
-  isCustomClass,
-} from "@toolwind/helpers/cssClasses";
-import { type CSSClassSuggestionItem } from "@toolwind/types/common";
-import clsx from "clsx";
-import { type UseComboboxStateChange, useCombobox } from "downshift";
-import { useCallback, useState } from "react";
-import { useMount, useUnmount } from "react-use";
-import { useRecoilState } from "recoil";
+	getClassNameFromCSSClassSuggestionItem,
+	getCssClassObjectFromClassName,
+	isCustomClass,
+} from '@toolwind/helpers/cssClasses'
+import { CloseIcon } from '@toolwind/icons'
+import { type CSSClassSuggestionItem } from '@toolwind/types/common'
+import clsx from 'clsx'
+import { type UseComboboxStateChange, useCombobox } from 'downshift'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePopper } from 'react-popper'
+import { useMount, useUnmount } from 'react-use'
+import { useRecoilState } from 'recoil'
 
 interface ClassNameInputProps {
-  onSave: (value: string) => void;
-  defaultValue?: CSSClassSuggestionItem | null;
+	onSave: (value: string) => void
+	defaultValue?: CSSClassSuggestionItem | null
 }
 
 const ClassNameInput = ({
-  defaultValue = null,
-  onSave,
+	defaultValue = null,
+	onSave,
 }: ClassNameInputProps) => {
-  const [suggestedClasses, setSuggestedClasses] = useState<
-    CSSClassSuggestionItem[]
-  >([]);
+	const [suggestedClasses, setSuggestedClasses] = useState<
+		CSSClassSuggestionItem[]
+	>([])
 
-  const { getCssText, getSuggestionList } = useTailwindIntellisense();
+	const { getCssText, getSuggestionList } = useTailwindIntellisense()
 
-  const [activeOption, setActiveClassOption] =
-    useRecoilState(activeCssClassState);
+	const [activeOption, setActiveClassOption] =
+		useRecoilState(activeCssClassState)
 
-  const onSelectedItemChange = useCallback(
-    ({
-      selectedItem = null,
-    }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
-      // triggered if the active option is an variant
+	const referenceElement = useRef(null)
+	const popperElement = useRef(null)
 
-      if (selectedItem === null || (selectedItem.isVariant ?? false)) return;
+	const { styles, attributes, forceUpdate } = usePopper(
+		referenceElement.current,
+		popperElement.current,
+		{
+			placement: 'bottom-start',
+			modifiers: [
+				{
+					name: 'preventOverflow',
+					options: {
+						rootBoundary: 'document',
+					},
+				},
+				{
+					name: 'offset',
+					options: {
+						offset: [0, 8],
+					},
+				},
+			],
+		}
+	)
 
-      onSave(getClassNameFromCSSClassSuggestionItem(selectedItem));
+	const onSelectedItemChange = useCallback(
+		({
+			selectedItem = null,
+		}: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+			// triggered if the active option is an variant
 
-      return true;
-    },
-    [onSave]
-  );
+			if (selectedItem === null || (selectedItem.isVariant ?? false)) return
 
-  const setActiveOptionHandler = useCallback(
-    async (cssClass: CSSClassSuggestionItem | null) => {
-      if (cssClass === null) {
-        setActiveClassOption(null);
-        return;
-      }
+			onSave(getClassNameFromCSSClassSuggestionItem(selectedItem))
 
-      const className = getClassNameFromCSSClassSuggestionItem(cssClass);
+			return true
+		},
+		[onSave]
+	)
 
-      if (className === activeOption?.className) return;
+	const setActiveOptionHandler = useCallback(
+		async (cssClass: CSSClassSuggestionItem | null) => {
+			if (cssClass === null) {
+				setActiveClassOption(null)
+				return
+			}
 
-      const cssText = await getCssText(className);
+			const className = getClassNameFromCSSClassSuggestionItem(cssClass)
 
-      setActiveClassOption(getCssClassObjectFromClassName(className, cssText));
-    },
-    [activeOption?.className, getCssText, setActiveClassOption]
-  );
+			if (className === activeOption?.className) return
 
-  const onInputValueChange = useCallback(
-    ({ inputValue = "" }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
-      if (isCustomClass(inputValue)) {
-        setSuggestedClasses([]);
+			const cssText = await getCssText(className)
 
-        void getCssText(inputValue).then((cssText) => {
-          setActiveClassOption(
-            getCssClassObjectFromClassName(inputValue, cssText)
-          );
-        });
-      }
+			setActiveClassOption(getCssClassObjectFromClassName(className, cssText))
+		},
+		[activeOption?.className, getCssText, setActiveClassOption]
+	)
 
-      void getSuggestionList(inputValue).then((list) => {
-        setSuggestedClasses(list);
+	const onInputValueChange = useCallback(
+		({ inputValue = '' }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+			if (isCustomClass(inputValue)) {
+				setSuggestedClasses([])
 
-        void setActiveOptionHandler(list[0] ?? null);
-      });
-    },
-    [
-      getSuggestionList,
-      getCssText,
-      setActiveClassOption,
-      setActiveOptionHandler,
-    ]
-  );
+				void getCssText(inputValue).then((cssText) => {
+					setActiveClassOption(
+						getCssClassObjectFromClassName(inputValue, cssText)
+					)
+				})
+			}
 
-  const onActiveOptionChange = useCallback(
-    ({
-      highlightedIndex = 0,
-      isOpen = false,
-    }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
-      const cssClass = suggestedClasses[highlightedIndex];
+			void getSuggestionList(inputValue).then((list) => {
+				setSuggestedClasses(list)
 
-      if (cssClass === undefined || !isOpen) return;
+				// void setActiveOptionHandler(list[0] ?? null)
+			})
+		},
+		[
+			getSuggestionList,
+			getCssText,
+			setActiveClassOption,
+			// setActiveOptionHandler,
+		]
+	)
 
-      void setActiveOptionHandler(cssClass);
-    },
-    [suggestedClasses, setActiveOptionHandler]
-  );
+	const onActiveOptionChange = useCallback(
+		({
+			highlightedIndex = 0,
+			isOpen = false,
+		}: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+			const cssClass = suggestedClasses[highlightedIndex]
 
-  const onCancelHandler = useCallback(() => {
-    onSave(defaultValue?.name ?? "");
-  }, [defaultValue?.name, onSave]);
+			if (cssClass === undefined || !isOpen) return
 
-  const {
-    getMenuProps,
-    getInputProps,
-    highlightedIndex,
-    getItemProps,
-    isOpen,
-    setInputValue,
-  } = useCombobox<CSSClassSuggestionItem>({
-    items: suggestedClasses,
-    itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
-    defaultHighlightedIndex: 0,
-    onInputValueChange,
-    onHighlightedIndexChange: onActiveOptionChange,
-    onSelectedItemChange,
-    defaultInputValue: defaultValue?.name,
-    defaultSelectedItem: defaultValue,
-  });
+			void setActiveOptionHandler(cssClass)
+		},
+		[suggestedClasses, setActiveOptionHandler]
+	)
 
-  useMount(() => {
-    if (defaultValue != null) {
-      // setting Active option to defaultValue on umount
-      void setActiveOptionHandler(defaultValue);
-    }
-  });
+	const onCancelHandler = useCallback(() => {
+		onSave(defaultValue?.name ?? '')
+	}, [defaultValue?.name, onSave])
 
-  useUnmount(() => {
-    // setting Active option to null on unmount
-    void setActiveOptionHandler(null);
-  });
+	const {
+		getMenuProps,
+		getInputProps,
+		highlightedIndex,
+		getItemProps,
+		isOpen,
+		setInputValue,
+	} = useCombobox<CSSClassSuggestionItem>({
+		items: suggestedClasses,
+		itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
+		// defaultHighlightedIndex: 0,
+		onInputValueChange,
+		onHighlightedIndexChange: onActiveOptionChange,
+		onSelectedItemChange,
+		defaultInputValue: defaultValue?.name,
+		defaultSelectedItem: defaultValue,
+	})
 
-  const onKeyUpHandler: React.KeyboardEventHandler<HTMLInputElement> =
-    useCallback(
-      (e) => {
-        const value = (e.target as HTMLInputElement).value;
+	useMount(() => {
+		if (defaultValue != null) {
+			// setting Active option to defaultValue on umount
+			void setActiveOptionHandler(defaultValue)
+		}
+	})
 
-        if (e.code === "Enter" && isCustomClass(value)) {
-          onSave(value);
-          return;
-        }
+	useUnmount(() => {
+		// setting Active option to null on unmount
+		void setActiveOptionHandler(null)
+	})
 
-        if (e.code === "BracketLeft") {
-          setInputValue(value + "]");
-        }
-      },
-      [onSave, setInputValue]
-    );
+	const onKeyUpHandler: React.KeyboardEventHandler<HTMLInputElement> =
+		useCallback(
+			(e) => {
+				const value = (e.target as HTMLInputElement).value
 
-  return (
-    <div className="relative">
-      <div className="flex items-center border-b border-indigo-600 my-1 mx-2">
-        <input
-          placeholder="Enter class name"
-          className="m-0 text-inherit bg-transparent !text-sm focus:!outline-none"
-          {...getInputProps({
-            autoFocus: true,
-            onBlur: onCancelHandler,
-            onKeyUpCapture: onKeyUpHandler,
-          })}
-        />
+				if (e.code === 'Enter' && isCustomClass(value)) {
+					onSave(value)
+					return
+				}
 
-        <button
-          onClick={onCancelHandler}
-          className="pr-1.5 z-0 font-bold leading-4 bg-transparent border-none h-full transition-all text-slate-400 hover:text-red-500 text-xl"
-        >
-          ⤫
-        </button>
-      </div>
+				if (e.code === 'BracketLeft') {
+					setInputValue(value + ']')
+				}
+			},
+			[onSave, setInputValue]
+		)
 
-      <ul
-        className={clsx(
-          "flex flex-col mt-1.5 absolute z-[10000] top-full max-h-48 left-0 overflow-auto w-48 bg-indigo-900 rounded-lg border border-indigo-600 p-2",
-          !isOpen && "hidden"
-        )}
-        {...getMenuProps()}
-      >
-        {suggestedClasses.map((suggestedClass, index) => (
-          <li
-            className={clsx(
-              highlightedIndex === index && "bg-indigo-800",
-              // selectedItem === suggestedClass && "font-bold",
-              "flex gap-2 items-baseline text-indigo-400 font-semibold text-sm border-b px-2 py-1 border-indigo-800 rounded-md"
-            )}
-            key={`${suggestedClass.name}${index}`}
-            {...getItemProps({ item: suggestedClass, index })}
-          >
-            {suggestedClass.color === undefined ? (
-              <span className="font-semibold text-orange-400">
-                {suggestedClass.isVariant === true ? `{}` : "☲"}
-              </span>
-            ) : (
-              <span
-                className="w-3 h-3 inline-block border border-gray-900 rounded-1"
-                style={{ background: suggestedClass.color }}
-              />
-            )}
+	useEffect(() => {
+		if (suggestedClasses.length > 0 && forceUpdate !== null) {
+			forceUpdate()
+		}
+	}, [suggestedClasses, forceUpdate])
 
-            <span>{suggestedClass.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+	return (
+		<div className="relative">
+			<div
+				className="flex items-center border-b border-default py-1 px-2 h-7"
+				ref={referenceElement}
+			>
+				<input
+					{...getInputProps({
+						onKeyUpCapture: onKeyUpHandler,
+						onBlur: onCancelHandler,
+						className:
+							'm-0 text-sm bg-transparent focus:!outline-none text-default',
+						placeholder: 'Enter class name',
+						autoFocus: true,
+					})}
+				/>
 
-export { ClassNameInput };
+				<button
+					onClick={onCancelHandler}
+					className=" text-default hover:text-red-500"
+				>
+					<CloseIcon size={10} />
+				</button>
+			</div>
+
+			<ul
+				style={{ ...styles.popper, zIndex: 10000 }}
+				{...attributes.popper}
+				{...getMenuProps({
+					ref: popperElement,
+					className: clsx(
+						'flex flex-col mt-1.5 absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
+						!isOpen && 'hidden'
+					),
+				})}
+			>
+				{suggestedClasses.length === 0 ? (
+					<div className="p-3 text-center text-sm but you can still add it bg-light">
+						This class name is not supported by tailwindcss
+					</div>
+				) : (
+					suggestedClasses.map((suggestedClass, index) => (
+						<li
+							key={`${suggestedClass.name}${index}`}
+							{...getItemProps({
+								item: suggestedClass,
+								index,
+								className: clsx(
+									highlightedIndex === index &&
+										'text-primary font-semibold bg-default',
+									// selectedItem === suggestedClass && "font-bold",
+									'flex gap-2 items-baseline text-default text-sm border-b p-2 border-default'
+								),
+							})}
+						>
+							{suggestedClass.color === undefined ? (
+								<span>{suggestedClass.isVariant === true ? `{}` : '☲'}</span>
+							) : (
+								<span
+									className={clsx(
+										'w-3 h-3 inline-block border',
+										highlightedIndex === index
+											? 'border-primary'
+											: 'border-light'
+									)}
+									style={{ background: suggestedClass.color }}
+								/>
+							)}
+
+							<span>{suggestedClass.name}</span>
+						</li>
+					))
+				)}
+			</ul>
+		</div>
+	)
+}
+
+export { ClassNameInput }

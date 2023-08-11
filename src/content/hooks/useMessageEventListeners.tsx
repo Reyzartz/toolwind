@@ -1,118 +1,109 @@
-import { addMessageListener, sendMessage } from "@toolwind/helpers/message";
-import { getElementFromXPath } from "@toolwind/helpers/xpath";
-import { useEffect } from "react";
-import { useRecoilTransaction_UNSTABLE, useSetRecoilState } from "recoil";
-import { runtime } from "webextension-polyfill";
+import { addMessageListener, sendMessage } from '@toolwind/helpers/message'
+import { getElementFromXPath } from '@toolwind/helpers/xpath'
+import { useRecoilCallback } from 'recoil'
+import { runtime } from 'webextension-polyfill'
 import {
-  inspectedElementState,
-  modifiedElementsState,
-  selectedElementState,
-} from "../store";
-import { useTailwindIntellisense } from "./useTailwindIntellisense";
-import { type TMessage } from "@toolwind/types/common";
+	inspectedElementState,
+	modifiedElementsState,
+	selectedElementState,
+} from '../store'
+import { useTailwindIntellisense } from './useTailwindIntellisense'
+import { type TMessage } from '@toolwind/types/common'
+import { useEffectOnce } from 'react-use'
 
 export const useMessageEventListeners = () => {
-  const setSelectedElement = useSetRecoilState(selectedElementState);
-  const { setConfig } = useTailwindIntellisense();
+	const { setConfig } = useTailwindIntellisense()
 
-  const onMessageHandler = useRecoilTransaction_UNSTABLE(
-    ({ get, set }) =>
-      (action: TMessage["action"]) => {
-        console.log("Listening to Messages");
+	const onMessageHandler = useRecoilCallback(
+		({ snapshot, set }) =>
+			(action: TMessage['action']) => {
+				switch (action.type) {
+					case 'FETCH_MODIFIED_ELEMENTS': {
+						void snapshot
+							.getPromise(modifiedElementsState)
+							.then((modifiedElements) => {
+								void sendMessage({
+									to: 'service_worker',
+									action: {
+										type: 'MODIFIED_ELEMENTS_UPDATED',
+										data: modifiedElements,
+									},
+								})
+							})
 
-        switch (action.type) {
-          case "FETCH_MODIFIED_ELEMENTS": {
-            const modifiedElements = get(modifiedElementsState);
+						break
+					}
 
-            void sendMessage({
-              to: "service_worker",
-              action: {
-                type: "MODIFIED_ELEMENTS_UPDATED",
-                data: modifiedElements,
-              },
-            });
+					case 'DELETE_MODIFIED_ELEMENT': {
+						const element = getElementFromXPath(action.data.xpath)
+						if (element === null) return
 
-            break;
-          }
+						element.className = action.data.originalClassNames.join(' ')
 
-          case "DELETE_MODIFIED_ELEMENT": {
-            const element = getElementFromXPath(action.data.xpath);
-            if (element === null) return;
+						set(modifiedElementsState, (prev) => {
+							const updatedList = prev.filter(
+								(item) => action.data.xpath !== item.xpath
+							)
 
-            element.className = action.data.originalClassNames.join(" ");
+							void sendMessage({
+								to: 'service_worker',
+								action: {
+									type: 'MODIFIED_ELEMENTS_UPDATED',
+									data: updatedList,
+								},
+							})
 
-            set(modifiedElementsState, (prev) => {
-              const updatedList = prev.filter(
-                (item) => action.data.xpath !== item.xpath
-              );
+							return updatedList
+						})
 
-              void sendMessage({
-                to: "service_worker",
-                action: {
-                  type: "MODIFIED_ELEMENTS_UPDATED",
-                  data: updatedList,
-                },
-              });
+						break
+					}
 
-              return updatedList;
-            });
+					case 'HOVER_ELEMENT':
+						if (action.data.xpath === null) {
+							set(inspectedElementState, null)
+						} else {
+							const element = getElementFromXPath(action.data.xpath)
+							if (element === null) return
 
-            break;
-          }
+							element.scrollIntoView({
+								behavior: 'smooth',
+								block: 'center',
+								inline: 'center',
+							})
 
-          case "HOVER_ELEMENT":
-            if (action.data.xpath === null) {
-              set(inspectedElementState, null);
-            } else {
-              const element = getElementFromXPath(action.data.xpath);
-              if (element === null) return;
+							set(inspectedElementState, element)
+						}
 
-              element.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-                inline: "center",
-              });
+						break
 
-              set(inspectedElementState, element);
-            }
+					case 'SELECT_ELEMENT':
+						if (action.data.xpath === null) {
+							set(selectedElementState, null)
+						} else {
+							const element = getElementFromXPath(action.data.xpath)
 
-            break;
+							if (element !== null) {
+								set(selectedElementState, element)
+							}
+						}
+						break
 
-          case "UPDATE_CONFIG":
-            setConfig(action.data.config);
-            break;
-        }
-      },
-    [setSelectedElement]
-  );
+					case 'UPDATE_CONFIG':
+						setConfig(action.data.config)
+						break
+				}
+			},
+		[]
+	)
 
-  useEffect(() => {
-    const eventListenerCallback = (message: TMessage["action"]) => {
-      // selectors are currently not supported by useRecoilTransaction Yet
+	useEffectOnce(() => {
+		console.log('Listening to Messages')
 
-      if (message.type === "SELECT_ELEMENT") {
-        const {
-          data: { xpath },
-        } = message;
+		void addMessageListener(onMessageHandler)
 
-        if (xpath === null) {
-          setSelectedElement(null);
-        } else {
-          const element = getElementFromXPath(xpath);
-
-          if (element !== null) {
-            setSelectedElement(element);
-          }
-        }
-      } else {
-        onMessageHandler(message);
-      }
-    };
-
-    void addMessageListener(eventListenerCallback);
-
-    return function removeEventListener() {
-      runtime.onMessage.removeListener(eventListenerCallback);
-    };
-  }, [onMessageHandler, setSelectedElement]);
-};
+		return function removeEventListener() {
+			runtime.onMessage.removeListener(onMessageHandler)
+		}
+	})
+}
