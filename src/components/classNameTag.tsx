@@ -49,7 +49,9 @@ export const ClassNameTag = ({
 		<div
 			className={clsx(
 				'relative transition-colors hover:bg-light max-w-max inline-flex items-center cursor-pointer group border border-default',
-				state === 'removed' ? 'text-neutral' : 'text-default hover:text-primary'
+				state === 'removed'
+					? 'text-neutral'
+					: 'text-default hover:text-primary hover:font-semibold'
 			)}
 		>
 			{state === 'editing' ? (

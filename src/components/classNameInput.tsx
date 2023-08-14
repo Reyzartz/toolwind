@@ -139,7 +139,7 @@ const ClassNameInput = ({
 		getInputProps,
 		highlightedIndex,
 		getItemProps,
-		isOpen,
+		inputValue,
 		setInputValue,
 	} = useCombobox<CSSClassSuggestionItem>({
 		items: suggestedClasses,
@@ -182,7 +182,7 @@ const ClassNameInput = ({
 		)
 
 	useEffect(() => {
-		if (suggestedClasses.length > 0 && forceUpdate !== null) {
+		if (suggestedClasses.length >= 0 && forceUpdate !== null) {
 			forceUpdate()
 		}
 	}, [suggestedClasses, forceUpdate])
@@ -219,12 +219,12 @@ const ClassNameInput = ({
 					ref: popperElement,
 					className: clsx(
 						'flex flex-col mt-1.5 absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
-						!isOpen && 'hidden'
+						inputValue.length === 0 && 'hidden'
 					),
 				})}
 			>
 				{suggestedClasses.length === 0 ? (
-					<div className="p-3 text-center text-sm but you can still add it bg-light">
+					<div className="p-3 text-center text-sm but you can still add it bg-light text-default">
 						This class name is not supported by tailwindcss
 					</div>
 				) : (
@@ -235,10 +235,9 @@ const ClassNameInput = ({
 								item: suggestedClass,
 								index,
 								className: clsx(
+									'flex gap-2 items-baseline text-default text-sm px-2 py-1.5 cursor-pointer',
 									highlightedIndex === index &&
-										'text-primary font-semibold bg-default',
-									// selectedItem === suggestedClass && "font-bold",
-									'flex gap-2 items-baseline text-default text-sm border-b p-2 border-default'
+										'text-primary font-semibold bg-default'
 								),
 							})}
 						>
