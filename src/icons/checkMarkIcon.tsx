@@ -2,7 +2,7 @@ import { type IBaseIconProps } from '@toolwind/types/components'
 import clsx from 'clsx'
 import { memo } from 'react'
 
-const CopyIcon = memo(({ size = 16, className }: IBaseIconProps) => {
+const CheckMarkIcon = memo(({ size = 16, className }: IBaseIconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -13,12 +13,12 @@ const CopyIcon = memo(({ size = 16, className }: IBaseIconProps) => {
 		>
 			<path
 				fill="currentColor"
-				d="M18 6v-6h-18v18h6v6h18v-18h-6zm-16 10v-14h14v4h-10v10h-4z"
+				d="M20 12.194v9.806h-20v-20h18.272l-1.951 2h-14.321v16h16v-5.768l2-2.038zm.904-10.027l-9.404 9.639-4.405-4.176-3.095 3.097 7.5 7.273 12.5-12.737-3.096-3.096z"
 			/>
 		</svg>
 	)
 })
 
-CopyIcon.displayName = 'CopyIcon'
+CheckMarkIcon.displayName = 'CheckMarkIcon'
 
-export { CopyIcon }
+export { CheckMarkIcon }

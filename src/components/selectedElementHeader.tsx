@@ -2,15 +2,18 @@ import {
 	inspectedElementState,
 	selectedElementState,
 } from '@toolwind/content/store'
-import { CloseIcon } from '@toolwind/icons'
+import { CheckMarkIcon, CloseIcon, CopyIcon, DeleteIcon } from '@toolwind/icons'
 import { CaretIcon } from '@toolwind/icons/caretIcon'
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
+import { useToggle } from 'react-use'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
 export const SelectedElementHeader = () => {
 	const [selectedElement, setSelectedElement] =
 		useRecoilState(selectedElementState)
 	const [parentElement, setParentElement] = useState<HTMLElement | null>(null)
+	const [copied, setCopied] = useToggle(false)
 
 	const setInspectedElement = useSetRecoilState(inspectedElementState)
 
@@ -20,11 +23,40 @@ export const SelectedElementHeader = () => {
 		}
 	}, [selectedElement])
 
-	const selectedElementHandler = (e: any, element: HTMLElement | null) => {
-		e.stopPropagation()
+	const selectedElementHandler = (
+		event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		element: HTMLElement | null
+	) => {
+		event.stopPropagation()
 		if (element === null) return
 
 		setSelectedElement(element)
+	}
+
+	const copyClassNameHandler = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => {
+		e.stopPropagation()
+		if (selectedElement === null) return
+
+		void navigator.clipboard.writeText(selectedElement.className)
+
+		setCopied(true)
+
+		setTimeout(() => {
+			setCopied(false)
+		}, 3000)
+	}
+
+	const removeElementHandler = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => {
+		e.stopPropagation()
+		if (selectedElement === null) return
+
+		setSelectedElement(null)
+
+		selectedElement.remove()
 	}
 
 	return (
@@ -40,7 +72,7 @@ export const SelectedElementHeader = () => {
 					onClick={(e) => {
 						selectedElementHandler(e, parentElement)
 					}}
-					className="border-none text-default text-base font-semibold hover:text-primary pl-2 lowercase"
+					className="border-none text-default text-base font-bold hover:text-primary active:text-primary-dark pl-2 lowercase"
 				>
 					{parentElement.tagName}
 				</button>
@@ -49,13 +81,13 @@ export const SelectedElementHeader = () => {
 			<CaretIcon size={12} className="text-default" />
 
 			<h1 className="flex-grow flex items-baseline">
-				<span className="text-primary font-semibold text-base leading-4 lowercase">
+				<span className="text-primary font-bold text-base leading-4 lowercase">
 					{selectedElement!.nodeName}
 				</span>
 
 				<span
-					className="text-sm leading-4 truncate inline-block text-default"
-					style={{ maxWidth: 148 }}
+					className="text-xs leading-4 truncate inline-block text-default"
+					style={{ maxWidth: 120 }}
 				>
 					{Boolean(selectedElement!.id) && '#'}
 					{selectedElement!.id}
@@ -64,14 +96,47 @@ export const SelectedElementHeader = () => {
 				</span>
 			</h1>
 
-			<button
-				onClick={() => {
-					setSelectedElement(null)
-				}}
-				className="border-none text-default  active:bg-dark hover:text-primary p-2 hover:bg-light"
-			>
-				<CloseIcon size={12} />
-			</button>
+			<div className="gap-2 flex">
+				<button
+					onClick={copyClassNameHandler}
+					className="border-none text-default group flex items-center gap-1 hover:text-primary active:text-primary-dark"
+				>
+					{copied ? <CheckMarkIcon size={12} /> : <CopyIcon size={12} />}
+
+					<span
+						className={clsx(
+							'w-0 overflow-hidden transition-all text-xs font-bold',
+							copied ? 'group-hover:w-11' : 'group-hover:w-8'
+						)}
+					>
+						{copied ? 'Copied' : 'Copy'}
+					</span>
+				</button>
+
+				<button
+					onClick={removeElementHandler}
+					className="border-none text-default group flex items-center gap-1 hover:text-red-500 active:hover:text-red-600"
+				>
+					<DeleteIcon size={12} />
+
+					<span className="w-0 overflow-hidden transition-all group-hover:w-12 text-xs font-bold">
+						Remove
+					</span>
+				</button>
+
+				<button
+					onClick={() => {
+						setSelectedElement(null)
+					}}
+					className="border-none text-default group flex items-center gap-1 hover:text-primary active:text-primary-dark"
+				>
+					<CloseIcon size={12} />
+
+					<span className="w-0 overflow-hidden transition-all group-hover:w-9 text-xs font-bold">
+						Close
+					</span>
+				</button>
+			</div>
 		</div>
 	)
 }
