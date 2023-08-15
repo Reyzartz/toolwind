@@ -48,10 +48,8 @@ export const ClassNameTag = ({
 	return (
 		<div
 			className={clsx(
-				'relative transition-colors hover:bg-light max-w-max inline-flex items-center cursor-pointer group border border-default',
-				state === 'removed'
-					? 'text-neutral'
-					: 'text-default hover:text-primary hover:font-semibold'
+				'relative transition max-w-max inline-flex items-center cursor-pointer group bg-light',
+				state === 'removed' ? 'text-alternative' : 'text-default'
 			)}
 		>
 			{state === 'editing' ? (
@@ -63,11 +61,13 @@ export const ClassNameTag = ({
 				<button
 					onClick={onClickHandler}
 					className={clsx(
-						'flex items-center gap-1 px-2 py-1 text-sm text-inherit border-none bg-transparent',
-						state === 'removed' ? 'line-through cursor-text' : 'cursor-pointer'
+						'flex items-center gap-1 px-2 py-0.5 text-sm text-inherit border-none bg-transparent group-hover:font-semibold',
+						state === 'removed'
+							? 'line-through cursor-text'
+							: 'cursor-pointer group-hover:text-primary group-active:text-primary-dark'
 					)}
 				>
-					{meta.color !== null && (
+					{meta.color !== null && state !== 'removed' && (
 						<span
 							className="w-3 h-3 inline-block border border-light rounded-1"
 							style={{ background: meta.color }}

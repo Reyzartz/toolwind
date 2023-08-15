@@ -23,6 +23,7 @@ export default {
 			},
 			textColor: {
 				default: '#8795AB',
+				alternative: '#6F7F9B',
 				neutral: '#EEEEEE',
 			},
 			borderColor: {

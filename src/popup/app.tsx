@@ -41,7 +41,7 @@ function App() {
 				<Toggle onToggle={onToggleHandler} checked={extensionState} />
 
 				<button
-					className="cursor-pointer hover:text-primary active:bg-primary-dark text-default"
+					className="cursor-pointer hover:text-primary active:text-primary-dark text-default"
 					onClick={() => {
 						setShowSettingPanel(!showSettingsPanel)
 					}}

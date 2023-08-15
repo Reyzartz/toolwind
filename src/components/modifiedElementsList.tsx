@@ -80,7 +80,7 @@ const ModifiedElementsList = () => {
 					</span>
 
 					<button
-						className="absolute -right-full p-2 top-1 group-hover:right-0 transition-all bg-light hover:text-red-600"
+						className="absolute -right-full p-2 top-1 group-hover:right-0 transition-all bg-light hover:text-red-500 active:hover:text-red-600"
 						onClick={(e) => {
 							e.stopPropagation()
 							onDeleteHandler(ele)

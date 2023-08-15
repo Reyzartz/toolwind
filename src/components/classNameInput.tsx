@@ -141,6 +141,7 @@ const ClassNameInput = ({
 		getItemProps,
 		inputValue,
 		setInputValue,
+		isOpen,
 	} = useCombobox<CSSClassSuggestionItem>({
 		items: suggestedClasses,
 		itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
@@ -190,7 +191,7 @@ const ClassNameInput = ({
 	return (
 		<div className="relative">
 			<div
-				className="flex items-center border-b border-default py-1 px-2 h-7"
+				className="flex items-center py-0.5 px-2 h-7 bg-light"
 				ref={referenceElement}
 			>
 				<input
@@ -206,7 +207,7 @@ const ClassNameInput = ({
 
 				<button
 					onClick={onCancelHandler}
-					className=" text-default hover:text-red-500"
+					className="text-default hover:text-red-500"
 				>
 					<CloseIcon size={10} />
 				</button>
@@ -219,7 +220,7 @@ const ClassNameInput = ({
 					ref: popperElement,
 					className: clsx(
 						'flex flex-col mt-1.5 absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
-						inputValue.length === 0 && 'hidden'
+						(inputValue.length === 0 || !isOpen) && 'hidden'
 					),
 				})}
 			>
