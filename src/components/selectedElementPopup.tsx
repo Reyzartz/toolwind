@@ -54,7 +54,6 @@ export const SelectedElementPopup = React.memo(
 
 				<div
 					id="toolwind-tooltip"
-					key={`${rect.y + rect.x}`}
 					ref={setPopperElement as any}
 					style={{ ...styles.popper, zIndex: 10000 }}
 					{...attributes.popper}
