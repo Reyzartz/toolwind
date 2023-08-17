@@ -4,6 +4,8 @@ import { Toggle } from '@toolwind/components/toggle'
 import { sendMessage } from '@toolwind/helpers/message'
 import { getItemFromStorage, setItemToStorage } from '@toolwind/helpers/storage'
 import { CloseIcon, SettingsIcon } from '@toolwind/icons'
+import { ToolwindIcon } from '@toolwind/icons/toolwindIcon'
+import clsx from 'clsx'
 import { useCallback, useEffect, useState } from 'react'
 
 function App() {
@@ -34,9 +36,20 @@ function App() {
 			style={{ width: 350, height: 400, maxHeight: 400 }}
 		>
 			<header className="flex p-3 items-center gap-3 pb-1">
-				<span className="text-lg font-semibold leading-4 text-default mr-auto">
-					{!showSettingsPanel ? 'Toolwind' : 'Settings'}
-				</span>
+				<div
+					className={clsx(
+						'mr-auto flex items-center p-1 transition-colors rounded-sm gap-2',
+						extensionState
+							? 'bg-primary text-background'
+							: 'bg-default text-default'
+					)}
+				>
+					<ToolwindIcon size={24} />
+
+					<span className="text-xl font-bold leading-4">
+						{!showSettingsPanel ? 'Toolwind' : 'Settings'}
+					</span>
+				</div>
 
 				<Toggle onToggle={onToggleHandler} checked={extensionState} />
 

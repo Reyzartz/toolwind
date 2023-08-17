@@ -11,7 +11,7 @@ const manifest = defineManifest(async () => ({
 	version: `${major}.${minor}.${patch}.${label}`,
 	description: packageJson.description,
 	action: {
-		default_popup: 'index.html',
+		default_popup: 'src/index.html',
 		default_icon: {
 			'16': 'icons/logo-16.png',
 			'24': 'icons/logo-24.png',
