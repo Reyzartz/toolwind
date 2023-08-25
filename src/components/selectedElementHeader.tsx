@@ -80,15 +80,12 @@ export const SelectedElementHeader = () => {
 
 			<CaretIcon size={12} className="text-default" />
 
-			<h1 className="flex-grow flex items-baseline">
+			<h1 className="flex-grow flex items-baseline w-full overflow-hidden">
 				<span className="text-primary font-bold text-base leading-4 lowercase">
 					{selectedElement!.nodeName}
 				</span>
 
-				<span
-					className="text-xs leading-4 truncate inline-block text-default"
-					style={{ maxWidth: 120 }}
-				>
+				<span className="text-xs flex-grow leading-4 truncate inline-block text-default">
 					{Boolean(selectedElement!.id) && '#'}
 					{selectedElement!.id}
 					{Boolean(selectedElement!.className) && '.'}
