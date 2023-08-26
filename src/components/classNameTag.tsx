@@ -1,6 +1,6 @@
 import { useCSSClasses } from '@toolwind/content/hooks/useCssClasses'
 import { type CSSClass } from '@toolwind/types/common'
-import { type MouseEventHandler, useCallback } from 'react'
+import { type MouseEventHandler, useCallback, useRef } from 'react'
 import { ClassNameInput } from './classNameInput'
 import { CloseIcon } from '@toolwind/icons'
 import clsx from 'clsx'
@@ -13,6 +13,7 @@ export const ClassNameTag = ({
 	cssClass: { id, className, meta, state, defaultClassName },
 }: ClassNameTagProps) => {
 	const { updateCssClass, removeCssClass } = useCSSClasses()
+	const tagRef = useRef<HTMLDivElement>(null)
 
 	const onUpdateHandler = useCallback(
 		(value: string) => {
@@ -47,13 +48,14 @@ export const ClassNameTag = ({
 
 	return (
 		<div
+			ref={tagRef}
 			className={clsx(
-				'relative transition max-w-max inline-flex items-center cursor-pointer group bg-light',
-				state === 'removed' ? 'text-alternative' : 'text-default'
+				'relative transition max-w-max inline-flex items-center cursor-pointer group bg-light text-default'
 			)}
 		>
 			{state === 'editing' ? (
 				<ClassNameInput
+					initialWidth={tagRef.current?.getClientRects()[0].width}
 					defaultValue={{ name: className, variants: [] }}
 					onSave={onUpdateHandler}
 				/>
@@ -61,9 +63,9 @@ export const ClassNameTag = ({
 				<button
 					onClick={onClickHandler}
 					className={clsx(
-						'flex items-center gap-1 px-2 py-0.5 text-sm text-inherit border-none bg-transparent group-hover:font-semibold',
+						'flex items-center gap-1 px-2 py-0.5 text-sm text-inherit border-none bg-transparent font-medium',
 						state === 'removed'
-							? 'line-through cursor-text'
+							? 'line-through cursor-text opacity-60'
 							: 'cursor-pointer group-hover:text-primary group-active:text-primary-dark'
 					)}
 				>

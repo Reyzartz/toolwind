@@ -17,11 +17,13 @@ import { useRecoilState } from 'recoil'
 interface ClassNameInputProps {
 	onSave: (value: string) => void
 	defaultValue?: CSSClassSuggestionItem | null
+	initialWidth?: number
 }
 
 const ClassNameInput = ({
 	defaultValue = null,
 	onSave,
+	initialWidth = 148,
 }: ClassNameInputProps) => {
 	const [suggestedClasses, setSuggestedClasses] = useState<
 		CSSClassSuggestionItem[]
@@ -34,6 +36,8 @@ const ClassNameInput = ({
 
 	const referenceElement = useRef(null)
 	const popperElement = useRef(null)
+
+	const textElementWidthRef = useRef<HTMLSpanElement>(null)
 
 	const { styles, attributes, forceUpdate } = usePopper(
 		referenceElement.current,
@@ -105,14 +109,14 @@ const ClassNameInput = ({
 			void getSuggestionList(inputValue).then((list) => {
 				setSuggestedClasses(list)
 
-				// void setActiveOptionHandler(list[0] ?? null)
+				void setActiveOptionHandler(list[0] ?? null)
 			})
 		},
 		[
 			getSuggestionList,
 			getCssText,
 			setActiveClassOption,
-			// setActiveOptionHandler,
+			setActiveOptionHandler,
 		]
 	)
 
@@ -145,7 +149,7 @@ const ClassNameInput = ({
 	} = useCombobox<CSSClassSuggestionItem>({
 		items: suggestedClasses,
 		itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
-		// defaultHighlightedIndex: 0,
+		defaultHighlightedIndex: 0,
 		onInputValueChange,
 		onHighlightedIndexChange: onActiveOptionChange,
 		onSelectedItemChange,
@@ -190,17 +194,36 @@ const ClassNameInput = ({
 
 	return (
 		<div className="relative">
+			<span
+				ref={textElementWidthRef}
+				className="text-sm absolute opacity-0 pl-1.5 pr-7 whitespace-pre pointer-events-none"
+			>
+				{inputValue.length === 0
+					? defaultValue?.name ?? 'Enter class name'
+					: inputValue}
+			</span>
+
 			<div
-				className="flex items-center py-0.5 px-2 h-7 bg-light"
+				className={clsx(
+					'flex items-center py-0.5 px-2 h-6 bg-light placeholder-opacity-30 transition-all'
+				)}
+				style={{
+					width: `min(${
+						textElementWidthRef.current?.getClientRects()[0].width ??
+						initialWidth
+					}px, 296px)`,
+				}}
 				ref={referenceElement}
 			>
 				<input
 					{...getInputProps({
 						onKeyUpCapture: onKeyUpHandler,
 						onBlur: onCancelHandler,
-						className:
-							'm-0 text-sm bg-transparent focus:!outline-none text-default',
-						placeholder: 'Enter class name',
+						className: clsx(
+							'm-0 text-sm bg-transparent focus:!outline-none text-default w-full',
+							inputValue.length === 0 && 'opacity-50'
+						),
+						placeholder: defaultValue?.name ?? 'Enter class name',
 						autoFocus: true,
 					})}
 				/>
@@ -212,14 +235,13 @@ const ClassNameInput = ({
 					<CloseIcon size={10} />
 				</button>
 			</div>
-
 			<ul
 				style={{ ...styles.popper, zIndex: 10000 }}
 				{...attributes.popper}
 				{...getMenuProps({
 					ref: popperElement,
 					className: clsx(
-						'flex flex-col mt-1.5 absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
+						'flex flex-col absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
 						(inputValue.length === 0 || !isOpen) && 'hidden'
 					),
 				})}

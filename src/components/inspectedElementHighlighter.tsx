@@ -20,8 +20,6 @@ const InspectedElementHighlighter = React.memo(
 
 				intervalId.current = setInterval(() => {
 					setRect((prev) => {
-						console.log(element?.getClientRects()[0])
-
 						const updatedRect = element?.getClientRects()[0]
 
 						if (updatedRect === undefined) return prev

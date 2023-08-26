@@ -66,7 +66,7 @@ export const SelectedElementPopup = React.memo(
 					>
 						<SelectedElementHeader />
 
-						<div className="flex flex-wrap gap-2 p-3 pt-2">
+						<div className="flex flex-wrap gap-2 p-3 pt-2" style={{}}>
 							{cssClasses.map((cssClass, ind) => (
 								<ClassNameTag key={ind} cssClass={cssClass} />
 							))}

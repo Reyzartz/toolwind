@@ -35,14 +35,11 @@ const AddClassName = () => {
 	return (
 		<div className="w-full flex">
 			{isAdding ? (
-				<ClassNameInput
-					defaultValue={{ name: '', variants: [] }}
-					onSave={onAddHandler}
-				/>
+				<ClassNameInput onSave={onAddHandler} />
 			) : (
 				<button
 					onClick={onClickHandler}
-					className="text-sm flex items-center gap-2 font-semibold text-primary py-1 px-2 hover:bg-light transition-colors"
+					className="text-sm flex items-center gap-2 font-semibold text-primary py-0.5 px-2 hover:bg-light transition-colors"
 				>
 					<AddIcon size={10} /> Add Class
 				</button>
