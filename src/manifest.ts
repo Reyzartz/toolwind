@@ -18,7 +18,7 @@ const manifest = defineManifest(async () => ({
 			'32': 'icons/logo-32.png',
 		},
 	},
-	permissions: ['activeTab', 'tabs', 'storage', 'clipboardWrite'],
+	permissions: ['activeTab', 'storage', 'clipboardWrite'],
 	icons: {
 		'16': 'icons/logo-16.png',
 		'32': 'icons/logo-32.png',
@@ -27,7 +27,7 @@ const manifest = defineManifest(async () => ({
 	},
 	content_scripts: [
 		{
-			matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+			matches: ['http://*/*', 'https://*/*'],
 			js: ['src/content/index.ts'],
 			run_at: 'document_end',
 		},
@@ -35,7 +35,7 @@ const manifest = defineManifest(async () => ({
 	web_accessible_resources: [
 		{
 			resources: ['assets/js/*.js', 'assets/css/*.css', 'assets/img/*'],
-			matches: ['*://*/*'],
+			matches: ['http://*/*', 'https://*/*'],
 		},
 	],
 }))
