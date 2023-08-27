@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { useMount } from "react-use";
 // @ts-expect-error it is broken Gomen'nasai
 import AutoComplete from "tailwindcss-autocomplete";
+
 export let autocomplete: AutoComplete;
 
 export const useTailwindIntellisense = () => {

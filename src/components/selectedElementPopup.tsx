@@ -43,7 +43,7 @@ export const SelectedElementPopup = React.memo(
 			<>
 				<div
 					ref={setReferenceElement as any}
-					className="border border-solid fixed z-[10000] pointer-events-none border-default"
+					className="fixed z-[10000] pointer-events-none"
 					style={{
 						top: rect.y,
 						left: rect.x,

@@ -1,8 +1,8 @@
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 import { linter } from '@codemirror/lint'
+import { editorTheme } from '@toolwind/helpers/constant'
 import { sendMessage } from '@toolwind/helpers/message'
 import { getItemFromStorage, setItemToStorage } from '@toolwind/helpers/storage'
-import { githubDark } from '@uiw/codemirror-theme-github'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -35,7 +35,7 @@ const SettingsPanel = () => {
 	}, [])
 
 	return (
-		<div>
+		<div className="p-0">
 			<h3 className="text-sm font-semibold text-default mb-2">
 				Tailwind Config:
 			</h3>
@@ -43,9 +43,9 @@ const SettingsPanel = () => {
 			{defaultValue !== undefined && (
 				<ReactCodeMirror
 					value={defaultValue}
-					height="318px"
-					style={{ fontSize: '14px' }}
-					theme={githubDark}
+					height="298px"
+					className="text-sm border border-default bg-light"
+					theme={editorTheme}
 					extensions={[json(), linter(jsonParseLinter())]}
 					onChange={onChangeHandler}
 				/>

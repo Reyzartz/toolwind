@@ -17,10 +17,11 @@
 		"devtool"
 	],
 	"dependencies": {
+		"@codemirror/lang-css": "^6.2.1",
 		"@codemirror/lang-json": "^6.0.1",
 		"@codemirror/lint": "^6.2.2",
 		"@headlessui/react": "^1.7.16",
-		"@uiw/codemirror-theme-github": "^4.21.2",
+		"@uiw/codemirror-theme-dracula": "^4.21.11",
 		"@uiw/react-codemirror": "^4.21.2",
 		"clsx": "^2.0.0",
 		"downshift": "^8.1.0",

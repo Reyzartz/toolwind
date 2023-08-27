@@ -78,10 +78,10 @@ export const SelectedElementHeader = () => {
 				</button>
 			)}
 
-			<CaretIcon size={12} className="text-default" />
+			<CaretIcon size={10} className="text-default -mx-0.5" />
 
 			<h1 className="flex-grow flex items-baseline w-full overflow-hidden">
-				<span className="text-primary font-bold text-base leading-4 lowercase">
+				<span className="text-primary font-semibold text-base leading-4 lowercase">
 					{selectedElement!.nodeName}
 				</span>
 
@@ -93,7 +93,7 @@ export const SelectedElementHeader = () => {
 				</span>
 			</h1>
 
-			<div className="gap-2 flex">
+			<div className="gap-1.5 flex">
 				<button
 					onClick={copyClassNameHandler}
 					className="border-none text-default group flex items-center gap-1 hover:text-primary active:text-primary-dark"

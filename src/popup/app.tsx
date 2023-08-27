@@ -33,7 +33,7 @@ function App() {
 	return (
 		<div
 			className="bg-default flex flex-col"
-			style={{ width: 350, height: 400, maxHeight: 400 }}
+			style={{ width: 350, height: 400 }}
 		>
 			<header className="flex p-3 items-center gap-3 pb-1">
 				<div
@@ -63,7 +63,7 @@ function App() {
 				</button>
 			</header>
 
-			<div className="flex-grow overflow-scroll p-3">
+			<div className="flex-grow overflow-auto m-3">
 				{showSettingsPanel ? <SettingsPanel /> : <ModifiedElementsList />}
 			</div>
 		</div>

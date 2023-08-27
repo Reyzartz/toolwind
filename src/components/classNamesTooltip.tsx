@@ -32,9 +32,12 @@ export const ClassNamesTooltip = React.memo(
 
 			for (const node of inspectedElement.childNodes) {
 				if (node.nodeName === '#text')
-					return `${computeStyles.getPropertyValue(
-						'font-size'
-					)}, ${computeStyles.getPropertyValue('font-family')}`
+					return {
+						fontSize: computeStyles
+							.getPropertyValue('font-size')
+							.replace('px', ''),
+						fontFamily: computeStyles.getPropertyValue('font-family'),
+					}
 			}
 
 			return null
@@ -99,21 +102,30 @@ export const ClassNamesTooltip = React.memo(
 					>
 						<div className="lowercase w-full flex items-baseline text-default">
 							<span className="font-bold text-primary text-base">{`${inspectedElement.tagName}`}</span>
-							<span className="text-sm truncate">
+							<span className="text-xs truncate">
 								{classNames.length === 0 ? '' : '.' + classNames.join('.')}
 							</span>
 						</div>
 
-						<div className="flex gap-1 items-center text-xs text-default">
-							<SizeIcon size={14} className="text-primary" /> {rect.width}x
-							<span>{rect.height}</span>
+						<div className="flex items-center gap-2 text-xs">
+							<SizeIcon size={14} className="text-primary" />
+
+							<div className="flex items-center text-default font-medium">
+								{rect.width.toFixed(2).replaceAll('.00', '')}
+								<span className="text-primary-dark mx-0.5">x</span>
+								{rect.height.toFixed(2).replaceAll('.00', '')}
+							</div>
 						</div>
 
 						{fontInfo !== null && (
-							<div className="flex gap-1 items-center text-xs text-default">
+							<div className="flex gap-2 items-center text-xs  truncate">
 								<FontIcon size={14} className="text-primary" />
 
-								<span className="truncate">{fontInfo}</span>
+								<div className="truncate text-default font-medium">
+									<span>{fontInfo.fontSize}</span>
+									<span className="text-primary-dark">px</span> ,
+									<span className="truncate"> {fontInfo.fontFamily}</span>
+								</div>
 							</div>
 						)}
 					</div>

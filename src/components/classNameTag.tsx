@@ -4,9 +4,29 @@ import { type MouseEventHandler, useCallback, useRef } from 'react'
 import { ClassNameInput } from './classNameInput'
 import { CloseIcon } from '@toolwind/icons'
 import clsx from 'clsx'
-
+import ReactCodeMirror from '@uiw/react-codemirror'
+import { css } from '@codemirror/lang-css'
+import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
+import { useAsync } from 'react-use'
+import { editorTheme } from '@toolwind/helpers/constant'
+import { EditorView } from '@codemirror/view'
 interface ClassNameTagProps {
 	cssClass: CSSClass
+}
+
+export const getCssClassPropertiesFromCssText = (cssText: string) => {
+	let propertyText = cssText.slice(
+		cssText.indexOf('{') + 1,
+		cssText.indexOf('}')
+	)
+	propertyText = propertyText.slice(0, propertyText.lastIndexOf(';'))
+	return propertyText.split(';').map((property) => {
+		const [key, value] = property.split(':')
+		return {
+			key: key?.trim(),
+			value: value?.trim(),
+		}
+	})
 }
 
 export const ClassNameTag = ({
@@ -14,6 +34,7 @@ export const ClassNameTag = ({
 }: ClassNameTagProps) => {
 	const { updateCssClass, removeCssClass } = useCSSClasses()
 	const tagRef = useRef<HTMLDivElement>(null)
+	const { getCssText } = useTailwindIntellisense()
 
 	const onUpdateHandler = useCallback(
 		(value: string) => {
@@ -46,6 +67,13 @@ export const ClassNameTag = ({
 		[defaultClassName, id, removeCssClass, updateCssClass]
 	)
 
+	const formattedCssText = useAsync(
+		async () => await getCssText(className ?? ''),
+		[className]
+	)
+
+	console.log('formattedCssText', formattedCssText)
+
 	return (
 		<div
 			ref={tagRef}
@@ -53,6 +81,26 @@ export const ClassNameTag = ({
 				'relative transition max-w-max inline-flex items-center cursor-pointer group bg-light text-default'
 			)}
 		>
+			{state !== 'editing' && (
+				<div className="absolute hidden group-hover:block bottom-full mb-2 z-[10000] border border-default">
+					<ReactCodeMirror
+						width="max-content"
+						maxWidth="296px"
+						value={formattedCssText.value ?? ''}
+						className="text-xs p-1 bg-default shadow-xl"
+						extensions={[css(), EditorView.lineWrapping]}
+						editable={false}
+						theme={editorTheme}
+						basicSetup={{
+							lineNumbers: false,
+							foldGutter: false,
+							syntaxHighlighting: false,
+							highlightActiveLine: false,
+						}}
+					/>
+				</div>
+			)}
+
 			{state === 'editing' ? (
 				<ClassNameInput
 					initialWidth={tagRef.current?.getClientRects()[0].width}
