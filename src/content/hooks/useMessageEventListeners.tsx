@@ -85,6 +85,7 @@ export const useMessageEventListeners = () => {
 
 							if (element !== null) {
 								set(selectedElementState, element)
+								set(inspectedElementState, null)
 							}
 						}
 						break

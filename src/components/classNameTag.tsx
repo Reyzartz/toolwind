@@ -72,8 +72,6 @@ export const ClassNameTag = ({
 		[className]
 	)
 
-	console.log('formattedCssText', formattedCssText)
-
 	return (
 		<div
 			ref={tagRef}

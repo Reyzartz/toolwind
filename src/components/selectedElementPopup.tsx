@@ -18,7 +18,7 @@ export const SelectedElementPopup = React.memo(
 		const [arrowElement, setArrowElement] = useState(null)
 
 		const { styles, attributes } = usePopper(referenceElement, popperElement, {
-			placement: 'bottom-start',
+			placement: 'bottom',
 			modifiers: [
 				{
 					name: 'preventOverflow',

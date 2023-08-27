@@ -94,7 +94,7 @@ export const ClassNamesTooltip = React.memo(
 					{...attributes.popper}
 				>
 					<div
-						className="bg-default p-2 space-y-2"
+						className="bg-default p-2 space-y-1.5"
 						style={{
 							minWidth: 148,
 							maxWidth: 296,

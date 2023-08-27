@@ -43,6 +43,8 @@ export const selectedElementState = selector<HTMLElement | null>({
 
 		const prevSelectedElement = get(selectedElementAtomState)
 
+		const modifiedElementsList = get(modifiedElementsState)
+
 		if (prevSelectedElement !== null) {
 			const xpath = getXPathFromElement(prevSelectedElement) as string
 
@@ -55,11 +57,10 @@ export const selectedElementState = selector<HTMLElement | null>({
 			if (
 				JSON.stringify(updatedClassNames) !== JSON.stringify(originalClassNames)
 			) {
-				const modifiedElementsList = get(modifiedElementsState)
-
 				const updatedList: ModifiedElement[] = [
 					{
 						xpath,
+						cssClasses: get(cssClassesState),
 						updatedClassNames,
 						originalClassNames,
 						tagName: prevSelectedElement.tagName,
@@ -80,10 +81,21 @@ export const selectedElementState = selector<HTMLElement | null>({
 		}
 
 		if (element !== null && !(element instanceof DefaultValue)) {
-			// setting the css classes and default css classes
-			set(cssClassesState, getClassObjects(element, false))
+			const currentElementXpath = getXPathFromElement(element)
+			const previousElementState = modifiedElementsList.find(
+				({ xpath }) => xpath === currentElementXpath
+			)
 
-			set(defaultCssClassesState, getClassNames(element))
+			// setting the css classes and default css classes
+			set(
+				cssClassesState,
+				previousElementState?.cssClasses ?? getClassObjects(element, false)
+			)
+
+			set(
+				defaultCssClassesState,
+				previousElementState?.originalClassNames ?? getClassNames(element)
+			)
 		}
 
 		// setting the selected element atom state
