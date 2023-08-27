@@ -1,4 +1,5 @@
 import {
+	defaultCssClassesState,
 	inspectedElementState,
 	selectedElementState,
 } from '@toolwind/content/store'
@@ -7,13 +8,15 @@ import { CaretIcon } from '@toolwind/icons/caretIcon'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useToggle } from 'react-use'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 export const SelectedElementHeader = () => {
 	const [selectedElement, setSelectedElement] =
 		useRecoilState(selectedElementState)
 	const [parentElement, setParentElement] = useState<HTMLElement | null>(null)
 	const [copied, setCopied] = useToggle(false)
+
+	const defaultCssClasses = useRecoilValue(defaultCssClassesState)
 
 	const setInspectedElement = useSetRecoilState(inspectedElementState)
 
@@ -89,7 +92,7 @@ export const SelectedElementHeader = () => {
 					{Boolean(selectedElement!.id) && '#'}
 					{selectedElement!.id}
 					{Boolean(selectedElement!.className) && '.'}
-					{selectedElement!.className.replace(' ', '.')}
+					{defaultCssClasses.join('.')}
 				</span>
 			</h1>
 

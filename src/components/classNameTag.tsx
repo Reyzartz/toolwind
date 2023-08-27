@@ -32,15 +32,18 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 export const ClassNameTag = ({
 	cssClass: { id, className, meta, state, defaultClassName },
 }: ClassNameTagProps) => {
-	const { updateCssClass, removeCssClass } = useCSSClasses()
+	const { updateCssClass, removeCssClass, isEditing, setIsEditing } =
+		useCSSClasses()
 	const tagRef = useRef<HTMLDivElement>(null)
 	const { getCssText } = useTailwindIntellisense()
 
 	const onUpdateHandler = useCallback(
 		(value: string) => {
 			void updateCssClass(id, { className: value, state: 'active' })
+
+			setIsEditing(false)
 		},
-		[id, updateCssClass]
+		[id, setIsEditing, updateCssClass]
 	)
 
 	const onClickHandler: React.MouseEventHandler<HTMLButtonElement> =
@@ -79,8 +82,8 @@ export const ClassNameTag = ({
 				'relative transition max-w-max inline-flex items-center cursor-pointer group bg-light text-default'
 			)}
 		>
-			{state !== 'editing' && (
-				<div className="absolute hidden group-hover:block bottom-full mb-2 z-[10000] border border-default">
+			{!isEditing && (
+				<div className="absolute delay-0 pointer-events-none invisible transition-all group-hover:visible group-hover:delay-500 bottom-full mb-2 z-[10000] border border-default">
 					<ReactCodeMirror
 						width="max-content"
 						maxWidth="296px"

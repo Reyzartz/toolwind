@@ -19,6 +19,11 @@ export const isAddingClassState = atom<boolean>({
 	default: false,
 })
 
+export const isEditingClassState = atom<boolean>({
+	key: 'is-editing-class',
+	default: false,
+})
+
 export const activeCssClassState = atom<CSSClass | null>({
 	key: 'active-css-class',
 	default: null,
