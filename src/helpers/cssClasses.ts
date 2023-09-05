@@ -68,14 +68,9 @@ import {
 // console.log(allRules)
 
 export function getClassNames(el: HTMLElement | null) {
-	if (
-		el === null ||
-		typeof el.className !== 'string' ||
-		el.className.trim().length === 0
-	)
-		return []
+	if (el === null) return []
 
-	const classNames = el.className.split(' ')
+	const classNames = el.classList.value.split(' ')
 
 	return classNames.filter(
 		(name) => !name.includes('toolwind') && name.trim().length > 0

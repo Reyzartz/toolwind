@@ -33,7 +33,7 @@ export const useCSSClasses = () => {
 			classNames.push(activeCssClass.className)
 		}
 
-		selectedElement.className = classNames.join(' ')
+		selectedElement.setAttribute('class', classNames.join(' '))
 	}, [cssClasses, activeCssClass, selectedElement])
 
 	useLayoutEffect(() => {

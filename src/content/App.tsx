@@ -46,7 +46,7 @@ const App = () => {
 
 			if (
 				e.target !== null &&
-				!(e.target as HTMLElement).matches('#toolwind,svg, svg *')
+				!(e.target as HTMLElement).matches('#toolwind')
 			) {
 				void setInspectedElementHandler(e.target as HTMLElement)
 			}
@@ -61,7 +61,7 @@ const App = () => {
 		const clickEventListener = (e: MouseEvent) => {
 			if (
 				e.target !== null &&
-				!(e.target as HTMLElement).matches('#toolwind,svg, svg *')
+				!(e.target as HTMLElement).matches('#toolwind')
 			) {
 				e.stopPropagation()
 				e.preventDefault()
