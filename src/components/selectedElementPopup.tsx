@@ -8,13 +8,8 @@ import React, {
 import { AddClassName } from './addClassName'
 import { ClassNameTag } from './classNameTag'
 import { SelectedElementHeader } from './selectedElementHeader'
-import { computePosition, offset } from '@floating-ui/react'
-
-const getVirtualEl = (x = 0, y = 0, width = 0, height = 0) => ({
-	getBoundingClientRect() {
-		return new DOMRect(x, y, width, height)
-	},
-})
+import { computePosition, flip, offset } from '@floating-ui/react'
+import { useEffectOnce } from 'react-use'
 
 interface ISelectedElementPopupProps {
 	element: HTMLElement
@@ -25,6 +20,8 @@ export const SelectedElementPopup = React.memo(
 		const { cssClasses } = useCSSClasses()
 
 		const floatingEl = useRef<HTMLDivElement>(null)
+		const referenceEl = useRef<HTMLDivElement>(null)
+
 		const initialPositionCleanup = useRef<() => void>()
 
 		const rect = useMemo(() => element.getBoundingClientRect(), [element])
@@ -33,29 +30,56 @@ export const SelectedElementPopup = React.memo(
 			({ clientX, clientY }) => {
 				if (clientX === 0 && clientY === 0) return
 
-				void computePosition(getVirtualEl(), floatingEl.current!, {
-					middleware: [offset(8)],
-				}).then(() => {
-					initialPositionCleanup.current?.()
+				void computePosition(referenceEl.current!, floatingEl.current!).then(
+					() => {
+						initialPositionCleanup.current?.()
 
-					Object.assign(floatingEl.current!.style, {
-						position: 'fixed',
-						// offsetting based on the move button position
-						left: `${clientX - 278}px`,
-						top: `${clientY - 19}px`,
-					})
-				})
+						Object.assign(floatingEl.current!.style, {
+							position: 'fixed',
+							// offsetting based on the move button position
+							left: `${clientX - 278}px`,
+							top: `${clientY - 19}px`,
+						})
+					}
+				)
 			},
 			[]
 		)
 
+		useEffectOnce(() => {
+			void computePosition(referenceEl.current!, floatingEl.current!, {
+				middleware: [offset(8), flip()],
+			}).then(({ x, y }) => {
+				initialPositionCleanup.current?.()
+
+				Object.assign(floatingEl.current!.style, {
+					position: 'fixed',
+					// offsetting based on the move button position
+					left: `${x}px`,
+					top: `${y}px`,
+				})
+			})
+		})
+
 		return (
 			<>
+				<div
+					ref={referenceEl}
+					className="fixed pointer-events-none"
+					style={{
+						zIndex: 10000,
+						top: rect.top,
+						left: rect.left,
+						width: rect.width,
+						height: rect.height,
+					}}
+				/>
+
 				<div
 					id="toolwind-tooltip my-2"
 					ref={floatingEl}
 					className="fixed"
-					style={{ zIndex: 10000, top: rect.bottom, left: rect.left }}
+					style={{ zIndex: 10000 }}
 				>
 					<div
 						className="bg-default"

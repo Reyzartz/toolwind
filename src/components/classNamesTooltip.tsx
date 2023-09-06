@@ -1,8 +1,8 @@
+import { autoUpdate, flip, useFloating } from '@floating-ui/react'
 import { inspectedElementState } from '@toolwind/content/store'
 import { getClassNames } from '@toolwind/helpers/cssClasses'
 import { FontIcon, SizeIcon } from '@toolwind/icons'
-import React, { useMemo, useState } from 'react'
-import { usePopper } from 'react-popper'
+import React, { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export interface IClassNamesTooltipProps {
@@ -13,11 +13,10 @@ export const ClassNamesTooltip = React.memo(
 	({ rect }: IClassNamesTooltipProps) => {
 		const inspectedElement = useRecoilValue(inspectedElementState)
 
-		const [referenceElement, setReferenceElement] = useState(null)
-		const [popperElement, setPopperElement] = useState(null)
-
-		const { styles, attributes } = usePopper(referenceElement, popperElement, {
+		const { refs, floatingStyles } = useFloating({
 			placement: 'top-start',
+			whileElementsMounted: autoUpdate,
+			middleware: [flip()],
 		})
 
 		const classNames = useMemo(
@@ -48,7 +47,7 @@ export const ClassNamesTooltip = React.memo(
 		return (
 			<>
 				<div
-					ref={setReferenceElement as any}
+					ref={refs.setReference}
 					className="fixed pointer-events-none border border-primary z-[10000]"
 					style={{
 						top: rect.y,
@@ -89,9 +88,8 @@ export const ClassNamesTooltip = React.memo(
 				<div
 					id="toolwind-tooltip"
 					key={`${rect.y}+${rect.x}`}
-					ref={setPopperElement as any}
-					style={{ ...styles.popper, zIndex: 10000, pointerEvents: 'none' }}
-					{...attributes.popper}
+					ref={refs.setFloating}
+					style={{ ...floatingStyles, zIndex: 10000, pointerEvents: 'none' }}
 				>
 					<div
 						className="bg-default p-2 space-y-1.5"

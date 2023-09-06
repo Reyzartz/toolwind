@@ -150,7 +150,7 @@ export const SelectedElementHeader = ({
 						setIsDragging(false)
 					}}
 					className={clsx(
-						'border-none text-default group flex items-center gap-1 cursor-move',
+						'border-none text-default group flex items-center gap-1 cursor-grab',
 						isDragging
 							? 'text-primary-dark'
 							: 'hover:text-primary active:text-primary-dark'

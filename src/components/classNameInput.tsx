@@ -1,3 +1,4 @@
+import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react'
 import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
 import { activeCssClassState } from '@toolwind/content/store'
 import {
@@ -9,8 +10,7 @@ import { CloseIcon } from '@toolwind/icons'
 import { type CSSClassSuggestionItem } from '@toolwind/types/common'
 import clsx from 'clsx'
 import { type UseComboboxStateChange, useCombobox } from 'downshift'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { usePopper } from 'react-popper'
+import { useCallback, useRef, useState } from 'react'
 import { useMount, useUnmount } from 'react-use'
 import { useRecoilState } from 'recoil'
 
@@ -34,32 +34,7 @@ const ClassNameInput = ({
 	const [activeOption, setActiveClassOption] =
 		useRecoilState(activeCssClassState)
 
-	const referenceElement = useRef(null)
-	const popperElement = useRef(null)
-
 	const textElementWidthRef = useRef<HTMLSpanElement>(null)
-
-	const { styles, attributes, forceUpdate } = usePopper(
-		referenceElement.current,
-		popperElement.current,
-		{
-			placement: 'bottom-start',
-			modifiers: [
-				{
-					name: 'preventOverflow',
-					options: {
-						rootBoundary: 'document',
-					},
-				},
-				{
-					name: 'offset',
-					options: {
-						offset: [0, 8],
-					},
-				},
-			],
-		}
-	)
 
 	const onSelectedItemChange = useCallback(
 		({
@@ -157,6 +132,13 @@ const ClassNameInput = ({
 		defaultSelectedItem: defaultValue,
 	})
 
+	const { refs, floatingStyles } = useFloating({
+		placement: 'bottom-start',
+		open: isOpen,
+		whileElementsMounted: autoUpdate,
+		middleware: [flip(), offset(8)],
+	})
+
 	useMount(() => {
 		if (defaultValue != null) {
 			// setting Active option to defaultValue on umount
@@ -186,12 +168,6 @@ const ClassNameInput = ({
 			[onSave, setInputValue]
 		)
 
-	useEffect(() => {
-		if (suggestedClasses.length >= 0 && forceUpdate !== null) {
-			forceUpdate()
-		}
-	}, [suggestedClasses, forceUpdate])
-
 	return (
 		<div className="relative">
 			<span
@@ -213,7 +189,7 @@ const ClassNameInput = ({
 						initialWidth
 					}px, 296px)`,
 				}}
-				ref={referenceElement}
+				ref={refs.setReference}
 			>
 				<input
 					{...getInputProps({
@@ -235,11 +211,11 @@ const ClassNameInput = ({
 					<CloseIcon size={10} />
 				</button>
 			</div>
+
 			<ul
-				style={{ ...styles.popper, zIndex: 10000 }}
-				{...attributes.popper}
+				style={{ ...floatingStyles, zIndex: 10000 }}
 				{...getMenuProps({
-					ref: popperElement,
+					ref: refs.setFloating,
 					className: clsx(
 						'flex flex-col absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
 						(inputValue.length === 0 || !isOpen) && 'hidden'
