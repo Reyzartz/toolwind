@@ -101,7 +101,7 @@ export const ClassNamesTooltip = React.memo(
 						}}
 					>
 						<div className="lowercase w-full flex items-baseline text-default">
-							<span className="font-bold text-primary text-base">{`${inspectedElement.tagName}`}</span>
+							<span className="font-bold text-primary text-base whitespace-pre">{`${inspectedElement.tagName}`}</span>
 							<span className="text-xs truncate">
 								{classNames.length === 0 ? '' : '.' + classNames.join('.')}
 							</span>

@@ -13,6 +13,11 @@ const renderReactComponent = (App: () => JSX.Element) => {
 
 	root.shadowRoot?.append(style)
 
+	Object.assign(root.style, {
+		position: 'fixed',
+		zIndex: 10000,
+	})
+
 	document.body.prepend(root)
 
 	const renderRoot = ReactDOM.createRoot(root.shadowRoot!)

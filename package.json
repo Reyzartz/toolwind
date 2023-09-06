@@ -20,6 +20,7 @@
 		"@codemirror/lang-css": "^6.2.1",
 		"@codemirror/lang-json": "^6.0.1",
 		"@codemirror/lint": "^6.2.2",
+		"@floating-ui/react": "^0.25.3",
 		"@headlessui/react": "^1.7.16",
 		"@uiw/codemirror-theme-dracula": "^4.21.11",
 		"@uiw/react-codemirror": "^4.21.2",

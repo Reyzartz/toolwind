@@ -1,9 +1,10 @@
-import { InspectedElementHighlighter } from '@toolwind/components/inspectedElementHighlighter'
 import { useCallback, useEffect } from 'react'
 import { useRecoilCallback, useRecoilValue } from 'recoil'
 import { useMessageEventListeners } from './hooks/useMessageEventListeners'
 import { inspectedElementState, selectedElementState } from './store'
 import { ContentStyles } from './styles'
+import { ClassNamesTooltip } from '@toolwind/components/classNamesTooltip'
+import { SelectedElementPopup } from '@toolwind/components/selectedElementPopup'
 
 const App = () => {
 	const inspectedElement = useRecoilValue(inspectedElementState)
@@ -108,11 +109,11 @@ const App = () => {
 			<ContentStyles />
 
 			{inspectedElement !== null && (
-				<InspectedElementHighlighter element={inspectedElement} />
+				<ClassNamesTooltip rect={inspectedElement.getClientRects()[0]} />
 			)}
 
 			{selectedElement !== null && (
-				<InspectedElementHighlighter element={selectedElement} selected />
+				<SelectedElementPopup element={selectedElement} />
 			)}
 		</>
 	)

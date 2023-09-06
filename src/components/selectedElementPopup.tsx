@@ -1,62 +1,61 @@
 import { useCSSClasses } from '@toolwind/content/hooks/useCssClasses'
-import React, { useState } from 'react'
-import { usePopper } from 'react-popper'
+import React, {
+	type DragEventHandler,
+	useCallback,
+	useRef,
+	useMemo,
+} from 'react'
 import { AddClassName } from './addClassName'
 import { ClassNameTag } from './classNameTag'
 import { SelectedElementHeader } from './selectedElementHeader'
+import { computePosition, offset } from '@floating-ui/react'
 
-export interface ISelectedElementPopupProps {
-	rect: DOMRect
+const getVirtualEl = (x = 0, y = 0, width = 0, height = 0) => ({
+	getBoundingClientRect() {
+		return new DOMRect(x, y, width, height)
+	},
+})
+
+interface ISelectedElementPopupProps {
+	element: HTMLElement
 }
 
 export const SelectedElementPopup = React.memo(
-	({ rect }: ISelectedElementPopupProps) => {
+	({ element }: ISelectedElementPopupProps) => {
 		const { cssClasses } = useCSSClasses()
 
-		const [referenceElement, setReferenceElement] = useState(null)
-		const [popperElement, setPopperElement] = useState(null)
-		const [arrowElement, setArrowElement] = useState(null)
+		const floatingEl = useRef<HTMLDivElement>(null)
+		const initialPositionCleanup = useRef<() => void>()
 
-		const { styles, attributes } = usePopper(referenceElement, popperElement, {
-			placement: 'bottom',
-			modifiers: [
-				{
-					name: 'preventOverflow',
-					options: {
-						rootBoundary: 'document',
-					},
-				},
-				{
-					name: 'arrow',
-					options: { element: arrowElement, padding: 16 },
-				},
-				{
-					name: 'offset',
-					options: {
-						offset: [0, 8],
-					},
-				},
-			],
-		})
+		const rect = useMemo(() => element.getBoundingClientRect(), [element])
+
+		const updatePosition: DragEventHandler = useCallback(
+			({ clientX, clientY }) => {
+				if (clientX === 0 && clientY === 0) return
+
+				void computePosition(getVirtualEl(), floatingEl.current!, {
+					middleware: [offset(8)],
+				}).then(() => {
+					initialPositionCleanup.current?.()
+
+					Object.assign(floatingEl.current!.style, {
+						position: 'fixed',
+						// offsetting based on the move button position
+						left: `${clientX - 278}px`,
+						top: `${clientY - 19}px`,
+					})
+				})
+			},
+			[]
+		)
 
 		return (
 			<>
 				<div
-					ref={setReferenceElement as any}
-					className="fixed z-[10000] pointer-events-none"
-					style={{
-						top: rect.y,
-						left: rect.x,
-						width: rect.width,
-						height: rect.height,
-					}}
-				/>
-
-				<div
-					id="toolwind-tooltip"
-					ref={setPopperElement as any}
-					style={{ ...styles.popper, zIndex: 10000 }}
-					{...attributes.popper}
+					id="toolwind-tooltip my-2"
+					ref={floatingEl}
+					className="fixed"
+					style={{ zIndex: 10000, top: rect.bottom, left: rect.left }}
 				>
 					<div
 						className="bg-default"
@@ -64,9 +63,9 @@ export const SelectedElementPopup = React.memo(
 							width: 320,
 						}}
 					>
-						<SelectedElementHeader />
+						<SelectedElementHeader updatePopupPosition={updatePosition} />
 
-						<div className="flex flex-wrap gap-2 p-3 pt-2" style={{}}>
+						<div className="flex flex-wrap gap-2 p-3 pt-2">
 							{cssClasses.map((cssClass, ind) => (
 								<ClassNameTag key={ind} cssClass={cssClass} />
 							))}
@@ -74,13 +73,6 @@ export const SelectedElementPopup = React.memo(
 							<AddClassName />
 						</div>
 					</div>
-
-					<div
-						id="toolwind-arrow"
-						ref={setArrowElement as any}
-						style={styles.arrow}
-						className="bg-default border-transparent"
-					/>
 				</div>
 			</>
 		)

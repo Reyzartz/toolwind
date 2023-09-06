@@ -1,22 +1,35 @@
 import {
-	defaultCssClassesState,
 	inspectedElementState,
 	selectedElementState,
 } from '@toolwind/content/store'
-import { CheckMarkIcon, CloseIcon, CopyIcon, DeleteIcon } from '@toolwind/icons'
+import {
+	CheckMarkIcon,
+	CloseIcon,
+	CopyIcon,
+	DeleteIcon,
+	DragIcon,
+} from '@toolwind/icons'
 import { CaretIcon } from '@toolwind/icons/caretIcon'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { type DragEventHandler, useEffect, useState } from 'react'
 import { useToggle } from 'react-use'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
-export const SelectedElementHeader = () => {
+const emptyImg = new Image()
+emptyImg.src =
+	'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+
+interface SelectedElementHeaderProps {
+	updatePopupPosition: DragEventHandler
+}
+export const SelectedElementHeader = ({
+	updatePopupPosition,
+}: SelectedElementHeaderProps) => {
 	const [selectedElement, setSelectedElement] =
 		useRecoilState(selectedElementState)
 	const [parentElement, setParentElement] = useState<HTMLElement | null>(null)
 	const [copied, setCopied] = useToggle(false)
-
-	const defaultCssClasses = useRecoilValue(defaultCssClassesState)
+	const [isDragging, setIsDragging] = useToggle(false)
 
 	const setInspectedElement = useSetRecoilState(inspectedElementState)
 
@@ -75,7 +88,7 @@ export const SelectedElementHeader = () => {
 					onClick={(e) => {
 						selectedElementHandler(e, parentElement)
 					}}
-					className="border-none text-default text-base font-bold hover:text-primary active:text-primary-dark pl-2 lowercase"
+					className="border-none text-default text-base font-bold hover:text-primary active:text-primary-dark pl-2 lowercase whitespace-pre"
 				>
 					{parentElement.tagName}
 				</button>
@@ -83,16 +96,17 @@ export const SelectedElementHeader = () => {
 
 			<CaretIcon size={10} className="text-default -mx-0.5" />
 
-			<h1 className="flex-grow flex items-baseline w-full overflow-hidden">
+			<h1
+				className="flex-grow flex items-baseline w-full overflow-hidden"
+				onMouseEnter={() => {
+					setInspectedElement(selectedElement)
+				}}
+				onMouseLeave={() => {
+					setInspectedElement(null)
+				}}
+			>
 				<span className="text-primary font-semibold text-base leading-4 lowercase">
 					{selectedElement!.nodeName}
-				</span>
-
-				<span className="text-xs flex-grow leading-4 truncate inline-block text-default">
-					{Boolean(selectedElement!.id) && '#'}
-					{selectedElement!.id}
-					{Boolean(selectedElement!.className) && '.'}
-					{defaultCssClasses.join('.')}
 				</span>
 			</h1>
 
@@ -125,6 +139,36 @@ export const SelectedElementHeader = () => {
 				</button>
 
 				<button
+					draggable
+					onDragStart={(e) => {
+						e.dataTransfer.setDragImage(emptyImg, 0, 0)
+						setIsDragging(true)
+					}}
+					onDrag={updatePopupPosition}
+					onDragEnd={(e) => {
+						updatePopupPosition(e)
+						setIsDragging(false)
+					}}
+					className={clsx(
+						'border-none text-default group flex items-center gap-1 cursor-move',
+						isDragging
+							? 'text-primary-dark'
+							: 'hover:text-primary active:text-primary-dark'
+					)}
+				>
+					<DragIcon size={12} />
+
+					<span
+						className={clsx(
+							'overflow-hidden transition-all text-xs font-bold',
+							isDragging ? 'w-8' : 'w-0 group-hover:w-8'
+						)}
+					>
+						Move
+					</span>
+				</button>
+
+				<button
 					onClick={() => {
 						setSelectedElement(null)
 					}}
@@ -132,7 +176,7 @@ export const SelectedElementHeader = () => {
 				>
 					<CloseIcon size={12} />
 
-					<span className="w-0 overflow-hidden transition-all group-hover:w-9 text-xs font-bold">
+					<span className="w-0 overflow-hidden transition-all group-hover:w-8 text-xs font-bold">
 						Close
 					</span>
 				</button>
