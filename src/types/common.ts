@@ -16,6 +16,7 @@ export interface CSSClassSuggestionItem {
 	color?: string
 	isVariant: boolean
 	variants: string[]
+	important: boolean
 }
 
 export interface ModifiedElement {

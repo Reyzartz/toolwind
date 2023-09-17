@@ -137,5 +137,5 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 export const getClassNameFromCSSClassSuggestionItem = (
 	item: CSSClassSuggestionItem
 ) => {
-	return [...item.variants, item.name].join(':')
+	return [...item.variants, `${item.important ? '!' : ''}${item.name}`].join(':')
 }

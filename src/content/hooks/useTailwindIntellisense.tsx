@@ -36,7 +36,8 @@ export const useTailwindIntellisense = () => {
 							? (item.documentation as string)
 							: undefined,
 					isVariant: item.data._type === 'variant',
-					variants: item.data?.variants ?? variants
+					variants: item.data?.variants ?? variants,
+					important: item.data?.important ?? false
 				}
 			})
 		},
