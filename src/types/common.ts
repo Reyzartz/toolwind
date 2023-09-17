@@ -14,7 +14,7 @@ export interface CSSClass {
 export interface CSSClassSuggestionItem {
 	name: string
 	color?: string
-	isVariant?: boolean
+	isVariant: boolean
 	variants: string[]
 }
 

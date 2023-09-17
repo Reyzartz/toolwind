@@ -24,8 +24,11 @@ export const useTailwindIntellisense = () => {
 			if (isCustomClass(className)) return []
 
 			const results = await autocomplete.getSuggestionList(className)
+			const variants = className.split(':').slice(0, -1)
 
 			return results.slice(0, 50).map((item: any) => {
+				console.log('item', item)
+
 				return {
 					name: item.label as string,
 					color:
@@ -33,7 +36,7 @@ export const useTailwindIntellisense = () => {
 							? (item.documentation as string)
 							: undefined,
 					isVariant: item.data._type === 'variant',
-					variants: item.data?.variants ?? []
+					variants: item.data?.variants ?? variants
 				}
 			})
 		},

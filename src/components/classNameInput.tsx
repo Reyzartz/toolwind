@@ -142,7 +142,7 @@ const ClassNameInput = ({
 		void setActiveOptionHandler(null)
 	})
 
-	const onKeyUpHandler: React.KeyboardEventHandler<HTMLInputElement> =
+	const onKeyDownHandler: React.KeyboardEventHandler<HTMLInputElement> =
 		useCallback(
 			(e) => {
 				const value = (e.target as HTMLInputElement).value
@@ -152,8 +152,20 @@ const ClassNameInput = ({
 					return
 				}
 
-				if (e.code === 'BracketLeft') {
-					setInputValue(value + ']')
+				if (e.key === '[') {
+					const end = e.target as HTMLInputElement
+
+					const caretPosition = end.selectionStart ?? value.length
+
+					setInputValue(
+						value.slice(0, caretPosition) +
+							']' +
+							value.slice(caretPosition, value.length)
+					)
+
+					setTimeout(() => {
+						end.setSelectionRange(caretPosition, caretPosition)
+					}, 0)
 				}
 			},
 			[onSave, setInputValue]
@@ -183,7 +195,7 @@ const ClassNameInput = ({
 			>
 				<input
 					{...getInputProps({
-						onKeyUpCapture: onKeyUpHandler,
+						onKeyDown: onKeyDownHandler,
 						onBlur: onCancelHandler,
 						className: clsx(
 							'm-0 text-sm bg-transparent focus:!outline-none text-default w-full',
@@ -230,7 +242,7 @@ const ClassNameInput = ({
 							})}
 						>
 							{suggestedClass.color === undefined ? (
-								<span>{suggestedClass.isVariant === true ? `{}` : '☲'}</span>
+								<span>{suggestedClass.isVariant ? `{}` : '☲'}</span>
 							) : (
 								<span
 									className={clsx(
