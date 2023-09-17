@@ -1,68 +1,68 @@
-import { isCustomClass } from "@toolwind/helpers/cssClasses";
-import { getItemFromStorage } from "@toolwind/helpers/storage";
-import { type CSSClassSuggestionItem } from "@toolwind/types/common";
-import { useCallback, useState } from "react";
-import { useMount } from "react-use";
+import { isCustomClass } from '@toolwind/helpers/cssClasses'
+import { getItemFromStorage } from '@toolwind/helpers/storage'
+import { type CSSClassSuggestionItem } from '@toolwind/types/common'
+import { useCallback, useState } from 'react'
+import { useMount } from 'react-use'
 // @ts-expect-error it is broken Gomen'nasai
-import AutoComplete from "tailwindcss-autocomplete";
+import AutoComplete from 'tailwindcss-autocomplete'
 
-export let autocomplete: AutoComplete;
+export let autocomplete: AutoComplete
 
 export const useTailwindIntellisense = () => {
-  const [config, setConfig] = useState({});
+	const [config, setConfig] = useState({})
 
-  useMount(() => {
-    if (autocomplete === undefined) {
-      void getItemFromStorage("tw_config").then((config) => {
-        autocomplete = new AutoComplete(config ?? {});
-      });
-    }
-  });
+	useMount(() => {
+		if (autocomplete === undefined) {
+			void getItemFromStorage('tw_config').then((config) => {
+				autocomplete = new AutoComplete(config ?? {})
+			})
+		}
+	})
 
-  const getSuggestionList = useCallback(
-    async (className = ""): Promise<CSSClassSuggestionItem[]> => {
-      if (isCustomClass(className)) return [];
+	const getSuggestionList = useCallback(
+		async (className = ''): Promise<CSSClassSuggestionItem[]> => {
+			if (isCustomClass(className)) return []
 
-      const results = await autocomplete.getSuggestionList(className);
+			const results = await autocomplete.getSuggestionList(className)
 
-      return results.slice(0, 50).map((item: any) => {
-        return {
-          name: item.label as string,
-          color:
-            typeof item.documentation === "string"
-              ? (item.documentation as string)
-              : undefined,
-          isVariant: item.data._type === "variant",
-          variants: item.data?.variants ?? [],
-        };
-      });
-    },
-    []
-  );
+			return results.slice(0, 50).map((item: any) => {
+				return {
+					name: item.label as string,
+					color:
+						typeof item.documentation === 'string'
+							? (item.documentation as string)
+							: undefined,
+					isVariant: item.data._type === 'variant',
+					variants: item.data?.variants ?? []
+				}
+			})
+		},
+		[]
+	)
 
-  const getCssText = useCallback(async (className: string): Promise<string> => {
-    const result = await autocomplete.getClassCssText(className);
+	const getCssText = useCallback(async (className: string): Promise<string> => {
+		const result = await autocomplete.getClassCssText(className)
 
-    return result;
-  }, []);
+		return result
+	}, [])
 
-  const getClassColor = useCallback(async (className: string) => {
-    const result = await autocomplete.getColor(className);
+	const getClassColor = useCallback(async (className: string) => {
+		const result = await autocomplete.getColor(className)
 
-    return result;
-  }, []);
+		return result
+	}, [])
 
-  const setConfigHandler = useCallback((config: Record<string, any>) => {
-    setConfig(config);
+	const setConfigHandler = useCallback((config: Record<string, any>) => {
+		setConfig(config)
 
-    autocomplete = new AutoComplete(config);
-  }, []);
+		autocomplete = new AutoComplete(config)
+	}, [])
 
-  return {
-    config,
-    setConfig: setConfigHandler,
-    getSuggestionList,
-    getCssText,
-    getClassColor,
-  };
-};
+	return {
+		config,
+		setConfig: setConfigHandler,
+		getSuggestionList,
+		getCssText,
+		getClassColor
+	}
+}

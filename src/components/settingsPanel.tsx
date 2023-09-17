@@ -26,8 +26,8 @@ const SettingsPanel = () => {
 				to: 'content_script',
 				action: {
 					type: 'UPDATE_CONFIG',
-					data: { config },
-				},
+					data: { config }
+				}
 			})
 
 			void setItemToStorage('tw_config', config)
@@ -36,15 +36,13 @@ const SettingsPanel = () => {
 
 	return (
 		<div className="p-0">
-			<h3 className="text-sm font-semibold text-default mb-2">
-				Tailwind Config:
-			</h3>
+			<h3 className="mb-2 text-sm font-semibold text-default">Tailwind Config:</h3>
 
 			{defaultValue !== undefined && (
 				<ReactCodeMirror
 					value={defaultValue}
 					height="298px"
-					className="text-sm border border-default bg-light"
+					className="border border-default bg-light text-sm"
 					theme={editorTheme}
 					extensions={[json(), linter(jsonParseLinter())]}
 					onChange={onChangeHandler}

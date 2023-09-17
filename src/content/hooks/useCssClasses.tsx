@@ -7,7 +7,7 @@ import {
 	cssClassesState,
 	isAddingClassState,
 	isEditingClassState,
-	selectedElementState,
+	selectedElementState
 } from '../store'
 import { useTailwindIntellisense } from './useTailwindIntellisense'
 
@@ -66,7 +66,7 @@ export const useCSSClasses = () => {
 				const updatedClassObjects = cssClasses.map((cssClass) => {
 					return {
 						...cssClass,
-						state: cssClass.state === 'editing' ? 'active' : cssClass.state,
+						state: cssClass.state === 'editing' ? 'active' : cssClass.state
 					}
 				})
 
@@ -86,8 +86,7 @@ export const useCSSClasses = () => {
 			const updatedClassObjects = await Promise.all(
 				cssClasses.map(async (cssClass) => {
 					if (id !== cssClass.id) {
-						return updatedCssClass.state === 'editing' &&
-							cssClass.state === 'editing'
+						return updatedCssClass.state === 'editing' && cssClass.state === 'editing'
 							? ({ ...cssClass, state: 'active' } satisfies CSSClass)
 							: cssClass
 					}
@@ -101,13 +100,13 @@ export const useCSSClasses = () => {
 								cssText,
 								cssClass.defaultClassName
 							),
-							...updatedCssClass,
+							...updatedCssClass
 						}
 					}
 
 					return {
 						...cssClass,
-						...updatedCssClass,
+						...updatedCssClass
 					}
 				})
 			)
@@ -136,6 +135,6 @@ export const useCSSClasses = () => {
 		cssClasses,
 		removeCssClass,
 		addCssClass,
-		updateCssClass,
+		updateCssClass
 	}
 }

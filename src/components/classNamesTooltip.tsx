@@ -16,7 +16,7 @@ export const ClassNamesTooltip = React.memo(
 		const { refs, floatingStyles } = useFloating({
 			placement: 'top-start',
 			whileElementsMounted: autoUpdate,
-			middleware: [flip()],
+			middleware: [flip()]
 		})
 
 		const classNames = useMemo(
@@ -32,10 +32,8 @@ export const ClassNamesTooltip = React.memo(
 			for (const node of inspectedElement.childNodes) {
 				if (node.nodeName === '#text')
 					return {
-						fontSize: computeStyles
-							.getPropertyValue('font-size')
-							.replace('px', ''),
-						fontFamily: computeStyles.getPropertyValue('font-family'),
+						fontSize: computeStyles.getPropertyValue('font-size').replace('px', ''),
+						fontFamily: computeStyles.getPropertyValue('font-family')
 					}
 			}
 
@@ -48,40 +46,40 @@ export const ClassNamesTooltip = React.memo(
 			<>
 				<div
 					ref={refs.setReference}
-					className="fixed pointer-events-none border border-primary z-[10000]"
+					className="pointer-events-none fixed z-[10000] border border-primary"
 					style={{
 						top: rect.y,
 						left: rect.x,
 						width: rect.width,
-						height: rect.height,
+						height: rect.height
 					}}
 				/>
 
 				<div
-					className="opacity-50 fixed pointer-events-none border-t border-primary z-[10000] border-dashed w-screen left-0"
+					className="pointer-events-none fixed left-0 z-[10000] w-screen border-t border-dashed border-primary opacity-50"
 					style={{
-						top: rect.y,
+						top: rect.y
 					}}
 				/>
 
 				<div
-					className="opacity-50 fixed pointer-events-none border-t border-primary z-[10000] border-dashed w-screen left-0"
+					className="pointer-events-none fixed left-0 z-[10000] w-screen border-t border-dashed border-primary opacity-50"
 					style={{
-						top: rect.y + rect.height - 1,
+						top: rect.y + rect.height - 1
 					}}
 				/>
 
 				<div
-					className="opacity-50 fixed pointer-events-none border-l border-primary z-[10000] border-dashed h-screen top-0"
+					className="pointer-events-none fixed top-0 z-[10000] h-screen border-l border-dashed border-primary opacity-50"
 					style={{
-						left: rect.x,
+						left: rect.x
 					}}
 				/>
 
 				<div
-					className="opacity-50 fixed pointer-events-none border-l border-primary z-[10000] border-dashed h-screen top-0"
+					className="pointer-events-none fixed top-0 z-[10000] h-screen border-l border-dashed border-primary opacity-50"
 					style={{
-						left: rect.x + rect.width - 1,
+						left: rect.x + rect.width - 1
 					}}
 				/>
 
@@ -92,15 +90,15 @@ export const ClassNamesTooltip = React.memo(
 					style={{ ...floatingStyles, zIndex: 10000, pointerEvents: 'none' }}
 				>
 					<div
-						className="bg-default p-2 space-y-1.5"
+						className="space-y-1.5 bg-default p-2"
 						style={{
 							minWidth: 148,
-							maxWidth: 296,
+							maxWidth: 296
 						}}
 					>
-						<div className="lowercase w-full flex items-baseline text-default">
-							<span className="font-bold text-primary text-base whitespace-pre">{`${inspectedElement.tagName}`}</span>
-							<span className="text-xs truncate">
+						<div className="flex w-full items-baseline lowercase text-default">
+							<span className="whitespace-pre text-base font-bold text-primary">{`${inspectedElement.tagName}`}</span>
+							<span className="truncate text-xs">
 								{classNames.length === 0 ? '' : '.' + classNames.join('.')}
 							</span>
 						</div>
@@ -108,18 +106,18 @@ export const ClassNamesTooltip = React.memo(
 						<div className="flex items-center gap-2 text-xs">
 							<SizeIcon size={14} className="text-primary" />
 
-							<div className="flex items-center text-default font-medium">
+							<div className="flex items-center font-medium text-default">
 								{rect.width.toFixed(2).replaceAll('.00', '')}
-								<span className="text-primary-dark mx-0.5">x</span>
+								<span className="mx-0.5 text-primary-dark">x</span>
 								{rect.height.toFixed(2).replaceAll('.00', '')}
 							</div>
 						</div>
 
 						{fontInfo !== null && (
-							<div className="flex gap-2 items-center text-xs  truncate">
+							<div className="flex items-center gap-2 truncate  text-xs">
 								<FontIcon size={14} className="text-primary" />
 
-								<div className="truncate text-default font-medium">
+								<div className="truncate font-medium text-default">
 									<span>{fontInfo.fontSize}</span>
 									<span className="text-primary-dark">px</span> ,
 									<span className="truncate"> {fontInfo.fontFamily}</span>

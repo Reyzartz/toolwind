@@ -1,13 +1,13 @@
 import {
 	inspectedElementState,
-	selectedElementState,
+	selectedElementState
 } from '@toolwind/content/store'
 import {
 	CheckMarkIcon,
 	CloseIcon,
 	CopyIcon,
 	DeleteIcon,
-	DragIcon,
+	DragIcon
 } from '@toolwind/icons'
 import { CaretIcon } from '@toolwind/icons/caretIcon'
 import clsx from 'clsx'
@@ -23,7 +23,7 @@ interface SelectedElementHeaderProps {
 	updatePopupPosition: DragEventHandler
 }
 export const SelectedElementHeader = ({
-	updatePopupPosition,
+	updatePopupPosition
 }: SelectedElementHeaderProps) => {
 	const [selectedElement, setSelectedElement] =
 		useRecoilState(selectedElementState)
@@ -76,7 +76,7 @@ export const SelectedElementHeader = ({
 	}
 
 	return (
-		<div className="max-w-full items-center flex justify-between gap-1.5 p-1.5">
+		<div className="flex max-w-full items-center justify-between gap-1.5 p-1.5">
 			{parentElement !== null && (
 				<button
 					onMouseEnter={() => {
@@ -88,16 +88,16 @@ export const SelectedElementHeader = ({
 					onClick={(e) => {
 						selectedElementHandler(e, parentElement)
 					}}
-					className="border-none text-default text-base font-bold hover:text-primary active:text-primary-dark pl-2 lowercase whitespace-pre"
+					className="whitespace-pre border-none pl-2 text-base font-bold lowercase text-default hover:text-primary active:text-primary-dark"
 				>
 					{parentElement.tagName}
 				</button>
 			)}
 
-			<CaretIcon size={10} className="text-default -mx-0.5" />
+			<CaretIcon size={10} className="-mx-0.5 text-default" />
 
 			<h1
-				className="flex-grow flex items-baseline w-full overflow-hidden"
+				className="flex w-full flex-grow items-baseline overflow-hidden"
 				onMouseEnter={() => {
 					setInspectedElement(selectedElement)
 				}}
@@ -105,21 +105,21 @@ export const SelectedElementHeader = ({
 					setInspectedElement(null)
 				}}
 			>
-				<span className="text-primary font-semibold text-base leading-4 lowercase">
+				<span className="text-base font-semibold lowercase leading-4 text-primary">
 					{selectedElement!.nodeName}
 				</span>
 			</h1>
 
-			<div className="gap-1.5 flex">
+			<div className="flex gap-1.5">
 				<button
 					onClick={copyClassNameHandler}
-					className="border-none text-default group flex items-center gap-1 hover:text-primary active:text-primary-dark"
+					className="group flex items-center gap-1 whitespace-pre border-none text-default hover:text-primary active:text-primary-dark"
 				>
 					{copied ? <CheckMarkIcon size={12} /> : <CopyIcon size={12} />}
 
 					<span
 						className={clsx(
-							'w-0 overflow-hidden transition-all text-xs font-bold',
+							'w-0 overflow-hidden text-xs font-bold transition-all',
 							copied ? 'group-hover:w-11' : 'group-hover:w-8'
 						)}
 					>
@@ -129,11 +129,11 @@ export const SelectedElementHeader = ({
 
 				<button
 					onClick={removeElementHandler}
-					className="border-none text-default group flex items-center gap-1 hover:text-red-500 active:hover:text-red-600"
+					className="group flex items-center gap-1 whitespace-pre border-none text-default hover:text-red-500 active:hover:text-red-600"
 				>
 					<DeleteIcon size={12} />
 
-					<span className="w-0 overflow-hidden transition-all group-hover:w-12 text-xs font-bold">
+					<span className="w-0 overflow-hidden text-xs font-bold transition-all group-hover:w-12">
 						Remove
 					</span>
 				</button>
@@ -150,7 +150,7 @@ export const SelectedElementHeader = ({
 						setIsDragging(false)
 					}}
 					className={clsx(
-						'border-none text-default group flex items-center gap-1 cursor-grab',
+						'group  flex cursor-grab items-center gap-1 whitespace-pre border-none text-default',
 						isDragging
 							? 'text-primary-dark'
 							: 'hover:text-primary active:text-primary-dark'
@@ -160,7 +160,7 @@ export const SelectedElementHeader = ({
 
 					<span
 						className={clsx(
-							'overflow-hidden transition-all text-xs font-bold',
+							'overflow-hidden text-xs font-bold transition-all',
 							isDragging ? 'w-8' : 'w-0 group-hover:w-8'
 						)}
 					>
@@ -172,11 +172,11 @@ export const SelectedElementHeader = ({
 					onClick={() => {
 						setSelectedElement(null)
 					}}
-					className="border-none text-default group flex items-center gap-1 hover:text-primary active:text-primary-dark"
+					className="group flex items-center gap-1 whitespace-pre border-none text-default hover:text-primary active:text-primary-dark"
 				>
 					<CloseIcon size={12} />
 
-					<span className="w-0 overflow-hidden transition-all group-hover:w-8 text-xs font-bold">
+					<span className="w-0 overflow-hidden text-xs font-bold transition-all group-hover:w-8 ">
 						Close
 					</span>
 				</button>

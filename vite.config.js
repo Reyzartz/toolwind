@@ -10,14 +10,14 @@ export default defineConfig({
 		crx({
 			manifest,
 			contentScripts: {
-				injectCss: true,
-			},
-		}),
+				injectCss: true
+			}
+		})
 	],
 	resolve: {
 		alias: {
 			src: path.resolve(__dirname, './src'),
-			'@toolwind': path.resolve(__dirname, './src'),
-		},
-	},
+			'@toolwind': path.resolve(__dirname, './src')
+		}
+	}
 })

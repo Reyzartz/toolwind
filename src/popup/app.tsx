@@ -20,7 +20,7 @@ function App() {
 
 		void sendMessage({
 			to: 'content_script',
-			action: { type: 'TOGGLE_TOOLWIND', data: value },
+			action: { type: 'TOGGLE_TOOLWIND', data: value }
 		})
 	}, [])
 
@@ -31,17 +31,12 @@ function App() {
 	}, [])
 
 	return (
-		<div
-			className="bg-default flex flex-col"
-			style={{ width: 350, height: 400 }}
-		>
-			<header className="flex p-3 items-center gap-3 pb-1">
+		<div className="flex flex-col bg-default" style={{ width: 350, height: 400 }}>
+			<header className="flex items-center gap-3 p-3 pb-1">
 				<div
 					className={clsx(
-						'mr-auto flex items-center p-1 transition-colors rounded-sm gap-2',
-						extensionState
-							? 'bg-primary text-background'
-							: 'bg-default text-default'
+						'mr-auto flex items-center gap-2 rounded-sm p-1 transition-colors',
+						extensionState ? 'bg-primary text-background' : 'bg-default text-default'
 					)}
 				>
 					<ToolwindIcon size={24} />
@@ -54,7 +49,7 @@ function App() {
 				<Toggle onToggle={onToggleHandler} checked={extensionState} />
 
 				<button
-					className="cursor-pointer hover:text-primary active:text-primary-dark text-default"
+					className="cursor-pointer text-default hover:text-primary active:text-primary-dark"
 					onClick={() => {
 						setShowSettingPanel(!showSettingsPanel)
 					}}
@@ -63,7 +58,7 @@ function App() {
 				</button>
 			</header>
 
-			<div className="flex-grow overflow-auto m-3">
+			<div className="m-3 flex-grow overflow-auto">
 				{showSettingsPanel ? <SettingsPanel /> : <ModifiedElementsList />}
 			</div>
 		</div>

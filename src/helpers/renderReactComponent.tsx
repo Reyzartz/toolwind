@@ -15,7 +15,7 @@ const renderReactComponent = (App: () => JSX.Element) => {
 
 	Object.assign(root.style, {
 		position: 'fixed',
-		zIndex: 10000,
+		zIndex: 10000
 	})
 
 	document.body.prepend(root)

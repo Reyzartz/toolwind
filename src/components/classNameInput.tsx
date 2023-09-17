@@ -4,7 +4,7 @@ import { activeCssClassState } from '@toolwind/content/store'
 import {
 	getClassNameFromCSSClassSuggestionItem,
 	getCssClassObjectFromClassName,
-	isCustomClass,
+	isCustomClass
 } from '@toolwind/helpers/cssClasses'
 import { CloseIcon } from '@toolwind/icons'
 import { type CSSClassSuggestionItem } from '@toolwind/types/common'
@@ -23,7 +23,7 @@ interface ClassNameInputProps {
 const ClassNameInput = ({
 	defaultValue = null,
 	onSave,
-	initialWidth = 148,
+	initialWidth = 148
 }: ClassNameInputProps) => {
 	const [suggestedClasses, setSuggestedClasses] = useState<
 		CSSClassSuggestionItem[]
@@ -37,9 +37,7 @@ const ClassNameInput = ({
 	const textElementWidthRef = useRef<HTMLSpanElement>(null)
 
 	const onSelectedItemChange = useCallback(
-		({
-			selectedItem = null,
-		}: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+		({ selectedItem = null }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
 			// triggered if the active option is an variant
 
 			if (selectedItem === null || (selectedItem.isVariant ?? false)) return
@@ -75,9 +73,7 @@ const ClassNameInput = ({
 				setSuggestedClasses([])
 
 				void getCssText(inputValue).then((cssText) => {
-					setActiveClassOption(
-						getCssClassObjectFromClassName(inputValue, cssText)
-					)
+					setActiveClassOption(getCssClassObjectFromClassName(inputValue, cssText))
 				})
 			}
 
@@ -87,18 +83,13 @@ const ClassNameInput = ({
 				void setActiveOptionHandler(list[0] ?? null)
 			})
 		},
-		[
-			getSuggestionList,
-			getCssText,
-			setActiveClassOption,
-			setActiveOptionHandler,
-		]
+		[getSuggestionList, getCssText, setActiveClassOption, setActiveOptionHandler]
 	)
 
 	const onActiveOptionChange = useCallback(
 		({
 			highlightedIndex = 0,
-			isOpen = false,
+			isOpen = false
 		}: UseComboboxStateChange<CSSClassSuggestionItem>) => {
 			const cssClass = suggestedClasses[highlightedIndex]
 
@@ -120,7 +111,7 @@ const ClassNameInput = ({
 		getItemProps,
 		inputValue,
 		setInputValue,
-		isOpen,
+		isOpen
 	} = useCombobox<CSSClassSuggestionItem>({
 		items: suggestedClasses,
 		itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
@@ -129,14 +120,14 @@ const ClassNameInput = ({
 		onHighlightedIndexChange: onActiveOptionChange,
 		onSelectedItemChange,
 		defaultInputValue: defaultValue?.name,
-		defaultSelectedItem: defaultValue,
+		defaultSelectedItem: defaultValue
 	})
 
 	const { refs, floatingStyles } = useFloating({
 		placement: 'bottom-start',
 		open: isOpen,
 		whileElementsMounted: autoUpdate,
-		middleware: [flip(), offset(8)],
+		middleware: [flip(), offset(8)]
 	})
 
 	useMount(() => {
@@ -172,7 +163,7 @@ const ClassNameInput = ({
 		<div className="relative">
 			<span
 				ref={textElementWidthRef}
-				className="text-sm absolute opacity-0 pl-1.5 pr-7 whitespace-pre pointer-events-none"
+				className="pointer-events-none absolute whitespace-pre pl-1.5 pr-7 text-sm opacity-0"
 			>
 				{inputValue.length === 0
 					? defaultValue?.name ?? 'Enter class name'
@@ -181,13 +172,12 @@ const ClassNameInput = ({
 
 			<div
 				className={clsx(
-					'flex items-center py-0.5 px-2 h-6 bg-light placeholder-opacity-30 transition-all'
+					'flex h-6 items-center bg-light px-2 py-0.5 placeholder-opacity-30 transition-all'
 				)}
 				style={{
 					width: `min(${
-						textElementWidthRef.current?.getClientRects()[0].width ??
-						initialWidth
-					}px, 296px)`,
+						textElementWidthRef.current?.getClientRects()[0].width ?? initialWidth
+					}px, 296px)`
 				}}
 				ref={refs.setReference}
 			>
@@ -200,7 +190,7 @@ const ClassNameInput = ({
 							inputValue.length === 0 && 'opacity-50'
 						),
 						placeholder: defaultValue?.name ?? 'Enter class name',
-						autoFocus: true,
+						autoFocus: true
 					})}
 				/>
 
@@ -219,11 +209,11 @@ const ClassNameInput = ({
 					className: clsx(
 						'flex flex-col absolute z-[10000] top-full max-h-60 left-0 overflow-auto w-60 bg-light p-1.5',
 						(inputValue.length === 0 || !isOpen) && 'hidden'
-					),
+					)
 				})}
 			>
 				{suggestedClasses.length === 0 ? (
-					<div className="p-3 text-center text-sm but you can still add it bg-light text-default">
+					<div className="but you can still add it bg-light p-3 text-center text-sm text-default">
 						This class name is not supported by tailwindcss
 					</div>
 				) : (
@@ -235,9 +225,8 @@ const ClassNameInput = ({
 								index,
 								className: clsx(
 									'flex gap-2 items-baseline text-default text-sm px-2 py-1.5 cursor-pointer',
-									highlightedIndex === index &&
-										'text-primary font-semibold bg-default'
-								),
+									highlightedIndex === index && 'text-primary font-semibold bg-default'
+								)
 							})}
 						>
 							{suggestedClass.color === undefined ? (
@@ -245,10 +234,8 @@ const ClassNameInput = ({
 							) : (
 								<span
 									className={clsx(
-										'w-3 h-3 inline-block border',
-										highlightedIndex === index
-											? 'border-primary'
-											: 'border-light'
+										'inline-block h-3 w-3 border',
+										highlightedIndex === index ? 'border-primary' : 'border-light'
 									)}
 									style={{ background: suggestedClass.color }}
 								/>

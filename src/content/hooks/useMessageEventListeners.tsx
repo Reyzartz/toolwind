@@ -5,7 +5,7 @@ import { runtime } from 'webextension-polyfill'
 import {
 	inspectedElementState,
 	modifiedElementsState,
-	selectedElementState,
+	selectedElementState
 } from '../store'
 import { useTailwindIntellisense } from './useTailwindIntellisense'
 import { type TMessage } from '@toolwind/types/common'
@@ -26,8 +26,8 @@ export const useMessageEventListeners = () => {
 									to: 'service_worker',
 									action: {
 										type: 'MODIFIED_ELEMENTS_UPDATED',
-										data: modifiedElements,
-									},
+										data: modifiedElements
+									}
 								})
 							})
 
@@ -49,8 +49,8 @@ export const useMessageEventListeners = () => {
 								to: 'service_worker',
 								action: {
 									type: 'MODIFIED_ELEMENTS_UPDATED',
-									data: updatedList,
-								},
+									data: updatedList
+								}
 							})
 
 							return updatedList
@@ -69,7 +69,7 @@ export const useMessageEventListeners = () => {
 							element.scrollIntoView({
 								behavior: 'smooth',
 								block: 'center',
-								inline: 'center',
+								inline: 'center'
 							})
 
 							set(inspectedElementState, element)

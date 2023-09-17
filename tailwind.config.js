@@ -15,22 +15,22 @@ export default {
 				primary: '#7BC74D',
 				'primary-light': '#98D373',
 				'primary-dark': '#63AB36',
-				background: '#222831',
+				background: '#222831'
 			},
 			backgroundColor: {
 				default: '#222831',
 				light: '#323B48',
-				dark: '#191D24',
+				dark: '#191D24'
 			},
 			textColor: {
 				default: '#8795AB',
 				alternative: '#6F7F9B',
-				neutral: '#EEEEEE',
+				neutral: '#EEEEEE'
 			},
 			borderColor: {
 				default: '#323B48',
-				light: '#8795AB',
-			},
+				light: '#8795AB'
+			}
 		},
 
 		/**
@@ -45,7 +45,7 @@ export default {
 			xl: '12px',
 			'2xl': '16px',
 			'3xl': '24px',
-			full: '9999px',
+			full: '9999px'
 		},
 		columns: {
 			auto: 'auto',
@@ -73,7 +73,7 @@ export default {
 			'4xl': '896px',
 			'5xl': '1024px',
 			'6xl': '1152px',
-			'7xl': '1280px',
+			'7xl': '1280px'
 		},
 		fontSize: {
 			xs: ['12px', { lineHeight: '16px' }],
@@ -88,7 +88,7 @@ export default {
 			'6xl': ['60px', { lineHeight: '1' }],
 			'7xl': ['72px', { lineHeight: '1' }],
 			'8xl': ['96px', { lineHeight: '1' }],
-			'9xl': ['144px', { lineHeight: '1' }],
+			'9xl': ['144px', { lineHeight: '1' }]
 		},
 		lineHeight: {
 			none: '1',
@@ -104,7 +104,7 @@ export default {
 			7: '28px',
 			8: '32px',
 			9: '36px',
-			10: '40px',
+			10: '40px'
 		},
 		maxWidth: ({ theme, breakpoints }) => ({
 			none: 'none',
@@ -125,7 +125,7 @@ export default {
 			max: 'max-content',
 			fit: 'fit-content',
 			prose: '65ch',
-			...breakpoints(theme('screens')),
+			...breakpoints(theme('screens'))
 		}),
 		spacing: {
 			px: '1px',
@@ -162,8 +162,8 @@ export default {
 			64: '256px',
 			72: '288px',
 			80: '320px',
-			96: '384px',
-		},
+			96: '384px'
+		}
 	},
-	plugins: [],
+	plugins: []
 }

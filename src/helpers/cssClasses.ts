@@ -1,7 +1,7 @@
 import { autocomplete } from '@toolwind/content/hooks/useTailwindIntellisense'
 import {
 	type CSSClass,
-	type CSSClassSuggestionItem,
+	type CSSClassSuggestionItem
 } from '@toolwind/types/common'
 
 // Function to retrieve all CSS rules from a document
@@ -94,8 +94,8 @@ export const getCssClassObjectFromClassName = (
 		customClass: isCustomClass(className),
 		cssText,
 		meta: {
-			color: autocomplete.getColor(className),
-		},
+			color: autocomplete.getColor(className)
+		}
 	}
 }
 
@@ -129,7 +129,7 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 
 		return {
 			key: key.trim(),
-			value: value.trim(),
+			value: value.trim()
 		}
 	})
 }

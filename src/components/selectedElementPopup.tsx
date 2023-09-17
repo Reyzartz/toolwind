@@ -3,7 +3,7 @@ import React, {
 	type DragEventHandler,
 	useCallback,
 	useRef,
-	useMemo,
+	useMemo
 } from 'react'
 import { AddClassName } from './addClassName'
 import { ClassNameTag } from './classNameTag'
@@ -30,25 +30,23 @@ export const SelectedElementPopup = React.memo(
 			({ clientX, clientY }) => {
 				if (clientX === 0 && clientY === 0) return
 
-				void computePosition(referenceEl.current!, floatingEl.current!).then(
-					() => {
-						initialPositionCleanup.current?.()
+				void computePosition(referenceEl.current!, floatingEl.current!).then(() => {
+					initialPositionCleanup.current?.()
 
-						Object.assign(floatingEl.current!.style, {
-							position: 'fixed',
-							// offsetting based on the move button position
-							left: `${clientX - 278}px`,
-							top: `${clientY - 19}px`,
-						})
-					}
-				)
+					Object.assign(floatingEl.current!.style, {
+						position: 'fixed',
+						// offsetting based on the move button position
+						left: `${clientX - 278}px`,
+						top: `${clientY - 19}px`
+					})
+				})
 			},
 			[]
 		)
 
 		useEffectOnce(() => {
 			void computePosition(referenceEl.current!, floatingEl.current!, {
-				middleware: [offset(8), flip()],
+				middleware: [offset(8), flip()]
 			}).then(({ x, y }) => {
 				initialPositionCleanup.current?.()
 
@@ -56,7 +54,7 @@ export const SelectedElementPopup = React.memo(
 					position: 'fixed',
 					// offsetting based on the move button position
 					left: `${x}px`,
-					top: `${y}px`,
+					top: `${y}px`
 				})
 			})
 		})
@@ -65,13 +63,13 @@ export const SelectedElementPopup = React.memo(
 			<>
 				<div
 					ref={referenceEl}
-					className="fixed pointer-events-none"
+					className="pointer-events-none fixed"
 					style={{
 						zIndex: 10000,
 						top: rect.top,
 						left: rect.left,
 						width: rect.width,
-						height: rect.height,
+						height: rect.height
 					}}
 				/>
 
@@ -84,7 +82,7 @@ export const SelectedElementPopup = React.memo(
 					<div
 						className="bg-default"
 						style={{
-							width: 320,
+							width: 320
 						}}
 					>
 						<SelectedElementHeader updatePopupPosition={updatePosition} />

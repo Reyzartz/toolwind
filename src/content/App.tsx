@@ -45,10 +45,7 @@ const App = () => {
 		const mouseoverEventHandler = (e: MouseEvent) => {
 			e.stopPropagation()
 
-			if (
-				e.target !== null &&
-				!(e.target as HTMLElement).matches('#toolwind')
-			) {
+			if (e.target !== null && !(e.target as HTMLElement).matches('#toolwind')) {
 				void setInspectedElementHandler(e.target as HTMLElement)
 			}
 		}
@@ -60,10 +57,7 @@ const App = () => {
 		}
 
 		const clickEventListener = (e: MouseEvent) => {
-			if (
-				e.target !== null &&
-				!(e.target as HTMLElement).matches('#toolwind')
-			) {
+			if (e.target !== null && !(e.target as HTMLElement).matches('#toolwind')) {
 				e.stopPropagation()
 				e.preventDefault()
 

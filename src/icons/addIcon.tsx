@@ -11,10 +11,7 @@ const AddIcon = memo(({ size = 16, className }: IBaseIconProps) => {
 			viewBox="0 0 24 24"
 			className={clsx('flex-shrink-0', className)}
 		>
-			<path
-				fill="currentColor"
-				d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
-			/>
+			<path fill="currentColor" d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" />
 		</svg>
 	)
 })

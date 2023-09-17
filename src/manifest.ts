@@ -15,29 +15,29 @@ const manifest = defineManifest(async () => ({
 		default_icon: {
 			'16': 'icons/logo-16.png',
 			'24': 'icons/logo-24.png',
-			'32': 'icons/logo-32.png',
-		},
+			'32': 'icons/logo-32.png'
+		}
 	},
 	permissions: ['activeTab', 'storage', 'clipboardWrite'],
 	icons: {
 		'16': 'icons/logo-16.png',
 		'32': 'icons/logo-32.png',
 		'48': 'icons/logo-48.png',
-		'128': 'icons/logo-128.png',
+		'128': 'icons/logo-128.png'
 	},
 	content_scripts: [
 		{
 			matches: ['http://*/*', 'https://*/*'],
 			js: ['src/content/index.ts'],
-			run_at: 'document_end',
-		},
+			run_at: 'document_end'
+		}
 	],
 	web_accessible_resources: [
 		{
 			resources: ['assets/js/*.js', 'assets/css/*.css', 'assets/img/*'],
-			matches: ['http://*/*', 'https://*/*'],
-		},
-	],
+			matches: ['http://*/*', 'https://*/*']
+		}
+	]
 }))
 
 export default manifest

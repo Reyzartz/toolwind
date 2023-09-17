@@ -10,13 +10,13 @@ const ModifiedElementsList = () => {
 		void sendMessage({
 			to: 'content_script',
 			action: {
-				type: 'FETCH_MODIFIED_ELEMENTS',
-			},
+				type: 'FETCH_MODIFIED_ELEMENTS'
+			}
 		})
 
 		void sendMessage({
 			to: 'content_script',
-			action: { type: 'SELECT_ELEMENT', data: { xpath: null } },
+			action: { type: 'SELECT_ELEMENT', data: { xpath: null } }
 		})
 
 		void addMessageListener((message) => {
@@ -31,15 +31,15 @@ const ModifiedElementsList = () => {
 			to: 'content_script',
 			action: {
 				type: 'HOVER_ELEMENT',
-				data: { xpath },
-			},
+				data: { xpath }
+			}
 		})
 	}, [])
 
 	const onClickHandler = useCallback((xpath: string) => {
 		void sendMessage({
 			to: 'content_script',
-			action: { type: 'SELECT_ELEMENT', data: { xpath } },
+			action: { type: 'SELECT_ELEMENT', data: { xpath } }
 		})
 
 		window.close()
@@ -50,8 +50,8 @@ const ModifiedElementsList = () => {
 			to: 'content_script',
 			action: {
 				type: 'DELETE_MODIFIED_ELEMENT',
-				data: item,
-			},
+				data: item
+			}
 		})
 	}, [])
 
@@ -60,7 +60,7 @@ const ModifiedElementsList = () => {
 			{elementsList.map((ele) => (
 				<div
 					key={ele.xpath}
-					className="text-sm text-slate-4 border-b border-default hover:bg-light overflow-hidden cursor-pointer group relative text-default p-2"
+					className="text-slate-4 group relative cursor-pointer overflow-hidden border-b border-default p-2 text-sm text-default hover:bg-light"
 					onMouseEnter={() => {
 						onMouseEnterHandler(ele.xpath)
 					}}
@@ -71,7 +71,7 @@ const ModifiedElementsList = () => {
 						onClickHandler(ele.xpath)
 					}}
 				>
-					<span className="text-primary lowercase font-semibold">
+					<span className="font-semibold lowercase text-primary">
 						{ele.tagName}.
 					</span>
 
@@ -80,7 +80,7 @@ const ModifiedElementsList = () => {
 					</span>
 
 					<button
-						className="absolute -right-full p-2 top-1 group-hover:right-0 transition-all bg-light hover:text-red-500 active:hover:text-red-600"
+						className="absolute -right-full top-1 bg-light p-2 transition-all hover:text-red-500 active:hover:text-red-600 group-hover:right-0"
 						onClick={(e) => {
 							e.stopPropagation()
 							onDeleteHandler(ele)
