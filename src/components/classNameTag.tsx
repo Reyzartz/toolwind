@@ -10,6 +10,7 @@ import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindInte
 import { useAsync } from 'react-use'
 import { editorTheme } from '@toolwind/helpers/constant'
 import { EditorView } from '@codemirror/view'
+import cssbeautify from 'cssbeautify'
 interface ClassNameTagProps {
 	cssClass: CSSClass
 }
@@ -30,12 +31,14 @@ export const getCssClassPropertiesFromCssText = (cssText: string) => {
 }
 
 export const ClassNameTag = ({
-	cssClass: { id, className, meta, state, defaultClassName }
+	cssClass: { id, className, meta, state, defaultClassName, cssText }
 }: ClassNameTagProps) => {
+	const tagRef = useRef<HTMLDivElement>(null)
+
+	const { getCssText } = useTailwindIntellisense()
+
 	const { updateCssClass, removeCssClass, isEditing, setIsEditing } =
 		useCSSClasses()
-	const tagRef = useRef<HTMLDivElement>(null)
-	const { getCssText } = useTailwindIntellisense()
 
 	const onUpdateHandler = useCallback(
 		(value: string) => {
@@ -70,7 +73,8 @@ export const ClassNameTag = ({
 	)
 
 	const formattedCssText = useAsync(
-		async () => await getCssText(className ?? ''),
+		async () =>
+			cssbeautify(cssText ?? (await getCssText(className ?? '')) ?? null),
 		[className]
 	)
 
@@ -81,30 +85,39 @@ export const ClassNameTag = ({
 				'group relative inline-flex max-w-max cursor-pointer items-center bg-light text-default transition'
 			)}
 		>
-			{!isEditing && (
-				<div className="pointer-events-none invisible absolute bottom-full z-[10000] mb-2 border border-default transition-all delay-0 group-hover:visible group-hover:delay-500">
-					<ReactCodeMirror
-						width="max-content"
-						maxWidth="296px"
-						value={formattedCssText.value ?? ''}
-						className="bg-default p-1 text-xs shadow-xl"
-						extensions={[css(), EditorView.lineWrapping]}
-						editable={false}
-						theme={editorTheme}
-						basicSetup={{
-							lineNumbers: false,
-							foldGutter: false,
-							syntaxHighlighting: false,
-							highlightActiveLine: false
-						}}
-					/>
-				</div>
-			)}
+			{!isEditing &&
+				formattedCssText.value !== undefined &&
+				formattedCssText.value.length > 0 && (
+					<div className="pointer-events-none invisible absolute bottom-full z-[10000] mb-2 border border-default transition-all delay-0 group-hover:visible group-hover:delay-500">
+						<ReactCodeMirror
+							width="max-content"
+							maxWidth="296px"
+							indentWithTab
+							value={formattedCssText.value}
+							className="bg-default p-1 text-xs shadow-xl"
+							extensions={[css(), EditorView.lineWrapping]}
+							editable={false}
+							theme={editorTheme}
+							basicSetup={{
+								lineNumbers: false,
+								foldGutter: false,
+								syntaxHighlighting: false,
+								highlightActiveLine: false,
+								indentOnInput: true
+							}}
+						/>
+					</div>
+				)}
 
 			{state === 'editing' ? (
 				<ClassNameInput
 					initialWidth={tagRef.current?.getClientRects()[0].width}
-					defaultValue={{ name: className, variants: [] }}
+					defaultValue={{
+						name: className,
+						variants: [],
+						isVariant: false,
+						important: className.includes('!')
+					}}
 					onSave={onUpdateHandler}
 				/>
 			) : (

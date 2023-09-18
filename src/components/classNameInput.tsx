@@ -1,4 +1,10 @@
-import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react'
+import {
+	autoUpdate,
+	flip,
+	offset,
+	shift,
+	useFloating
+} from '@floating-ui/react'
 import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
 import { activeCssClassState } from '@toolwind/content/store'
 import {
@@ -127,7 +133,18 @@ const ClassNameInput = ({
 		placement: 'bottom-start',
 		open: isOpen,
 		whileElementsMounted: autoUpdate,
-		middleware: [flip(), offset(8)]
+		middleware: [
+			flip(),
+			offset(8),
+			shift({
+				boundary: {
+					x: 0,
+					y: 0,
+					width: innerWidth,
+					height: innerHeight
+				}
+			})
+		]
 	})
 
 	useMount(() => {

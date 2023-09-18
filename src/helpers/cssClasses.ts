@@ -5,67 +5,60 @@ import {
 } from '@toolwind/types/common'
 
 // Function to retrieve all CSS rules from a document
-// function getAllCSSRules() {
-// 	console.log('Retrieved all CSS rules from a document')
 
-// 	const allRules: Record<string, string> = {}
+function getAllCSSRules(): Record<string, string> {
+	console.log('Retrieved all CSS rules from a document')
 
-// 	// Loop through all style sheets in the document
-// 	for (let i = 0; i < document.styleSheets.length; i++) {
-// 		const styleSheet = document.styleSheets[i]
+	const allRules: Record<string, string> = {}
 
-// 		if (styleSheet.cssRules !== undefined || styleSheet.cssRules !== null) {
-// 			for (let j = 0; j < styleSheet.cssRules.length; j++) {
-// 				if (
-// 					(styleSheet.cssRules[j] as any).selectorText !== undefined &&
-// 					!((styleSheet.cssRules[j] as any).selectorText as string).includes(
-// 						' '
-// 					) &&
-// 					((styleSheet.cssRules[j] as any).selectorText as string).startsWith(
-// 						'.'
-// 					)
-// 				)
-// 					allRules[(styleSheet.cssRules[j] as any).selectorText] =
-// 						styleSheet.cssRules[j].cssText
+	// Loop through all style sheets in the document
 
-// 				if ((styleSheet.cssRules[j] as any).type === 4) {
-// 					console.log(styleSheet.cssRules[j].conditionText)
-// 					for (
-// 						let k = 0;
-// 						k < (styleSheet.cssRules[j] as any).cssRules.length;
-// 						k++
-// 					) {
-// 						if (
-// 							(styleSheet.cssRules[j] as any).cssRules[k].selectorText !==
-// 								undefined &&
-// 							!(
-// 								(styleSheet.cssRules[j] as any).cssRules[k]
-// 									.selectorText as string
-// 							).includes(' ') &&
-// 							(
-// 								(styleSheet.cssRules[j] as any).cssRules[k]
-// 									.selectorText as string
-// 							).startsWith('.')
-// 						)
-// 							allRules[
-// 								(styleSheet.cssRules[j] as any).cssRules[
-// 									k
-// 								].selectorText.replaceAll(/(\\)|\./gm, '')
-// 							] = `@media ${styleSheet.cssRules[j].conditionText} {${
-// 								(styleSheet.cssRules[j] as any).cssRules[k].cssText
-// 							}}`
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
+	try {
+		for (let i = 0; i < document.styleSheets.length; i++) {
+			const styleSheet = document.styleSheets[i]
 
-// 	return allRules
-// }
+			if (styleSheet instanceof CSSStyleSheet) {
+				for (let j = 0; j < styleSheet.cssRules.length; j++) {
+					const cssRule = styleSheet.cssRules[j]
 
-// const allRules = getAllCSSRules()
+					if (cssRule instanceof CSSStyleRule) {
+						const selectorText = cssRule.selectorText
 
-// console.log(allRules)
+						if (
+							typeof selectorText === 'string' &&
+							!selectorText.includes(' ') &&
+							selectorText.startsWith('.')
+						) {
+							allRules[selectorText.replace(/(\\)|\./gm, '')] = cssRule.cssText
+						}
+					} else if (cssRule instanceof CSSMediaRule) {
+						for (let k = 0; k < cssRule.cssRules.length; k++) {
+							const innerRule = cssRule.cssRules[k]
+
+							if (innerRule instanceof CSSStyleRule) {
+								const innerSelectorText = innerRule.selectorText
+
+								if (
+									typeof innerSelectorText === 'string' &&
+									!innerSelectorText.includes(' ') &&
+									innerSelectorText.startsWith('.')
+								) {
+									allRules[innerSelectorText.replace(/(\\)|\./gm, '')] = `@media ${
+										cssRule.conditionText
+									} {${innerRule.cssText.replace(/(\\)|\./gm, '')}}`
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} catch (e) {}
+
+	return allRules
+}
+
+const allRules = getAllCSSRules()
 
 export function getClassNames(el: HTMLElement | null) {
 	if (el === null) return []
@@ -108,7 +101,7 @@ export const getClassObjects = (
 	return classNames.map((className) =>
 		getCssClassObjectFromClassName(
 			className,
-			null,
+			allRules[className] ?? null,
 			isModifiedElement ? null : className
 		)
 	)
