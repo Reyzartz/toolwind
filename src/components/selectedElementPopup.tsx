@@ -8,7 +8,7 @@ import React, {
 import { AddClassName } from './addClassName'
 import { ClassNameTag } from './classNameTag'
 import { SelectedElementHeader } from './selectedElementHeader'
-import { computePosition, flip, offset } from '@floating-ui/react'
+import { computePosition, flip, offset, shift } from '@floating-ui/react'
 import { useEffectOnce } from 'react-use'
 
 interface ISelectedElementPopupProps {
@@ -22,8 +22,6 @@ export const SelectedElementPopup = React.memo(
 		const floatingEl = useRef<HTMLDivElement>(null)
 		const referenceEl = useRef<HTMLDivElement>(null)
 
-		const initialPositionCleanup = useRef<() => void>()
-
 		const rect = useMemo(() => element.getBoundingClientRect(), [element])
 
 		const updatePosition: DragEventHandler = useCallback(
@@ -31,8 +29,6 @@ export const SelectedElementPopup = React.memo(
 				if (clientX === 0 && clientY === 0) return
 
 				void computePosition(referenceEl.current!, floatingEl.current!).then(() => {
-					initialPositionCleanup.current?.()
-
 					Object.assign(floatingEl.current!.style, {
 						position: 'fixed',
 						// offsetting based on the move button position
@@ -45,18 +41,28 @@ export const SelectedElementPopup = React.memo(
 		)
 
 		useEffectOnce(() => {
-			void computePosition(referenceEl.current!, floatingEl.current!, {
-				middleware: [offset(8), flip()]
-			}).then(({ x, y }) => {
-				initialPositionCleanup.current?.()
-
-				Object.assign(floatingEl.current!.style, {
-					position: 'fixed',
-					// offsetting based on the move button position
-					left: `${x}px`,
-					top: `${y}px`
+			setTimeout(() => {
+				void computePosition(referenceEl.current!, floatingEl.current!, {
+					middleware: [
+						offset(8),
+						flip(),
+						shift({
+							boundary: {
+								x: 0,
+								y: 0,
+								width: innerWidth,
+								height: innerHeight
+							}
+						})
+					]
+				}).then(({ x, y }) => {
+					Object.assign(floatingEl.current!.style, {
+						position: 'absolute',
+						left: `${x}px`,
+						top: `${y}px`
+					})
 				})
-			})
+			}, 0)
 		})
 
 		return (
@@ -66,19 +72,14 @@ export const SelectedElementPopup = React.memo(
 					className="pointer-events-none fixed"
 					style={{
 						zIndex: 10000,
-						top: rect.top,
-						left: rect.left,
-						width: rect.width,
-						height: rect.height
+						top: `${rect.top}px`,
+						left: `${rect.left}px`,
+						width: `${rect.width}px`,
+						height: `${rect.height}px`
 					}}
 				/>
 
-				<div
-					id="toolwind-tooltip my-2"
-					ref={floatingEl}
-					className="fixed"
-					style={{ zIndex: 10000 }}
-				>
+				<div id="toolwind-tooltip my-2" ref={floatingEl} style={{ zIndex: 10000 }}>
 					<div
 						className="bg-default"
 						style={{
