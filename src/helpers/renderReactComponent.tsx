@@ -22,6 +22,15 @@ const renderReactComponent = (App: () => JSX.Element) => {
 
 	const renderRoot = ReactDOM.createRoot(root.shadowRoot!)
 
+	// prevent global keyboard shortcuts when using an input field
+	root.shadowRoot?.addEventListener('keypress', (e) => {
+		e.stopPropagation()
+	})
+
+	root.shadowRoot?.addEventListener('keydown', (e) => {
+		e.stopPropagation()
+	})
+
 	renderRoot.render(
 		<React.StrictMode>
 			<RecoilRoot>

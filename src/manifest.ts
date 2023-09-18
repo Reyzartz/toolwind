@@ -10,18 +10,22 @@ const manifest = defineManifest(async () => ({
 	name: packageJson.displayName ?? packageJson.name,
 	version: `${major}.${minor}.${patch}.${label}`,
 	description: packageJson.description,
+	background: {
+		service_worker: 'src/background.ts',
+		type: 'module'
+	},
 	action: {
 		default_popup: 'src/index.html',
 		default_icon: {
 			'16': 'icons/logo-16.png',
 			'24': 'icons/logo-24.png',
-			'32': 'icons/logo-32.png'
+			'32': 'icons/disabled-logo-32.png'
 		}
 	},
-	permissions: ['activeTab', 'storage', 'clipboardWrite'],
+	permissions: ['tabs', 'activeTab', 'storage', 'clipboardWrite'],
 	icons: {
 		'16': 'icons/logo-16.png',
-		'32': 'icons/logo-32.png',
+		'32': 'icons/disabled-logo-32.png',
 		'48': 'icons/logo-48.png',
 		'128': 'icons/logo-128.png'
 	},

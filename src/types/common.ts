@@ -35,7 +35,15 @@ export interface IToggleToolwindMessage {
 	to: 'content_script'
 	action: {
 		type: 'TOGGLE_TOOLWIND'
-		data: boolean
+		data: { extensionEnabled: boolean }
+	}
+}
+
+export interface IUpdateExtensionIconMessage {
+	to: 'service_worker'
+	action: {
+		type: 'UPDATE_EXTENSION_ICON'
+		data: { extensionEnabled: boolean }
 	}
 }
 
@@ -94,5 +102,9 @@ export type TMessage =
 	| IDeleteModifiedElementMessage
 	| IFetchModifiedElementMessage
 	| IUpdateConfigMessage
+	| IUpdateExtensionIconMessage
 
-export type TStorageItemKeys = 'toolwind_enabled' | 'tw_config'
+export interface TStorageItemKeysMap {
+	toolwind_enabled: boolean
+	tw_config: Record<string, any>
+}

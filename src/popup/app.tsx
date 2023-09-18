@@ -2,7 +2,7 @@ import { ModifiedElementsList } from '@toolwind/components/modifiedElementsList'
 import { SettingsPanel } from '@toolwind/components/settingsPanel'
 import { Toggle } from '@toolwind/components/toggle'
 import { sendMessage } from '@toolwind/helpers/message'
-import { getItemFromStorage, setItemToStorage } from '@toolwind/helpers/storage'
+import { getItemFromStorage } from '@toolwind/helpers/storage'
 import { CloseIcon, SettingsIcon } from '@toolwind/icons'
 import { ToolwindIcon } from '@toolwind/icons/toolwindIcon'
 import clsx from 'clsx'
@@ -16,32 +16,30 @@ function App() {
 	const onToggleHandler = useCallback((value: boolean) => {
 		setExtensionState(value)
 
-		void setItemToStorage('toolwind_enabled', value)
-
 		void sendMessage({
 			to: 'content_script',
-			action: { type: 'TOGGLE_TOOLWIND', data: value }
+			action: { type: 'TOGGLE_TOOLWIND', data: { extensionEnabled: value } }
 		})
 	}, [])
 
 	useEffect(() => {
 		void getItemFromStorage('toolwind_enabled').then((res) => {
-			setExtensionState(res)
+			setExtensionState(res ?? false)
 		})
 	}, [])
 
 	return (
 		<div className="flex flex-col bg-default" style={{ width: 350, height: 400 }}>
-			<header className="flex items-center gap-3 p-3 pb-1">
+			<header className="flex items-center gap-3 px-4 py-3 pb-1">
 				<div
 					className={clsx(
-						'mr-auto flex items-center gap-2 rounded-sm p-1 transition-colors',
-						extensionState ? 'bg-primary text-background' : 'bg-default text-default'
+						'mr-auto flex items-center gap-2 transition-colors',
+						extensionState ? 'text-primary' : 'text-default'
 					)}
 				>
-					<ToolwindIcon size={24} />
+					{<ToolwindIcon size={22} />}
 
-					<span className="text-xl font-bold leading-4">
+					<span className="text-xl font-semibold leading-4 text-default">
 						{!showSettingsPanel ? 'Toolwind' : 'Settings'}
 					</span>
 				</div>

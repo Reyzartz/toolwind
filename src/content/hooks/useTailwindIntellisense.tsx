@@ -27,8 +27,6 @@ export const useTailwindIntellisense = () => {
 			const variants = className.split(':').slice(0, -1)
 
 			return results.slice(0, 50).map((item: any) => {
-				console.log('item', item)
-
 				return {
 					name: item.label as string,
 					color:
