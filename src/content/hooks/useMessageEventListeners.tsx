@@ -11,6 +11,38 @@ import { useTailwindIntellisense } from './useTailwindIntellisense'
 import { type TMessage } from '@toolwind/types/common'
 import { useEffectOnce } from 'react-use'
 
+const waitForElementToScrollIntoView = (
+	element: Element,
+	callback: () => void
+) => {
+	/**
+	 * chromium does not currently support observing an svg element other thant the top-level .
+	 * There is a chromium bug tracking this: https://bugs.chromium.org/p/chromium/issues/detail?id=963246
+	 */
+
+	if (element.matches('svg *')) {
+		setTimeout(() => {
+			callback()
+		}, 500)
+		return
+	}
+
+	const observer = new IntersectionObserver((entries, observer) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				// Element has scrolled into view
+
+				setTimeout(() => {
+					callback()
+				}, 300)
+				observer.disconnect() // Stop observing once callback is triggered
+			}
+		})
+	})
+
+	observer.observe(element)
+}
+
 export const useMessageEventListeners = () => {
 	const { setConfig } = useTailwindIntellisense()
 
@@ -60,10 +92,13 @@ export const useMessageEventListeners = () => {
 					}
 
 					case 'HOVER_ELEMENT':
+						console.log(action)
+
 						if (action.data.xpath === null) {
 							set(inspectedElementState, null)
 						} else {
 							const element = getElementFromXPath(action.data.xpath)
+
 							if (element === null) return
 
 							element.scrollIntoView({
@@ -72,7 +107,9 @@ export const useMessageEventListeners = () => {
 								inline: 'center'
 							})
 
-							set(inspectedElementState, element)
+							waitForElementToScrollIntoView(element, () => {
+								set(inspectedElementState, element)
+							})
 						}
 
 						break

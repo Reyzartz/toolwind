@@ -6,6 +6,8 @@ import { useCallback, useEffect, useState } from 'react'
 const ModifiedElementsList = () => {
 	const [elementsList, setElementList] = useState<ModifiedElement[]>([])
 
+	console.log('elementsList', elementsList)
+
 	useEffect(() => {
 		void sendMessage({
 			to: 'content_script',

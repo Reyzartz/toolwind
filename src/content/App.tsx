@@ -102,9 +102,7 @@ const App = () => {
 		<>
 			<ContentStyles />
 
-			{inspectedElement !== null && (
-				<ClassNamesTooltip rect={inspectedElement.getClientRects()[0]} />
-			)}
+			{inspectedElement !== null && <ClassNamesTooltip />}
 
 			{selectedElement !== null && (
 				<SelectedElementPopup element={selectedElement} />

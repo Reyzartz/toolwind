@@ -1,3 +1,7 @@
+const getElementPrefix = (element: Element) => {
+	return element.namespaceURI === 'http://www.w3.org/2000/svg' ? 'svg:' : ''
+}
+
 export const getXPathFromElement = (
 	element: HTMLElement
 ): string | undefined => {
@@ -10,15 +14,9 @@ export const getXPathFromElement = (
 	for (let i = 0; i < siblings.length; i++) {
 		const sibling = siblings[i]
 		if (sibling === element)
-			return (
-				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-				getXPathFromElement(element.parentNode as HTMLElement) +
-				'/' +
-				element.tagName +
-				'[' +
-				(ix + 1) +
-				']'
-			)
+			return `${
+				getXPathFromElement(element.parentNode as HTMLElement) as string
+			}/${`${getElementPrefix(element)}${element.tagName}`}[${ix + 1}]`
 		if (sibling.nodeType === 1 && sibling.tagName === element.tagName) ix++
 	}
 }
@@ -27,7 +25,13 @@ export const getElementFromXPath = (xpath: string): HTMLElement | null => {
 	return document.evaluate(
 		xpath,
 		document,
-		null,
+		function (prefix) {
+			if (prefix === 'svg') {
+				return 'http://www.w3.org/2000/svg'
+			} else {
+				return null
+			}
+		},
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
 		null
 	).singleNodeValue as HTMLElement | null
