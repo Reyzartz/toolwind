@@ -3,7 +3,7 @@
 	"displayName": "Toolwind - Devtool for Tailwind css",
 	"description": "Enhance Tailwind CSS workflow: Easily add, modify, remove, and copy classes with built-in Tailwind IntelliSense",
 	"private": true,
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
