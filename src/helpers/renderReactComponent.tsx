@@ -2,8 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import css from '../index.css?inline'
 import { RecoilRoot } from 'recoil'
+import RecoilNexus from 'recoil-nexus'
+import { type DestroyFn } from '@toolwind/types/components'
 
-const renderReactComponent = (App: () => JSX.Element) => {
+const renderReactComponent = (App: () => JSX.Element): DestroyFn => {
 	const root = document.createElement('div')
 	root.id = 'toolwind'
 	root.attachShadow({ mode: 'open' })
@@ -34,6 +36,7 @@ const renderReactComponent = (App: () => JSX.Element) => {
 	renderRoot.render(
 		<React.StrictMode>
 			<RecoilRoot>
+				<RecoilNexus />
 				<App />
 			</RecoilRoot>
 		</React.StrictMode>

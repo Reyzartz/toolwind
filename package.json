@@ -31,6 +31,7 @@
 		"react-dom": "^18.2.0",
 		"react-use": "^17.4.0",
 		"recoil": "^0.7.7",
+		"recoil-nexus": "^0.5.0",
 		"tailwindcss-autocomplete": "^0.5.3"
 	},
 	"devDependencies": {

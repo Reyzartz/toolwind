@@ -17,7 +17,11 @@ export const ContentStyles = memo(() => {
 			...new Map(
 				prev
 					.concat(cssClasses)
-					.filter((cssClass) => cssClass.cssText !== null)
+					.filter(
+						(cssClass) =>
+							cssClass.cssText !== null &&
+							cssClass.className !== cssClass.defaultClassName
+					)
 					.map((cssClass) => [cssClass.className, cssClass])
 			).values()
 		])

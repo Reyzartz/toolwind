@@ -1,6 +1,6 @@
 import { action, tabs } from 'webextension-polyfill'
-import { addMessageListener } from './helpers/message'
 import { getItemFromStorage } from './helpers/storage'
+import { addMessageEventListener } from './helpers/message'
 
 const updateIconHandler = async (extensionEnabled: boolean | null) => {
 	console.log('extensionEnabled', extensionEnabled)
@@ -36,7 +36,7 @@ const tabEventListeners = () => {
 const init = async () => {
 	tabEventListeners()
 
-	void addMessageListener((action) => {
+	void addMessageEventListener((action) => {
 		switch (action.type) {
 			case 'UPDATE_EXTENSION_ICON':
 				console.log('UPDATE_EXTENSION_ICON', action)

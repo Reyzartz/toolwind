@@ -57,6 +57,8 @@ export const useTailwindIntellisense = () => {
 	const setConfigHandler = useCallback((config: Record<string, any>) => {
 		setConfig(config)
 
+		console.log('Updated Config')
+
 		autocomplete = new AutoComplete(config)
 	}, [])
 

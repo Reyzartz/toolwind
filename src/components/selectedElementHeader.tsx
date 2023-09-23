@@ -16,12 +16,14 @@ import { useToggle } from 'react-use'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
 const emptyImg = new Image()
+
 emptyImg.src =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 
 interface SelectedElementHeaderProps {
 	updatePopupPosition: DragEventHandler
 }
+
 export const SelectedElementHeader = ({
 	updatePopupPosition
 }: SelectedElementHeaderProps) => {

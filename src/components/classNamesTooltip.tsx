@@ -35,13 +35,9 @@ export const ClassNamesTooltip = React.memo(() => {
 		return null
 	}, [inspectedElement])
 
-	console.log('inspectedElement', inspectedElement)
-
 	if (inspectedElement === null) return null
 
 	const rect = inspectedElement.getClientRects()[0]
-
-	console.log(rect)
 
 	return (
 		<>

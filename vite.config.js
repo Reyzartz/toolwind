@@ -6,11 +6,11 @@ import manifest from './src/manifest'
 
 export default defineConfig({
 	build: {
-		terserOptions: {
-			compress: {
-				drop_console: true
-			}
-		},
+		// terserOptions: {
+		// 	compress: {
+		// 		drop_console: true
+		// 	}
+		// },
 		sourcemap: true
 	},
 	plugins: [

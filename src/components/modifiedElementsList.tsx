@@ -1,14 +1,13 @@
-import { addMessageListener, sendMessage } from '@toolwind/helpers/message'
+import { addMessageEventListener, sendMessage } from '@toolwind/helpers/message'
 import { DeleteIcon } from '@toolwind/icons'
 import { type ModifiedElement } from '@toolwind/types/common'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useEffectOnce } from 'react-use'
 
 const ModifiedElementsList = () => {
 	const [elementsList, setElementList] = useState<ModifiedElement[]>([])
 
-	console.log('elementsList', elementsList)
-
-	useEffect(() => {
+	useEffectOnce(() => {
 		void sendMessage({
 			to: 'content_script',
 			action: {
@@ -21,12 +20,12 @@ const ModifiedElementsList = () => {
 			action: { type: 'SELECT_ELEMENT', data: { xpath: null } }
 		})
 
-		void addMessageListener((message) => {
+		addMessageEventListener((message) => {
 			if (message.type === 'MODIFIED_ELEMENTS_UPDATED') {
 				setElementList(message.data)
 			}
 		})
-	}, [])
+	})
 
 	const onMouseEnterHandler = useCallback((xpath: string | null = null) => {
 		void sendMessage({

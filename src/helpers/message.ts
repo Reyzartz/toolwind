@@ -1,6 +1,7 @@
 import { type Tabs, runtime, tabs } from 'webextension-polyfill'
 import { getActiveTab } from './tabs'
 import { type TMessage } from '@toolwind/types/common'
+import { type DestroyFn } from '@toolwind/types/components'
 
 export const sendMessage = async ({ to, action }: TMessage): Promise<void> => {
 	let activeTab: Tabs.Tab
@@ -34,14 +35,24 @@ export const sendMessage = async ({ to, action }: TMessage): Promise<void> => {
 	}
 }
 
-export const addMessageListener = async (
+export const addMessageEventListener = (
 	callback: (props: TMessage['action']) => void
-) => {
-	runtime.onMessage.addListener((action: TMessage['action']) => {
+): DestroyFn => {
+	const backgroundEventListener = (action: TMessage['action']) => {
 		callback(action)
-	})
+	}
 
-	addEventListener('message', (message: MessageEvent<TMessage['action']>) => {
+	const contentEventListener = (message: MessageEvent<TMessage['action']>) => {
 		callback(message.data)
-	})
+	}
+
+	runtime.onMessage.addListener(backgroundEventListener)
+	addEventListener('message', contentEventListener)
+
+	return () => {
+		console.log('Event Listener Removed')
+
+		runtime.onMessage.removeListener(backgroundEventListener)
+		removeEventListener('message', contentEventListener)
+	}
 }
