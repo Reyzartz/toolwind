@@ -9,7 +9,7 @@ import {
 	isEditingClassState,
 	selectedElementState
 } from '../store'
-import { useTailwindIntellisense } from './useTailwindIntellisense'
+import { tailwindAutoComplete } from '..'
 
 export const useCSSClasses = () => {
 	const [cssClasses, setCssClasses] = useRecoilState(cssClassesState)
@@ -19,8 +19,6 @@ export const useCSSClasses = () => {
 	const activeCssClass = useRecoilValue(activeCssClassState)
 
 	const selectedElement = useRecoilValue(selectedElementState)
-
-	const { getCssText } = useTailwindIntellisense()
 
 	const setClassNameToElement = useCallback(() => {
 		if (selectedElement === null) return
@@ -92,7 +90,9 @@ export const useCSSClasses = () => {
 					}
 
 					if (updatedCssClass.className !== undefined) {
-						const cssText = await getCssText(updatedCssClass.className)
+						const cssText = await tailwindAutoComplete.getCssText(
+							updatedCssClass.className
+						)
 
 						return {
 							...getCssClassObjectFromClassName(
@@ -113,18 +113,18 @@ export const useCSSClasses = () => {
 
 			setCssClassesHandler(updatedClassObjects)
 		},
-		[cssClasses, getCssText, setCssClassesHandler, setIsAdding, setIsEditing]
+		[cssClasses, setCssClassesHandler, setIsAdding, setIsEditing]
 	)
 
 	const addCssClass = useCallback(
 		async (className: string) => {
-			const cssText = await getCssText(className)
+			const cssText = await tailwindAutoComplete.getCssText(className)
 
 			const newClassObject = getCssClassObjectFromClassName(className, cssText)
 
 			setCssClassesHandler([...cssClasses, newClassObject])
 		},
-		[cssClasses, getCssText, setCssClassesHandler]
+		[cssClasses, setCssClassesHandler]
 	)
 
 	return {

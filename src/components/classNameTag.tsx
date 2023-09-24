@@ -1,41 +1,27 @@
 import { useCSSClasses } from '@toolwind/content/hooks/useCssClasses'
 import { type CSSClass } from '@toolwind/types/common'
-import { type MouseEventHandler, useCallback, useRef } from 'react'
+import { type MouseEventHandler, useCallback, useRef, useMemo } from 'react'
 import { ClassNameInput } from './classNameInput'
 import { CloseIcon } from '@toolwind/icons'
 import clsx from 'clsx'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { css } from '@codemirror/lang-css'
-import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
 import { useAsync } from 'react-use'
 import { editorTheme } from '@toolwind/helpers/constant'
 import { EditorView } from '@codemirror/view'
 import cssbeautify from 'cssbeautify'
+import { tailwindAutoComplete } from '@toolwind/content'
+
 interface ClassNameTagProps {
 	cssClass: CSSClass
-}
-
-export const getCssClassPropertiesFromCssText = (cssText: string) => {
-	let propertyText = cssText.slice(
-		cssText.indexOf('{') + 1,
-		cssText.indexOf('}')
-	)
-	propertyText = propertyText.slice(0, propertyText.lastIndexOf(';'))
-	return propertyText.split(';').map((property) => {
-		const [key, value] = property.split(':')
-		return {
-			key: key?.trim(),
-			value: value?.trim()
-		}
-	})
+	index: number
 }
 
 export const ClassNameTag = ({
-	cssClass: { id, className, meta, state, defaultClassName, cssText }
+	cssClass: { id, className, meta, state, defaultClassName, cssText },
+	index
 }: ClassNameTagProps) => {
 	const tagRef = useRef<HTMLDivElement>(null)
-
-	const { getCssText } = useTailwindIntellisense()
 
 	const { updateCssClass, removeCssClass, isEditing, setIsEditing } =
 		useCSSClasses()
@@ -74,7 +60,20 @@ export const ClassNameTag = ({
 
 	const formattedCssText = useAsync(
 		async () =>
-			cssbeautify(cssText ?? (await getCssText(className ?? '')) ?? null),
+			cssbeautify(
+				cssText ?? (await tailwindAutoComplete.getCssText(className ?? '')) ?? ''
+			),
+		[className]
+	)
+
+	const defaultValue = useMemo(
+		() => ({
+			name: className,
+			color: tailwindAutoComplete.getColor(className),
+			variants: tailwindAutoComplete.getVariantsFromClassName(className),
+			isVariant: false,
+			important: className.includes('!')
+		}),
 		[className]
 	)
 
@@ -82,7 +81,7 @@ export const ClassNameTag = ({
 		<div
 			ref={tagRef}
 			className={clsx(
-				'group relative inline-flex max-w-max cursor-pointer items-center bg-light text-default transition'
+				'group relative inline-flex max-w-max cursor-pointer items-center bg-light text-default ring-primary ring-opacity-70 transition focus-within:ring-2'
 			)}
 		>
 			{!isEditing &&
@@ -112,19 +111,15 @@ export const ClassNameTag = ({
 			{state === 'editing' ? (
 				<ClassNameInput
 					initialWidth={tagRef.current?.getClientRects()[0].width}
-					defaultValue={{
-						name: className,
-						variants: [],
-						isVariant: false,
-						important: className.includes('!')
-					}}
+					defaultValue={defaultValue}
 					onSave={onUpdateHandler}
 				/>
 			) : (
 				<button
+					autoFocus={index === 0}
 					onClick={onClickHandler}
 					className={clsx(
-						'flex items-center gap-1 border-none bg-transparent px-2 py-0.5 text-sm font-medium text-inherit',
+						'flex items-center gap-1 border-none bg-transparent px-2 py-0.5 text-sm font-medium text-inherit outline-none',
 						state === 'removed'
 							? 'cursor-text line-through opacity-60'
 							: 'cursor-pointer group-hover:text-primary group-active:text-primary-dark'
@@ -143,8 +138,9 @@ export const ClassNameTag = ({
 
 			{state === 'active' && (
 				<button
+					tabIndex={-1}
 					onClick={onDeleteHandler}
-					className="h-full border-none bg-transparent p-2 pl-0 transition-opacity group-hover:opacity-100"
+					className="h-full border-none bg-transparent p-2 pl-0 outline-none transition-opacity group-hover:opacity-100"
 				>
 					<CloseIcon size={10} className="text-default hover:text-red-500" />
 				</button>

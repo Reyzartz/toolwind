@@ -31,10 +31,13 @@ class ToolwindApp {
 		switch (state) {
 			case 'enable':
 				this.removeReactApp = renderReactComponent(ReactApp)
-				this.removeMessageEventListeners = addMessageEventListener(
-					ToolwindApp.messageEventHandler
-				)
-				this.removeMouseEventListeners = ToolwindApp.addMouseEventListener()
+				setTimeout(() => {
+					this.removeMessageEventListeners = addMessageEventListener(
+						ToolwindApp.messageEventHandler
+					)
+					this.removeMouseEventListeners = ToolwindApp.addMouseEventListener()
+				}, 0)
+
 				break
 			case 'disable':
 				this.removeReactApp?.()
@@ -210,10 +213,6 @@ class ToolwindApp {
 					}
 				}
 				break
-
-			// case 'UPDATE_CONFIG':
-			// 	setConfig(action.data.config)
-			// 	break
 		}
 	}
 }

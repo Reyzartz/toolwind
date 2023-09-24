@@ -32,17 +32,19 @@ const AddClassName = () => {
 	})
 
 	return (
-		<div className="flex w-full">
-			{isAdding ? (
-				<ClassNameInput onSave={onAddHandler} />
-			) : (
-				<button
-					onClick={onClickHandler}
-					className="flex items-center gap-2 px-2 py-0.5 text-sm font-semibold text-primary transition-colors hover:bg-light"
-				>
-					<AddIcon size={10} /> Add Class
-				</button>
-			)}
+		<div className="w-full">
+			<div className="flex max-w-max ring-primary ring-opacity-70 focus-within:ring-2">
+				{isAdding ? (
+					<ClassNameInput onSave={onAddHandler} />
+				) : (
+					<button
+						onClick={onClickHandler}
+						className="flex items-center gap-2 px-2 py-0.5 text-sm font-semibold text-primary outline-none transition-colors hover:bg-light"
+					>
+						<AddIcon size={10} /> Add Class
+					</button>
+				)}
+			</div>
 		</div>
 	)
 }

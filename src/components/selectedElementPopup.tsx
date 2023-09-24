@@ -90,7 +90,7 @@ export const SelectedElementPopup = React.memo(
 
 						<div className="flex flex-wrap gap-2 p-3 pt-2">
 							{cssClasses.map((cssClass, ind) => (
-								<ClassNameTag key={ind} cssClass={cssClass} />
+								<ClassNameTag key={ind} index={ind} cssClass={cssClass} />
 							))}
 
 							<AddClassName />

@@ -32,7 +32,7 @@
 		"react-use": "^17.4.0",
 		"recoil": "^0.7.7",
 		"recoil-nexus": "^0.5.0",
-		"tailwindcss-autocomplete": "^0.5.3"
+		"tailwindcss-autocomplete": "^0.5.10"
 	},
 	"devDependencies": {
 		"@crxjs/vite-plugin": "^2.0.0-beta.12",
@@ -58,8 +58,9 @@
 		"prettier-plugin-tailwindcss": "^0.5.4",
 		"tailwindcss": "^3.3.2",
 		"ts-node": "^10.9.1",
-		"typescript": "*",
-		"vite": "4.1.0",
+		"typescript": "5.2.2",
+		"vite": "^4.0.1",
+		"vite-plugin-node-polyfills": "^0.14.1",
 		"webextension-polyfill": "^0.10.0"
 	}
 }

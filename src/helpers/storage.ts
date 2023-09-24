@@ -17,7 +17,7 @@ export const getItemFromStorage = async <T extends keyof TStorageItemKeysMap>(
 
 	const fullKey = `${key}_${hostname.replaceAll('.', '_')}`
 
-	const resp: Record<string, any> = await storage.local.get(fullKey)
+	const resp = await storage.local.get(fullKey)
 
 	return resp[fullKey] ?? null
 }
@@ -27,13 +27,13 @@ export const setItemToStorage = async <T extends keyof TStorageItemKeysMap>(
 	item: TStorageItemKeysMap[T]
 ) => {
 	let hostname: string
-	if (window.location.protocol === 'chrome-extension:') {
+	if (location.protocol === 'chrome-extension:') {
 		const activeTab = await getActiveTab()
 		if (activeTab.url === undefined) return null
 
 		hostname = new URL(activeTab.url).hostname
 	} else {
-		hostname = window.location.hostname
+		hostname = location.hostname
 	}
 
 	const fullKey = `${key}_${hostname.replaceAll('.', '_')}`

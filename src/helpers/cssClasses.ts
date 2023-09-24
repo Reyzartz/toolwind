@@ -1,8 +1,6 @@
-import { autocomplete } from '@toolwind/content/hooks/useTailwindIntellisense'
-import {
-	type CSSClass,
-	type CSSClassSuggestionItem
-} from '@toolwind/types/common'
+import { tailwindAutoComplete } from '@toolwind/content'
+import { type CSSClass } from '@toolwind/types/common'
+import { type SuggestionItem } from 'tailwindcss-autocomplete'
 
 // Function to retrieve all CSS rules from a document
 
@@ -87,7 +85,7 @@ export const getCssClassObjectFromClassName = (
 		customClass: isCustomClass(className),
 		cssText,
 		meta: {
-			color: autocomplete.getColor(className)
+			color: tailwindAutoComplete.getColor(className)
 		}
 	}
 }
@@ -107,28 +105,6 @@ export const getClassObjects = (
 	)
 }
 
-// this is later going to be change to accept only tailwind classes from the sites spreadsheets
-
-export const getCssClassPropertiesFromCssText = (cssText: string) => {
-	let propertyText = cssText.slice(
-		cssText.indexOf('{') + 1,
-		cssText.indexOf('}')
-	)
-
-	propertyText = propertyText.slice(0, propertyText.lastIndexOf(';'))
-
-	return propertyText.split(';').map((property) => {
-		const [key, value] = property.split(':')
-
-		return {
-			key: key.trim(),
-			value: value.trim()
-		}
-	})
-}
-
-export const getClassNameFromCSSClassSuggestionItem = (
-	item: CSSClassSuggestionItem
-) => {
+export const getClassNameFromSuggestionItem = (item: SuggestionItem) => {
 	return [...item.variants, `${item.important ? '!' : ''}${item.name}`].join(':')
 }

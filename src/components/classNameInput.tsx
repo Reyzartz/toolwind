@@ -5,24 +5,24 @@ import {
 	shift,
 	useFloating
 } from '@floating-ui/react'
-import { useTailwindIntellisense } from '@toolwind/content/hooks/useTailwindIntellisense'
+import { tailwindAutoComplete } from '@toolwind/content'
 import { activeCssClassState } from '@toolwind/content/store'
 import {
-	getClassNameFromCSSClassSuggestionItem,
+	getClassNameFromSuggestionItem,
 	getCssClassObjectFromClassName,
 	isCustomClass
 } from '@toolwind/helpers/cssClasses'
 import { CloseIcon } from '@toolwind/icons'
-import { type CSSClassSuggestionItem } from '@toolwind/types/common'
 import clsx from 'clsx'
 import { type UseComboboxStateChange, useCombobox } from 'downshift'
 import { useCallback, useRef, useState } from 'react'
 import { useMount, useUnmount } from 'react-use'
 import { useRecoilState } from 'recoil'
+import { type SuggestionItem } from 'tailwindcss-autocomplete'
 
 interface ClassNameInputProps {
 	onSave: (value: string) => void
-	defaultValue?: CSSClassSuggestionItem | null
+	defaultValue?: SuggestionItem | null
 	initialWidth?: number
 }
 
@@ -31,11 +31,7 @@ const ClassNameInput = ({
 	onSave,
 	initialWidth = 148
 }: ClassNameInputProps) => {
-	const [suggestedClasses, setSuggestedClasses] = useState<
-		CSSClassSuggestionItem[]
-	>([])
-
-	const { getCssText, getSuggestionList } = useTailwindIntellisense()
+	const [suggestedClasses, setSuggestedClasses] = useState<SuggestionItem[]>([])
 
 	const [activeOption, setActiveClassOption] =
 		useRecoilState(activeCssClassState)
@@ -43,60 +39,62 @@ const ClassNameInput = ({
 	const textElementWidthRef = useRef<HTMLSpanElement>(null)
 
 	const onSelectedItemChange = useCallback(
-		({ selectedItem = null }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+		({ selectedItem = null }: UseComboboxStateChange<SuggestionItem>) => {
 			// triggered if the active option is an variant
 
-			if (selectedItem === null || (selectedItem.isVariant ?? false)) return
+			if (selectedItem === null || selectedItem.isVariant) return
 
-			onSave(getClassNameFromCSSClassSuggestionItem(selectedItem))
-
-			return true
+			onSave(getClassNameFromSuggestionItem(selectedItem))
 		},
 		[onSave]
 	)
 
 	const setActiveOptionHandler = useCallback(
-		async (cssClass: CSSClassSuggestionItem | null) => {
+		async (cssClass: SuggestionItem | null) => {
 			if (cssClass === null) {
 				setActiveClassOption(null)
 				return
 			}
 
-			const className = getClassNameFromCSSClassSuggestionItem(cssClass)
+			const className = getClassNameFromSuggestionItem(cssClass)
 
 			if (className === activeOption?.className) return
 
-			const cssText = await getCssText(className)
+			const cssText = await tailwindAutoComplete.getCssText(className)
 
 			setActiveClassOption(getCssClassObjectFromClassName(className, cssText))
 		},
-		[activeOption?.className, getCssText, setActiveClassOption]
+		[activeOption?.className, setActiveClassOption]
 	)
 
 	const onInputValueChange = useCallback(
-		({ inputValue = '' }: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+		({ inputValue = '' }: UseComboboxStateChange<SuggestionItem>) => {
 			if (isCustomClass(inputValue)) {
 				setSuggestedClasses([])
 
-				void getCssText(inputValue).then((cssText) => {
+				void tailwindAutoComplete.getCssText(inputValue).then((cssText) => {
 					setActiveClassOption(getCssClassObjectFromClassName(inputValue, cssText))
 				})
 			}
 
-			void getSuggestionList(inputValue).then((list) => {
-				setSuggestedClasses(list)
+			const query = inputValue.endsWith(':') ? '' : inputValue
+
+			void tailwindAutoComplete.getSuggestionList(query).then((list) => {
+				// the full list can contain more than 11000+ classnames so it's important to slice it
+
+				setSuggestedClasses(list.slice(0, 50))
 
 				void setActiveOptionHandler(list[0] ?? null)
 			})
 		},
-		[getSuggestionList, getCssText, setActiveClassOption, setActiveOptionHandler]
+		[setActiveClassOption, setActiveOptionHandler]
 	)
 
 	const onActiveOptionChange = useCallback(
 		({
 			highlightedIndex = 0,
 			isOpen = false
-		}: UseComboboxStateChange<CSSClassSuggestionItem>) => {
+		}: UseComboboxStateChange<SuggestionItem>) => {
 			const cssClass = suggestedClasses[highlightedIndex]
 
 			if (cssClass === undefined || !isOpen) return
@@ -118,9 +116,9 @@ const ClassNameInput = ({
 		inputValue,
 		setInputValue,
 		isOpen
-	} = useCombobox<CSSClassSuggestionItem>({
+	} = useCombobox<SuggestionItem>({
 		items: suggestedClasses,
-		itemToString: (item) => getClassNameFromCSSClassSuggestionItem(item!),
+		itemToString: (item) => getClassNameFromSuggestionItem(item!),
 		defaultHighlightedIndex: 0,
 		onInputValueChange,
 		onHighlightedIndexChange: onActiveOptionChange,
@@ -149,8 +147,16 @@ const ClassNameInput = ({
 
 	useMount(() => {
 		if (defaultValue != null) {
-			// setting Active option to defaultValue on umount
+			// setting Active option to defaultValue on mount
 			void setActiveOptionHandler(defaultValue)
+
+			// setting initial suggestion list
+
+			void tailwindAutoComplete
+				.getSuggestionList(getClassNameFromSuggestionItem(defaultValue))
+				.then((list) => {
+					setSuggestedClasses(list.slice(0, 50))
+				})
 		}
 	})
 
@@ -164,28 +170,37 @@ const ClassNameInput = ({
 			(e) => {
 				const value = (e.target as HTMLInputElement).value
 
-				if (e.code === 'Enter' && isCustomClass(value)) {
+				if (e.code === 'Tab' && activeOption?.className.endsWith(':') === true) {
+					e.stopPropagation()
+					e.preventDefault()
+
+					setInputValue(activeOption?.className ?? '')
+				}
+
+				if (e.code === 'Enter' && (isCustomClass(value) || activeOption === null)) {
+					console.log('save')
+
 					onSave(value)
-					return
+					
 				}
 
-				if (e.key === '[') {
-					const end = e.target as HTMLInputElement
+				// if (e.key === '[') {
+				// 	const end = e.target as HTMLInputElement
 
-					const caretPosition = end.selectionStart ?? value.length
+				// 	const caretPosition = end.selectionStart ?? value.length
 
-					setInputValue(
-						value.slice(0, caretPosition) +
-							']' +
-							value.slice(caretPosition, value.length)
-					)
+				// 	setInputValue(
+				// 		value.slice(0, caretPosition) +
+				// 			']' +
+				// 			value.slice(caretPosition + 1, value.length)
+				// 	)
 
-					setTimeout(() => {
-						end.setSelectionRange(caretPosition, caretPosition)
-					}, 0)
-				}
+				// 	setTimeout(() => {
+				// 		end.setSelectionRange(caretPosition, caretPosition)
+				// 	}, 0)
+				// }
 			},
-			[onSave, setInputValue]
+			[activeOption, onSave, setInputValue]
 		)
 
 	return (
@@ -201,7 +216,7 @@ const ClassNameInput = ({
 
 			<div
 				className={clsx(
-					'flex h-6 items-center bg-light px-2 py-0.5 placeholder-opacity-30 transition-all'
+					'flex h-6 items-center bg-light px-2 py-1 placeholder-opacity-30 transition-all'
 				)}
 				style={{
 					width: `min(${
@@ -212,7 +227,7 @@ const ClassNameInput = ({
 			>
 				<input
 					{...getInputProps({
-						onKeyDown: onKeyDownHandler,
+						onKeyDownCapture: onKeyDownHandler,
 						onBlur: onCancelHandler,
 						className: clsx(
 							'm-0 text-sm bg-transparent focus:!outline-none text-default w-full',
@@ -242,8 +257,14 @@ const ClassNameInput = ({
 				})}
 			>
 				{suggestedClasses.length === 0 ? (
-					<div className="but you can still add it bg-light p-3 text-center text-sm text-default">
-						This class name is not supported by tailwindcss
+					<div className="-m-1.5 p-2 text-default">
+						<h5 className="mb-2 flex gap-1 text-lg font-bold leading-5 text-yellow-500">
+							<span>⚠</span> No Results Found with current config
+						</h5>
+						<p className="text-sm leading-4">
+							But, you can still add the class by pressing{' '}
+							<span className="font-semibold">↵</span> Enter
+						</p>
 					</div>
 				) : (
 					suggestedClasses.map((suggestedClass, index) => (
@@ -258,7 +279,7 @@ const ClassNameInput = ({
 								)
 							})}
 						>
-							{suggestedClass.color === undefined ? (
+							{suggestedClass.color === null ? (
 								<span>{suggestedClass.isVariant ? `{}` : '☲'}</span>
 							) : (
 								<span
@@ -270,7 +291,13 @@ const ClassNameInput = ({
 								/>
 							)}
 
-							<span>{suggestedClass.name}</span>
+							<span className="flex-grow">{suggestedClass.name}</span>
+
+							{highlightedIndex === index && (
+								<kbd className="block rounded-sm border border-default px-1 py-0.5 font-mono text-[10px] font-semibold leading-3 text-default">
+									tab
+								</kbd>
+							)}
 						</li>
 					))
 				)}

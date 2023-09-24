@@ -1,3 +1,5 @@
+import { type TailwindConfig } from 'tailwindcss-autocomplete'
+
 export interface CSSClass {
 	id: string
 	className: string
@@ -11,13 +13,6 @@ export interface CSSClass {
 	}
 }
 
-export interface CSSClassSuggestionItem {
-	name: string
-	color?: string
-	isVariant: boolean
-	variants: string[]
-	important: boolean
-}
 
 export interface ModifiedElement {
 	xpath: string
@@ -90,7 +85,7 @@ export interface IUpdateConfigMessage {
 	to: 'content_script'
 	action: {
 		type: 'UPDATE_CONFIG'
-		data: { config: Record<string, any> }
+		data: { config: TailwindConfig }
 	}
 }
 
@@ -106,5 +101,5 @@ export type TMessage =
 
 export interface TStorageItemKeysMap {
 	toolwind_enabled: boolean
-	tw_config: Record<string, any>
+	tw_config: TailwindConfig
 }
